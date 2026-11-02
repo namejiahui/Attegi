@@ -29,9 +29,9 @@ own cover-active case is already covered there, so this attribute only needs the
 	connection early so those deferred scripts don't pay for DNS/TLS when
 	the parser finally reaches them. --}}
 	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-	{{!-- Note: GLightbox and JetBrains Mono are NOT loaded here; both are
-	injected only when the rendered body actually needs them (see the
-	conditional-load scripts near the closing </body>). --}}
+	{{!-- Note: GLightbox is NOT loaded here; it is
+	injected only when the rendered body actually needs it (see the
+	conditional-load script near the closing </body>). --}}
 
 		{{!-- data-cfasync="false" keeps Cloudflare Rocket Loader from deferring
 		this script, which would let the wrong theme paint first. --}}
@@ -581,19 +581,19 @@ own cover-active case is already covered there, so this attribute only needs the
 		</section>
 	</div>
 
+	{{!-- Back to top button with progress ring --}}
+	<button class="back-to-top" aria-label="{{t "Back to top"}}">
+		<svg class="progress-ring" viewBox="0 0 44 44">
+			<circle class="progress-ring__bg" cx="22" cy="22" r="20"></circle>
+			<circle class="progress-ring__progress" cx="22" cy="22" r="20"></circle>
+		</svg>
+		<svg class="back-to-top__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<polyline points="18 15 12 9 6 15"></polyline>
+		</svg>
+	</button>
+
 	{{!-- Load basic scripts (no defer, placed before </body> for reliability) --}}
 	<script src="{{asset "js/site.js"}}"></script>
-	<script>
-		// Load the JetBrains Mono webfont only on pages that actually render
-		// a code block; every other page skips the request entirely.
-		(function() {
-			if (!document.querySelector('.kg-card-code, pre code')) return;
-			var stylesheet = document.createElement('link');
-			stylesheet.rel = 'stylesheet';
-			stylesheet.href = 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap';
-			document.head.appendChild(stylesheet);
-		})();
-	</script>
 	<script>
 		// Conditionally load GLightbox only for gallery images
 		(function() {

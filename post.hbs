@@ -1,21 +1,5 @@
 {{!< default}}
 
-{{!-- Reading progress bar, filled by src/js/features/progress-bar.js --}}
-<div class="progress-container">
-	<div class="progress-bar"></div>
-</div>
-
-{{!-- Back to top button with progress ring (shown when no TOC) --}}
-<button class="back-to-top" aria-label="{{t "Back to top"}}">
-	<svg class="progress-ring" viewBox="0 0 44 44">
-		<circle class="progress-ring__bg" cx="22" cy="22" r="20"></circle>
-		<circle class="progress-ring__progress" cx="22" cy="22" r="20"></circle>
-	</svg>
-	<svg class="back-to-top__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-		<polyline points="18 15 12 9 6 15"></polyline>
-	</svg>
-</button>
-
 {{!-- Everything inside the #post tags pulls data from the post --}}
 {{#post}}
 

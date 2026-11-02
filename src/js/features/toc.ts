@@ -420,19 +420,8 @@ function updateTriggerPosition(): void {
 
 function updateMobileTriggerVisibility(scrollTop: number): void {
   if (!elements.mobileTrigger) return;
-
-  // Don't hide if at the top of the page (less than 200px)
-  if (scrollTop < 200) {
-    elements.mobileTrigger.classList.remove('is-hidden-scroll');
-    return;
-  }
-
-  // Hide when scrolling down, show when scrolling up
-  if (state.isScrollingDown) {
-    elements.mobileTrigger.classList.add('is-hidden-scroll');
-  } else {
-    elements.mobileTrigger.classList.remove('is-hidden-scroll');
-  }
+  const shouldShow = scrollTop >= 200;
+  elements.mobileTrigger.classList.toggle('is-visible', shouldShow);
 }
 
 function updateTOCVisibility(): void {

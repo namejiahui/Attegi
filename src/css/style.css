@@ -3324,30 +3324,6 @@ textarea {
 	margin-top: var(--space-3);
 }
 /* ==========================================================================
-   Reading Progress
-   ========================================================================== */
-.progress-container {
-	position: fixed;
-	width: 100%;
-	height: 4px;
-	left: 0;
-	top: 0;
-	z-index: var(--z-floating-ui);
-	background: transparent;
-	transition: transform var(--duration-base) var(--ease-standard);
-
-	&.complete {
-		transform: translateY(-3px);
-	}
-}
-
-.progress-bar {
-	display: block;
-	width: 0;
-	height: 3px;
-	background: var(--ghost-accent-color);
-}
-/* ==========================================================================
    Footer
    ========================================================================== */
 .nav-footer {
@@ -6232,12 +6208,6 @@ a.post-tag-chip {
 		transform: translateY(0);
 	}
 
-	/* Hide when scrolling down (slide to right) */
-	&.is-hidden-scroll {
-		opacity: 0;
-		transform: translateX(8rem) scale(0.9);
-	}
-
 	&:hover {
 		transform: translateY(-1px);
 	}
@@ -6291,11 +6261,6 @@ a.post-tag-chip {
 
 .theme-dark .back-to-top__icon {
 	color: rgba(255, 255, 255, 0.8);
-}
-
-/* Hide when TOC is present */
-.has-toc .back-to-top {
-	display: none;
 }
 
 /* Mobile adjustments */
@@ -6963,7 +6928,6 @@ a.post-tag-chip {
 	.toc-mobile-drawer,
 	.toc-mobile-overlay,
 	.back-to-top,
-	.progress-container,
 	#announcement-bar-root {
 		display: none !important;
 	}

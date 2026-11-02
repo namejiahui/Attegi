@@ -12,6 +12,7 @@ import { initExcerptClean } from '../features/excerpt-clean.js';
 import { initTagCards } from '../features/tag-cards.js';
 import { initLinksMotion } from '../features/links-motion.js';
 import { initFloatNav } from '../features/float-nav.js';
+import { setupBackToTop } from '../features/back-to-top.js';
 
 onReady(() => {
   // Initialize core site features
@@ -21,6 +22,7 @@ onReady(() => {
   initTagCards();
   initLinksMotion();
   initFloatNav();
+  setupBackToTop();
 
   // Defer non-critical features
   setTimeout(() => {

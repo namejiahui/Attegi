@@ -46,7 +46,7 @@ export function onScroll(callback: () => void): () => void {
 /**
  * Reading progress of `content`, measured as how far the viewport's vertical
  * middle has crossed the element's top-to-bottom span. Shared by the
- * progress bar, back-to-top ring and TOC trigger ring so they agree.
+ * back-to-top ring and TOC trigger ring so they agree.
  *
  * Not clamped above 1: callers that only need "how far through" clamp to
  * `Math.min(progress, 1)` themselves; the progress bar uses the overshoot
