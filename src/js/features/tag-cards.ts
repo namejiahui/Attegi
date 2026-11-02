@@ -7,25 +7,25 @@
 
 import { qs, qsa, each } from '../core/index.js';
 
-var VISIBLE_POST_COUNT = 3;
+const VISIBLE_POST_COUNT = 3;
 
 /**
  * Swap the default tag icon for one supplied via the tag's code
  * injection (<template data-tag-icon>...</template> or an inline SVG).
  */
-function applyCustomIcons() {
-  each(qsa('.tag-card'), function(card) {
-    var codeInjection = card.querySelector('.tag-code-injection');
-    var iconContainer = card.querySelector('.tag-card-icon');
+function applyCustomIcons(): void {
+  each(qsa('.tag-card'), (card: HTMLElement) => {
+    const codeInjection = card.querySelector<HTMLTemplateElement>('.tag-code-injection');
+    const iconContainer = card.querySelector<HTMLElement>('.tag-card-icon');
     if (!codeInjection || !iconContainer) return;
 
-    var source = codeInjection.content || codeInjection;
-    var iconTemplate = source.querySelector('[data-tag-icon]');
+    const source = (codeInjection.content || codeInjection) as ParentNode;
+    const iconTemplate = source.querySelector<HTMLElement>('[data-tag-icon]');
     if (iconTemplate) {
-      var defaultIcon = iconContainer.querySelector('.tag-icon-default');
+      const defaultIcon = iconContainer.querySelector<HTMLElement>('.tag-icon-default');
       if (defaultIcon) {
         defaultIcon.outerHTML = iconTemplate.tagName === 'TEMPLATE'
-          ? iconTemplate.innerHTML
+          ? (iconTemplate as HTMLTemplateElement).innerHTML
           : iconTemplate.outerHTML;
       }
     }
@@ -38,29 +38,37 @@ function applyCustomIcons() {
  * Loads a detached copy with crossOrigin set so a CORS failure only
  * skips the color sample instead of breaking the visible <img>.
  */
-function sampleDominantColor(card, srcImg) {
-  var probe = new Image();
+function sampleDominantColor(card: HTMLElement, srcImg: HTMLImageElement): void {
+  const probe = new Image();
   probe.crossOrigin = 'anonymous';
 
-  probe.onload = function() {
-    var canvas = document.createElement('canvas');
-    var ctx = canvas.getContext('2d');
+  probe.onload = () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    var size = 50;
+    const size = 50;
     canvas.width = size;
     canvas.height = size;
 
     try {
       ctx.drawImage(probe, 0, 0, size, size);
-      var data = ctx.getImageData(0, 0, size, size).data;
-      var r = 0, g = 0, b = 0, count = 0;
+      const data = ctx.getImageData(0, 0, size, size).data;
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let count = 0;
 
-      for (var i = 0; i < data.length; i += 16) {
-        var pr = data[i], pg = data[i + 1], pb = data[i + 2];
-        var brightness = (pr + pg + pb) / 3;
+      for (let i = 0; i < data.length; i += 16) {
+        const pr = data[i];
+        const pg = data[i + 1];
+        const pb = data[i + 2];
+        const brightness = (pr + pg + pb) / 3;
         if (brightness > 30 && brightness < 220) {
-          r += pr; g += pg; b += pb; count++;
+          r += pr;
+          g += pg;
+          b += pb;
+          count++;
         }
       }
       if (!count) return;
@@ -69,18 +77,18 @@ function sampleDominantColor(card, srcImg) {
       g = Math.round(g / count);
       b = Math.round(b / count);
 
-      var max = Math.max(r, g, b);
-      var min = Math.min(r, g, b);
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
       if (max !== min) {
-        var mid = (max + min) / 2;
-        var boost = 1.2;
+        const mid = (max + min) / 2;
+        const boost = 1.2;
         r = Math.min(255, Math.round(mid + (r - mid) * boost));
         g = Math.min(255, Math.round(mid + (g - mid) * boost));
         b = Math.min(255, Math.round(mid + (b - mid) * boost));
       }
 
-      card.style.setProperty('--tag-image-color', 'rgb(' + r + ', ' + g + ', ' + b + ')');
-    } catch (e) {
+      card.style.setProperty('--tag-image-color', `rgb(${r}, ${g}, ${b})`);
+    } catch {
       // Canvas read blocked (CORS or otherwise) — keep the fallback color.
     }
   };
@@ -88,9 +96,9 @@ function sampleDominantColor(card, srcImg) {
   probe.src = srcImg.currentSrc || srcImg.src;
 }
 
-function applyDominantColors() {
-  each(qsa('.tag-card.has-image'), function(card) {
-    var img = card.querySelector('.tag-card-bg > img');
+function applyDominantColors(): void {
+  each(qsa<HTMLElement>('.tag-card.has-image'), (card: HTMLElement) => {
+    const img = card.querySelector<HTMLImageElement>('.tag-card-bg > img');
     if (img) sampleDominantColor(card, img);
   });
 }
@@ -99,14 +107,14 @@ function applyDominantColors() {
  * Move a card's post previews into a scrollable wrapper once there are
  * more than fit in the visible area.
  */
-function setupScrollablePosts() {
-  each(qsa('.tag-card-posts'), function(container) {
-    var posts = qsa('.tag-post-preview', container);
+function setupScrollablePosts(): void {
+  each(qsa<HTMLElement>('.tag-card-posts'), (container: HTMLElement) => {
+    const posts = qsa<HTMLElement>('.tag-post-preview', container);
     if (posts.length <= VISIBLE_POST_COUNT) return;
 
-    var scrollWrapper = document.createElement('div');
+    const scrollWrapper = document.createElement('div');
     scrollWrapper.className = 'tag-posts-scroll';
-    each(posts, function(post) {
+    each(posts, (post: HTMLElement) => {
       scrollWrapper.appendChild(post);
     });
     container.insertBefore(scrollWrapper, container.firstChild);
@@ -114,7 +122,7 @@ function setupScrollablePosts() {
   });
 }
 
-export function initTagCards() {
+export function initTagCards(): void {
   if (!qs('.tags-grid')) return;
 
   applyCustomIcons();

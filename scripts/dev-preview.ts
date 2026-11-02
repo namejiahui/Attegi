@@ -20,7 +20,7 @@ const ROOT = process.cwd();
 const DEFAULT_PREVIEW_PORT = 3020;
 const DEFAULT_RENDER_PORT = 3021;
 const DEFAULT_POSTS_PER_PAGE = 8;
-const ASSET_TYPES = {
+const ASSET_TYPES: Record<string, string> = {
   '.css': 'text/css; charset=UTF-8',
   '.js': 'application/javascript; charset=UTF-8',
   '.json': 'application/json; charset=UTF-8',
@@ -46,7 +46,7 @@ const contentKey = process.env.GHOST_CONTENT_API_KEY || process.env.GHOST_API_KE
 const previewPort = parsePort(process.env.DEV_PREVIEW_PORT, DEFAULT_PREVIEW_PORT);
 const renderPort = parsePort(process.env.DEV_PREVIEW_RENDER_PORT, DEFAULT_RENDER_PORT);
 const autoOpen = parseBoolean(process.env.DEV_PREVIEW_OPEN);
-const localeCache = new Map();
+const localeCache = new Map<string, Record<string, string>>();
 
 if (!contentUrl || !contentKey) {
   console.error('\n[preview] Missing Ghost Content API config.');
@@ -55,13 +55,13 @@ if (!contentUrl || !contentKey) {
 }
 
 const api = createGhostApi(contentUrl, contentKey);
-const themeCustom = packageConfig.config && packageConfig.config.custom ? packageConfig.config.custom : {};
-const postsPerPage = Number(packageConfig.config && packageConfig.config.posts_per_page) || DEFAULT_POSTS_PER_PAGE;
+const themeCustom = (packageConfig.config as Record<string, any>)?.custom || {};
+const postsPerPage = Number((packageConfig.config as Record<string, any>)?.posts_per_page) || DEFAULT_POSTS_PER_PAGE;
 
 registerHelpers();
 
-const renderServer = http.createServer((request, response) => {
-  handleRequest(request, response).catch((error) => {
+const renderServer = http.createServer((request: http.IncomingMessage, response: http.ServerResponse) => {
+  handleRequest(request, response).catch((error: Error) => {
     console.error('[preview] Render failed:', error);
     sendHtml(response, 500, renderErrorPage(error));
   });
@@ -105,7 +105,7 @@ renderServer.listen(renderPort, '127.0.0.1', () => {
   console.log('========================================\n');
 });
 
-function loadEnvFile(fileName) {
+function loadEnvFile(fileName: string): void {
   const filePath = path.join(ROOT, fileName);
   if (!fs.existsSync(filePath)) return;
 
@@ -128,32 +128,28 @@ function loadEnvFile(fileName) {
   });
 }
 
-function normalizeUrl(rawUrl) {
+function normalizeUrl(rawUrl: string | undefined): string {
   const value = String(rawUrl || '').trim().replace(/\/+$/, '');
   if (!value) return '';
   if (/^https?:\/\//i.test(value)) return value;
   return `https://${value}`;
 }
 
-function parsePort(rawPort, fallback) {
+function parsePort(rawPort: string | undefined, fallback: number): number {
   const parsed = Number.parseInt(String(rawPort || ''), 10);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-function parseBoolean(rawValue) {
+function parseBoolean(rawValue: string | undefined): boolean {
   return ['1', 'true', 'yes', 'on'].includes(String(rawValue || '').trim().toLowerCase());
 }
 
-function readJson(fileName) {
-  return JSON.parse(fs.readFileSync(path.join(ROOT, fileName), 'utf8'));
-}
-
-function fillCountTemplate(template, value) {
+function fillCountTemplate(template: string, value: string | number): string {
   return String(template).split('%').join(String(value));
 }
 
-function createGhostApi(siteUrl, key) {
-  async function request(resource, params = {}) {
+function createGhostApi(siteUrl: string, key: string) {
+  async function request(resource: string, params: Record<string, any> = {}): Promise<any> {
     const apiUrl = new URL(`${siteUrl}/ghost/api/content/${resource.replace(/^\/+/, '')}`);
     apiUrl.searchParams.set('key', key);
     Object.entries(params).forEach(([param, value]) => {
@@ -172,19 +168,19 @@ function createGhostApi(siteUrl, key) {
   return {
     siteUrl,
     settings: () => request('settings/'),
-    posts: (params) => request('posts/', params),
-    postBySlug: (slug) => request(`posts/slug/${encodeURIComponent(slug)}/`, { include: 'tags,authors' }),
-    pages: (params) => request('pages/', params),
-    pageBySlug: (slug) => request(`pages/slug/${encodeURIComponent(slug)}/`, { include: 'tags,authors' }),
-    tags: (params) => request('tags/', params),
-    tagBySlug: (slug) => request(`tags/slug/${encodeURIComponent(slug)}/`),
-    authors: (params) => request('authors/', params),
-    authorBySlug: (slug) => request(`authors/slug/${encodeURIComponent(slug)}/`)
+    posts: (params?: Record<string, any>) => request('posts/', params),
+    postBySlug: (slug: string) => request(`posts/slug/${encodeURIComponent(slug)}/`, { include: 'tags,authors' }),
+    pages: (params?: Record<string, any>) => request('pages/', params),
+    pageBySlug: (slug: string) => request(`pages/slug/${encodeURIComponent(slug)}/`, { include: 'tags,authors' }),
+    tags: (params?: Record<string, any>) => request('tags/', params),
+    tagBySlug: (slug: string) => request(`tags/slug/${encodeURIComponent(slug)}/`),
+    authors: (params?: Record<string, any>) => request('authors/', params),
+    authorBySlug: (slug: string) => request(`authors/slug/${encodeURIComponent(slug)}/`)
   };
 }
 
-async function handleRequest(request, response) {
-  const requestUrl = new URL(request.url, `http://localhost:${previewPort}`);
+async function handleRequest(request: http.IncomingMessage, response: http.ServerResponse): Promise<void> {
+  const requestUrl = new URL(request.url || '/', `http://localhost:${previewPort}`);
   const pathname = normalizePathname(requestUrl.pathname);
 
   if (pathname.startsWith('/assets/')) {
@@ -201,16 +197,16 @@ async function handleRequest(request, response) {
   sendHtml(response, model.status || 200, await renderRoute(model));
 }
 
-function normalizePathname(pathname) {
+function normalizePathname(pathname: string | undefined): string {
   if (!pathname || pathname === '/') return '/';
   return pathname.replace(/\/+$/, '') || '/';
 }
 
-function hasRequestExtension(pathname) {
+function hasRequestExtension(pathname: string): boolean {
   return Boolean(path.extname(pathname));
 }
 
-function serveAsset(pathname, response) {
+function serveAsset(pathname: string, response: http.ServerResponse): void {
   const assetPath = path.normalize(path.join(ROOT, pathname));
   if (!assetPath.startsWith(path.join(ROOT, 'assets'))) {
     response.writeHead(403);
@@ -232,7 +228,7 @@ function serveAsset(pathname, response) {
   fs.createReadStream(assetPath).pipe(response);
 }
 
-async function serveRemoteAsset(pathname, response) {
+async function serveRemoteAsset(pathname: string, response: http.ServerResponse): Promise<void> {
   const remoteUrl = new URL(pathname.replace(/^\/+/, ''), withTrailingSlash(api.siteUrl));
   const remoteResponse = await fetch(remoteUrl);
 
@@ -250,7 +246,7 @@ async function serveRemoteAsset(pathname, response) {
   response.end(Buffer.from(await remoteResponse.arrayBuffer()));
 }
 
-async function buildRouteModel(pathname) {
+async function buildRouteModel(pathname: string): Promise<any> {
   const common = await getCommonContext(pathname);
 
   if (pathname === '/') {
@@ -333,7 +329,7 @@ async function buildRouteModel(pathname) {
     const postModel = decoratePost(post.posts[0], common.site.url, false);
     postModel.comments = Boolean(common.ghost.commentsEnabled);
     const navPosts = await listPosts({ limit: 20 });
-    const navIndex = navPosts.items.findIndex((item) => item.slug === postModel.slug);
+    const navIndex = navPosts.items.findIndex((item: any) => item.slug === postModel.slug);
     return {
       ...common,
       ...postModel,
@@ -359,7 +355,7 @@ async function buildRouteModel(pathname) {
   };
 }
 
-async function getCommonContext(pathname) {
+async function getCommonContext(pathname: string): Promise<any> {
   const settingsResponse = await api.settings();
   const ghostSettings = settingsResponse.settings || {};
   const site = buildSite(ghostSettings);
@@ -379,7 +375,7 @@ async function getCommonContext(pathname) {
   };
 }
 
-function buildSite(settings) {
+function buildSite(settings: any): any {
   return {
     title: settings.title || 'Ghost',
     description: settings.description || settings.meta_description || '',
@@ -401,7 +397,7 @@ function buildSite(settings) {
   };
 }
 
-function buildGhostContext(settings) {
+function buildGhostContext(settings: any): any {
   const siteUrl = withTrailingSlash(api.siteUrl);
 
   return {
@@ -421,15 +417,15 @@ function buildGhostContext(settings) {
   };
 }
 
-function buildCustomSettings() {
-  const custom = {};
-  Object.entries(themeCustom).forEach(([key, config]) => {
+function buildCustomSettings(): Record<string, any> {
+  const custom: Record<string, any> = {};
+  Object.entries(themeCustom).forEach(([key, config]: [string, any]) => {
     custom[key] = config && Object.prototype.hasOwnProperty.call(config, 'default') ? config.default : '';
   });
   return custom;
 }
 
-async function listPosts(params = {}) {
+async function listPosts(params: Record<string, any> = {}): Promise<any> {
   const data = await api.posts({
     include: params.include || 'tags,authors',
     filter: params.filter,
@@ -439,12 +435,12 @@ async function listPosts(params = {}) {
   });
 
   return {
-    items: (data.posts || []).map((post) => decoratePost(post, api.siteUrl, false)),
+    items: (data.posts || []).map((post: any) => decoratePost(post, api.siteUrl, false)),
     meta: data.meta || { pagination: {} }
   };
 }
 
-function buildPagination(pagination, basePath) {
+function buildPagination(pagination: any, basePath: string): any {
   return {
     page: pagination.page || 1,
     pages: pagination.pages || 1,
@@ -456,7 +452,7 @@ function buildPagination(pagination, basePath) {
   };
 }
 
-function decorateNavigation(items, currentPath, siteUrl) {
+function decorateNavigation(items: any[], currentPath: string, siteUrl: string): any[] {
   const previewOrigin = new URL(siteUrl).origin;
   return items.map((item) => {
     const itemUrl = item.url || '/';
@@ -472,9 +468,9 @@ function decorateNavigation(items, currentPath, siteUrl) {
   });
 }
 
-function decoratePost(post, siteUrl, isPage) {
-  const tags = (post.tags || []).map((tag) => decorateTag(tag, siteUrl));
-  const authors = (post.authors || []).map((author) => decorateAuthor(author, siteUrl));
+function decoratePost(post: any, siteUrl: string, isPage: boolean): any {
+  const tags = (post.tags || []).map((tag: any) => decorateTag(tag, siteUrl));
+  const authors = (post.authors || []).map((author: any) => decorateAuthor(author, siteUrl));
   const urlPath = isPage ? `/${post.slug}/` : `/${post.slug}/`;
   const html = absolutizeContentAssets(post.html || '', siteUrl);
 
@@ -493,7 +489,7 @@ function decoratePost(post, siteUrl, isPage) {
   };
 }
 
-function decorateTag(tag, siteUrl) {
+function decorateTag(tag: any, siteUrl: string): any {
   if (!tag) return null;
   return {
     ...tag,
@@ -502,7 +498,7 @@ function decorateTag(tag, siteUrl) {
   };
 }
 
-function decorateAuthor(author, siteUrl) {
+function decorateAuthor(author: any, siteUrl: string): any {
   if (!author) return null;
   return {
     ...author,
@@ -512,17 +508,17 @@ function decorateAuthor(author, siteUrl) {
   };
 }
 
-function selectPageTemplate(page) {
+function selectPageTemplate(page: any): string {
   if (page.slug === 'tags' && templateExists('page-tags')) return 'page-tags';
   if (page.slug === 'links' && templateExists('page-links')) return 'page-links';
   return 'page';
 }
 
-function templateExists(name) {
+function templateExists(name: string): boolean {
   return fs.existsSync(path.join(ROOT, `${name}.hbs`));
 }
 
-async function renderRoute(model) {
+async function renderRoute(model: any): Promise<string> {
   const collections = await buildCollections(model);
   const context = {
     ...model,
@@ -543,8 +539,8 @@ async function renderRoute(model) {
   return compileTemplate('default')(layoutContext, { data: buildHandlebarsData(model, layoutContext) });
 }
 
-async function buildCollections(model) {
-  const collections = { ...(model.collections || {}) };
+async function buildCollections(model: any): Promise<Record<string, any>> {
+  const collections: Record<string, any> = { ...(model.collections || {}) };
 
   if (model.template === 'page-tags') {
     const tagData = await api.tags({
@@ -553,7 +549,7 @@ async function buildCollections(model) {
       limit: 100,
       order: 'created_at desc'
     });
-    collections.tags = (tagData.tags || []).map((tag) => decorateTag(tag, api.siteUrl));
+    collections.tags = (tagData.tags || []).map((tag: any) => decorateTag(tag, api.siteUrl));
     const posts = await listPosts({ limit: 100 });
     collections.posts = posts.items;
   }
@@ -566,7 +562,7 @@ async function buildCollections(model) {
   return collections;
 }
 
-function buildHandlebarsData(model, root) {
+function buildHandlebarsData(model: any, root: any): any {
   return {
     root,
     site: model.site,
@@ -578,13 +574,13 @@ function buildHandlebarsData(model, root) {
   };
 }
 
-function compileTemplate(name) {
+function compileTemplate(name: string): Handlebars.TemplateDelegate {
   let source = fs.readFileSync(path.join(ROOT, `${name}.hbs`), 'utf8');
   source = source.replace(/^\s*\{\{!<\s+default\s*\}\}\s*/, '');
   return Handlebars.compile(source, { noEscape: false });
 }
 
-function registerPartials() {
+function registerPartials(): void {
   const partialRoot = path.join(ROOT, 'partials');
   const files = walk(partialRoot).filter((file) => file.endsWith('.hbs'));
   files.forEach((file) => {
@@ -593,10 +589,10 @@ function registerPartials() {
   });
 }
 
-function registerHelpers() {
-  Handlebars.registerHelper('asset', (assetPath) => `/assets/${String(assetPath || '').replace(/^\/+/, '')}`);
+function registerHelpers(): void {
+  Handlebars.registerHelper('asset', (assetPath: any) => `/assets/${String(assetPath || '').replace(/^\/+/, '')}`);
   Handlebars.registerHelper('t', translate);
-  Handlebars.registerHelper('encode', (value) => encodeURIComponent(String(value || '')));
+  Handlebars.registerHelper('encode', (value: any) => encodeURIComponent(String(value || '')));
   Handlebars.registerHelper('img_url', imageUrl);
   Handlebars.registerHelper('date', dateHelper);
   Handlebars.registerHelper('foreach', foreachHelper);
@@ -632,19 +628,19 @@ function registerHelpers() {
   Handlebars.registerHelper('link_class', linkClassHelper);
 }
 
-function translate(phrase, options) {
+function translate(this: any, phrase: string, options: any): string {
   const root = options && options.data ? options.data.root || {} : {};
   const locale = root.site && root.site.locale ? root.site.locale : 'en';
   const messages = getLocaleMessages(locale);
   const hash = options && options.hash ? options.hash : {};
   let output = Object.prototype.hasOwnProperty.call(messages, phrase) ? messages[phrase] : String(phrase || '');
-  Object.entries(hash).forEach(([key, value]) => {
-    output = output.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
+  Object.entries(hash).forEach(([key, value]: [string, any]) => {
+    output = output.replace(new RegExp(`\\{${key}\\}`, 'g'), String(value));
   });
   return output;
 }
 
-function getLocaleMessages(locale) {
+function getLocaleMessages(locale: string): Record<string, string> {
   const normalized = String(locale || 'en').trim().toLowerCase().replace(/-/g, '_');
   const candidates = [normalized];
 
@@ -656,7 +652,7 @@ function getLocaleMessages(locale) {
 
   for (const candidate of candidates) {
     if (localeCache.has(candidate)) {
-      return localeCache.get(candidate);
+      return localeCache.get(candidate)!;
     }
 
     const filePath = path.join(ROOT, 'locales', `${candidate}.json`);
@@ -670,7 +666,7 @@ function getLocaleMessages(locale) {
   return {};
 }
 
-function imageUrl(image, options) {
+function imageUrl(image: any, options: any): string {
   const url = absolutizeUrl(image, api.siteUrl);
   if (!url) return '';
 
@@ -681,12 +677,12 @@ function imageUrl(image, options) {
   return url;
 }
 
-function dateHelper(value, options) {
+function dateHelper(this: any, value: any, options: any): string {
   let dateValue = value;
   let hash = options && options.hash ? options.hash : {};
 
   if (arguments.length === 1 || (options && options.name === 'date')) {
-    dateValue = this.published_at || this.created_at || new Date();
+    dateValue = this?.published_at || this?.created_at || new Date();
     hash = value && value.hash ? value.hash : {};
   }
 
@@ -703,11 +699,11 @@ function dateHelper(value, options) {
   return formatDate(date, { month: 'short', day: '2-digit', year: 'numeric' });
 }
 
-function formatDate(date, options) {
+function formatDate(date: Date, options: Intl.DateTimeFormatOptions): string {
   return new Intl.DateTimeFormat('en', options).format(date);
 }
 
-function foreachHelper(collection, options) {
+function foreachHelper(this: any, collection: any, options: any): string {
   const hash = options.hash || {};
   let items = Array.isArray(collection) ? collection : [];
   if (hash.visibility === 'public') {
@@ -729,10 +725,10 @@ function foreachHelper(collection, options) {
   }).join('');
 }
 
-function contextBlock(key) {
-  return function contextBlockHelper(options) {
+function contextBlock(key: string) {
+  return function contextBlockHelper(this: any, options: any): string {
     const root = options.data.root || {};
-    const value = this[key] || root[key] || null;
+    const value = this?.[key] || root[key] || null;
     if (value) {
       return options.fn(value);
     }
@@ -740,35 +736,35 @@ function contextBlock(key) {
   };
 }
 
-function contentForHelper(name, options) {
+function contentForHelper(this: any, name: string, options: any): string {
   const root = options.data.root;
   root.__blocks = root.__blocks || {};
   root.__blocks[name] = (root.__blocks[name] || '') + options.fn(this);
   return '';
 }
 
-function blockHelper(name, options) {
+function blockHelper(name: string, options: any): Handlebars.SafeString {
   const root = options.data.root || {};
   return new Handlebars.SafeString(root.__blocks && root.__blocks[name] ? root.__blocks[name] : '');
 }
 
-function isHelper(routeType, options) {
+function isHelper(this: any, routeType: string, options: any): any {
   const current = options.data.routeType;
   const wanted = String(routeType || '').split(',').map((item) => item.trim());
   return wanted.includes(current) ? options.fn(this) : options.inverse(this);
 }
 
-function hasHelper(options) {
+function hasHelper(this: any, options: any): any {
   const tagName = options.hash && options.hash.tag;
   if (!tagName) return options.inverse(this);
 
   const normalized = String(tagName).replace(/^#/, '');
-  const tags = this.tags || [];
-  const found = tags.some((tag) => tag.slug === normalized || tag.name === tagName || tag.name === normalized);
+  const tags = this?.tags || [];
+  const found = tags.some((tag: any) => tag.slug === normalized || tag.name === tagName || tag.name === normalized);
   return found ? options.fn(this) : options.inverse(this);
 }
 
-function matchHelper(left, operator, right, options) {
+function matchHelper(this: any, left: any, operator: string, right: any, options: any): any {
   let result = false;
   switch (operator) {
     case '!=':
@@ -799,7 +795,7 @@ function matchHelper(left, operator, right, options) {
   return result ? options.fn(this) : options.inverse(this);
 }
 
-function pluralHelper(count, options) {
+function pluralHelper(count: any, options: any): string {
   const value = Number(count) || 0;
   const hash = options.hash || {};
   if (value === 0) return hash.empty || '';
@@ -807,45 +803,45 @@ function pluralHelper(count, options) {
   return fillCountTemplate(template, value);
 }
 
-function urlHelper(options) {
-  const itemUrl = this.url || '/';
+function urlHelper(this: any, options: any): string {
+  const itemUrl = this?.url || '/';
   if (options.hash && (options.hash.absolute === 'true' || options.hash.absolute === true)) {
     return new URL(itemUrl, api.siteUrl).toString();
   }
   return itemUrl;
 }
 
-function pageUrlHelper(page, options) {
+function pageUrlHelper(page: any, options: any): string {
   const root = options.data.root || {};
   const pagination = root.pagination || {};
   if (Number(page) <= 1) return pagination.basePath || '/';
   return `${pagination.basePath || '/'}page/${page}/`;
 }
 
-function paginationHelper(options) {
-  return new Handlebars.SafeString(Handlebars.partials.pagination(options.data.root.pagination || {}, { data: options.data }));
+function paginationHelper(options: any): Handlebars.SafeString {
+  return new Handlebars.SafeString((Handlebars.partials as any).pagination(options.data.root.pagination || {}, { data: options.data }));
 }
 
-function navigationHelper(options) {
+function navigationHelper(options: any): Handlebars.SafeString {
   const root = options.data.root || {};
   const secondary = options.hash && options.hash.type === 'secondary';
   const navigation = (secondary ? root.site.secondary_navigation : root.site.navigation) || [];
-  return new Handlebars.SafeString(Handlebars.partials.navigation({ navigation, isSecondary: secondary }, { data: options.data }));
+  return new Handlebars.SafeString((Handlebars.partials as any).navigation({ navigation, isSecondary: secondary }, { data: options.data }));
 }
 
-function tagsHelper(options) {
-  const tags = (this.tags || []).filter((tag) => tag.visibility !== 'internal');
+function tagsHelper(this: any, options: any): Handlebars.SafeString {
+  const tags = (this?.tags || []).filter((tag: any) => tag.visibility !== 'internal');
   const separator = options.hash && options.hash.separator !== undefined ? options.hash.separator : ', ';
-  return new Handlebars.SafeString(tags.map((tag) => `<a href="${tag.url}">${escapeHtml(tag.name)}</a>`).join(separator));
+  return new Handlebars.SafeString(tags.map((tag: any) => `<a href="${tag.url}">${escapeHtml(tag.name)}</a>`).join(separator));
 }
 
-function contentHelper() {
-  return new Handlebars.SafeString(this.html || this.content || '');
+function contentHelper(this: any): Handlebars.SafeString {
+  return new Handlebars.SafeString(this?.html || this?.content || '');
 }
 
-function excerptHelper(options) {
+function excerptHelper(this: any, options: any): string {
   const hash = options.hash || {};
-  let text = this.excerpt || stripHtml(this.html || '');
+  let text = this?.excerpt || stripHtml(this?.html || '');
 
   if (hash.words) {
     text = text.split(/\s+/).filter(Boolean).slice(0, Number(hash.words)).join(' ');
@@ -858,27 +854,27 @@ function excerptHelper(options) {
   return text;
 }
 
-function postClassHelper() {
+function postClassHelper(this: any): string {
   const classes = ['post'];
-  if (this.featured) classes.push('featured');
-  if (this.page) classes.push('page');
-  if (this.tags) {
-    this.tags.slice(0, 3).forEach((tag) => classes.push(`tag-${tag.slug}`));
+  if (this?.featured) classes.push('featured');
+  if (this?.page) classes.push('page');
+  if (this?.tags) {
+    this.tags.slice(0, 3).forEach((tag: any) => classes.push(`tag-${tag.slug}`));
   }
   return classes.join(' ');
 }
 
-function bodyClassHelper(options) {
+function bodyClassHelper(options: any): string {
   const routeType = options.data.routeType;
   const root = options.data.root || {};
-  const classes = [];
+  const classes: string[] = [];
 
   if (routeType) {
     classes.push(`${routeType}-template`);
   }
 
   if (routeType === 'post' && root.post && Array.isArray(root.post.tags)) {
-    root.post.tags.forEach((tag) => {
+    root.post.tags.forEach((tag: any) => {
       if (tag && tag.slug) {
         classes.push(`tag-${tag.slug}`);
       }
@@ -888,7 +884,7 @@ function bodyClassHelper(options) {
   return Array.from(new Set(classes)).join(' ');
 }
 
-function metaTitleHelper(options) {
+function metaTitleHelper(options: any): string {
   const root = options.data.root || {};
   if (root.title) return root.title;
   if (root.tag && root.tag.name) return root.tag.name;
@@ -896,17 +892,17 @@ function metaTitleHelper(options) {
   return root.site ? root.site.title : 'Ghost';
 }
 
-function readingTimeHelper(options) {
-  const minutes = this.reading_time || readingTime(this.html || '');
+function readingTimeHelper(this: any, options: any): string {
+  const minutes = this?.reading_time || readingTime(this?.html || '');
   const hash = options.hash || {};
   if (minutes === 1 && hash.minute) return hash.minute;
   if (hash.minutes) return fillCountTemplate(hash.minutes, minutes);
   return `${minutes} min read`;
 }
 
-function commentCountHelper(options) {
+function commentCountHelper(this: any, options: any): Handlebars.SafeString {
   const hash = options.hash || {};
-  const postId = this.id || '';
+  const postId = this?.id || '';
   const autowrapRaw = hash.autowrap;
   const autowrap = !(
     autowrapRaw === false ||
@@ -922,11 +918,11 @@ function commentCountHelper(options) {
   );
 }
 
-function commentsHelper(options) {
+function commentsHelper(this: any, options: any): Handlebars.SafeString | string {
   const root = options.data.root || {};
   const ghost = root.ghost || {};
   const hash = options.hash || {};
-  const postId = this.id || '';
+  const postId = this?.id || '';
 
   if (!postId || !ghost.siteUrl || !contentKey) {
     return '';
@@ -937,7 +933,7 @@ function commentsHelper(options) {
   );
 }
 
-function ghostHeadHelper(options) {
+function ghostHeadHelper(options: any): Handlebars.SafeString {
   const title = escapeHtml(metaTitleHelper(options));
   const root = options.data.root || {};
   const ghost = root.ghost || {};
@@ -973,7 +969,7 @@ function ghostHeadHelper(options) {
   return new Handlebars.SafeString(parts.join(''));
 }
 
-function ghostFootHelper(options) {
+function ghostFootHelper(options: any): Handlebars.SafeString {
   const root = options.data.root || {};
   const ghost = root.ghost || {};
   return new Handlebars.SafeString(ghost.codeinjectionFoot || '');
@@ -981,23 +977,23 @@ function ghostFootHelper(options) {
 
 // Settings/author key -> profile URL. Ghost stores handles; these shapes
 // approximate Ghost's own social_url output.
-const SOCIAL_URLS = {
-  twitter: (v) => `https://x.com/${v.replace(/^@/, '')}`,
-  facebook: (v) => `https://www.facebook.com/${v}`,
-  linkedin: (v) => `https://www.linkedin.com/in/${v}`,
-  bluesky: (v) => `https://bsky.app/profile/${v.replace(/^@/, '')}`,
-  threads: (v) => `https://www.threads.net/@${v.replace(/^@/, '')}`,
-  mastodon: (v) => {
+const SOCIAL_URLS: Record<string, (v: string) => string> = {
+  twitter: (v: string) => `https://x.com/${v.replace(/^@/, '')}`,
+  facebook: (v: string) => `https://www.facebook.com/${v}`,
+  linkedin: (v: string) => `https://www.linkedin.com/in/${v}`,
+  bluesky: (v: string) => `https://bsky.app/profile/${v.replace(/^@/, '')}`,
+  threads: (v: string) => `https://www.threads.net/@${v.replace(/^@/, '')}`,
+  mastodon: (v: string) => {
     const [user, host] = v.replace(/^@/, '').split('@');
     return host ? `https://${host}/@${user}` : `https://${v}`;
   },
-  tiktok: (v) => `https://www.tiktok.com/@${v.replace(/^@/, '')}`,
-  youtube: (v) => `https://www.youtube.com/${v}`,
-  instagram: (v) => `https://www.instagram.com/${v.replace(/^@/, '')}`
+  tiktok: (v: string) => `https://www.tiktok.com/@${v.replace(/^@/, '')}`,
+  youtube: (v: string) => `https://www.youtube.com/${v}`,
+  instagram: (v: string) => `https://www.instagram.com/${v.replace(/^@/, '')}`
 };
 
 // Same lookup order as Ghost: the current context (an author), then @site.
-function socialUrlHelper(options) {
+function socialUrlHelper(this: any, options: any): string {
   const type = options.hash && options.hash.type;
   const site = (options.data.root || {}).site || {};
   const value = (this && this[type]) || site[type];
@@ -1007,13 +1003,13 @@ function socialUrlHelper(options) {
 
 // Registered so a bare {{link_class}} fails here the way it does in Ghost,
 // instead of silently resolving a same-named context property.
-function linkClassHelper(options) {
+function linkClassHelper(options: any): string {
   const hash = (options && options.hash) || {};
   if (!hash.for) throw new Error('The {{link_class}} helper requires a for="" attribute.');
   return hash.class || '';
 }
 
-function getHelper(resource, options) {
+function getHelper(this: any, resource: string, options: any): any {
   const root = options.data.root || {};
   const collections = root.collections || {};
   const hash = options.hash || {};
@@ -1033,11 +1029,11 @@ function getHelper(resource, options) {
   return options.inverse ? options.inverse(this) : '';
 }
 
-function renderErrorPage(error) {
+function renderErrorPage(error: any): string {
   return `<!doctype html><html><head><meta charset="utf-8"><title>Attegi preview error</title></head><body><pre>${escapeHtml(error.stack || error.message)}</pre></body></html>`;
 }
 
-function sendHtml(response, status, html) {
+function sendHtml(response: http.ServerResponse, status: number, html: string): void {
   // An explicit length keeps BrowserSync's snippet rewrite from emitting chunked + content-length together
   response.writeHead(status, {
     'Content-Type': 'text/html; charset=UTF-8',
@@ -1047,38 +1043,38 @@ function sendHtml(response, status, html) {
   response.end(html);
 }
 
-function walk(dir) {
+function walk(dir: string): string[] {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const entryPath = path.join(dir, entry.name);
-    return entry.isDirectory() ? walk(entryPath) : entryPath;
+    return entry.isDirectory() ? walk(entryPath) : [entryPath];
   });
 }
 
-function absolutizeUrl(value, siteUrl) {
+function absolutizeUrl(value: any, siteUrl: string): string {
   if (!value) return '';
   if (/^https?:\/\//i.test(value)) return value;
   return new URL(value, siteUrl).toString();
 }
 
-function withTrailingSlash(value) {
+function withTrailingSlash(value: string): string {
   return /\/$/.test(value) ? value : `${value}/`;
 }
 
-function absolutizeContentAssets(html, siteUrl) {
+function absolutizeContentAssets(html: string, siteUrl: string): string {
   return String(html || '').replace(/(src|href)="\/(?!\/)/g, `$1="${siteUrl}/`);
 }
 
-function readingTime(html) {
+function readingTime(html: string): number {
   const text = stripHtml(html);
   const words = text.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 220));
 }
 
-function stripHtml(html) {
+function stripHtml(html: string): string {
   return String(html || '').replace(/<[^>]+>/g, ' ');
 }
 
-function slugify(value) {
+function slugify(value: string): string {
   return String(value || '')
     .trim()
     .toLowerCase()
@@ -1086,14 +1082,14 @@ function slugify(value) {
     .replace(/^-+|-+$/g, '');
 }
 
-function maybe(fn) {
-  return fn().catch((error) => {
+function maybe<T>(fn: () => Promise<T>): Promise<T | null> {
+  return fn().catch((error: Error) => {
     if (/Ghost API 404/.test(error.message)) return null;
     throw error;
   });
 }
 
-function escapeHtml(value) {
+function escapeHtml(value: any): string {
   return String(value || '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -1102,7 +1098,7 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function shutdown() {
+function shutdown(): void {
   browserSync.exit();
   renderServer.close(() => process.exit(0));
 }

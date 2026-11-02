@@ -7,21 +7,21 @@
  */
 import { qsa, each } from '../core/index.js';
 
-export function initToggleCards(container) {
-  var cards = qsa('.kg-toggle-card', container || document);
+export function initToggleCards(container?: ParentNode): void {
+  const cards = qsa<HTMLElement>('.kg-toggle-card', container || document);
   if (!cards.length) return;
 
-  each(cards, function(card, index) {
-    var heading = card.querySelector('.kg-toggle-heading');
-    var content = card.querySelector('.kg-toggle-content');
+  each(cards, (card: HTMLElement, index: number) => {
+    const heading = card.querySelector<HTMLElement>('.kg-toggle-heading');
+    const content = card.querySelector<HTMLElement>('.kg-toggle-content');
     if (!heading || !content) return;
 
-    if (!content.id) content.id = 'kg-toggle-content-' + index;
+    if (!content.id) content.id = `kg-toggle-content-${index}`;
     heading.setAttribute('aria-controls', content.id);
 
-    function sync() {
-      var isOpen = card.getAttribute('data-kg-toggle-state') === 'open';
-      heading.setAttribute('aria-expanded', String(isOpen));
+    function sync(): void {
+      const isOpen = card.getAttribute('data-kg-toggle-state') === 'open';
+      heading!.setAttribute('aria-expanded', String(isOpen));
     }
 
     sync();

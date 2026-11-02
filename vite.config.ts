@@ -52,9 +52,9 @@ function ghostThemePlugin(): Plugin {
 
       // Build JS entry points
       const entries: Array<{ name: string; file: string }> = [
-        { name: 'site', file: 'src/js/entries/site.js' },
-        { name: 'post', file: 'src/js/entries/post.js' },
-        { name: 'page', file: 'src/js/entries/page.js' }
+        { name: 'site', file: 'src/js/entries/site.ts' },
+        { name: 'post', file: 'src/js/entries/post.ts' },
+        { name: 'page', file: 'src/js/entries/page.ts' }
       ];
 
       for (const entry of entries) {

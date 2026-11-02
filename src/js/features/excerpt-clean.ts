@@ -8,12 +8,13 @@
 
 import { qsa, each } from '../core/index.js';
 
-var DIRECTIVE_PATTERN = /\[\/?!?[a-z0-9_-]+\]/gi;
+const DIRECTIVE_PATTERN = /\[\/?!?[a-z0-9_-]+\]/gi;
 
-export function initExcerptClean() {
-  each(qsa('.post-excerpt, .post-nav-excerpt'), function(el) {
-    if (!DIRECTIVE_PATTERN.test(el.textContent)) return;
+export function initExcerptClean(): void {
+  each(qsa('.post-excerpt, .post-nav-excerpt'), (el: HTMLElement) => {
+    const text = el.textContent || '';
+    if (!DIRECTIVE_PATTERN.test(text)) return;
     DIRECTIVE_PATTERN.lastIndex = 0;
-    el.textContent = el.textContent.replace(DIRECTIVE_PATTERN, '').replace(/\s{2,}/g, ' ').trim();
+    el.textContent = text.replace(DIRECTIVE_PATTERN, '').replace(/\s{2,}/g, ' ').trim();
   });
 }

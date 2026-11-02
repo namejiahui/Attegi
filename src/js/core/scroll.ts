@@ -6,22 +6,22 @@
  */
 import { docEl } from './dom.js';
 
-var callbacks = [];
-var ticking = false;
-var started = false;
+let callbacks: Array<() => void> = [];
+let ticking = false;
+let started = false;
 
-function tick() {
+function tick(): void {
   ticking = false;
-  callbacks.forEach(function(callback) { callback(); });
+  callbacks.forEach((callback) => { callback(); });
 }
 
-function requestTick() {
+function requestTick(): void {
   if (ticking) return;
   ticking = true;
   window.requestAnimationFrame(tick);
 }
 
-function start() {
+function start(): void {
   if (started) return;
   started = true;
   window.addEventListener('scroll', requestTick, { passive: true });
@@ -32,15 +32,14 @@ function start() {
 /**
  * Subscribe to the shared scroll/resize tick. Calls back immediately once,
  * then on every batched scroll/resize/orientation change.
- * @param {Function} callback
- * @returns {Function} unsubscribe
+ * @returns unsubscribe function
  */
-export function onScroll(callback) {
+export function onScroll(callback: () => void): () => void {
   start();
   callbacks.push(callback);
   callback();
   return function unsubscribe() {
-    callbacks = callbacks.filter(function(cb) { return cb !== callback; });
+    callbacks = callbacks.filter((cb) => cb !== callback);
   };
 }
 
@@ -52,18 +51,17 @@ export function onScroll(callback) {
  * Not clamped above 1: callers that only need "how far through" clamp to
  * `Math.min(progress, 1)` themselves; the progress bar uses the overshoot
  * past 1 to trigger its "complete" state.
- * @param {Element} content
- * @returns {number} 0 at the top, 1 when the viewport middle reaches the
+ * @returns 0 at the top, 1 when the viewport middle reaches the
  *   content's bottom edge, and above 1 once scrolled past it.
  */
-export function getReadingProgress(content) {
-  var rect = content.getBoundingClientRect();
-  var scrollY = window.pageYOffset || docEl.scrollTop;
-  var contentTop = rect.top + scrollY;
-  var contentHeight = rect.height;
+export function getReadingProgress(content: Element): number {
+  const rect = content.getBoundingClientRect();
+  const scrollY = window.pageYOffset || docEl.scrollTop;
+  const contentTop = rect.top + scrollY;
+  const contentHeight = rect.height;
   if (contentHeight <= 0) return 0;
 
-  var viewportMiddle = scrollY + window.innerHeight / 2;
+  const viewportMiddle = scrollY + window.innerHeight / 2;
   return Math.max(0, (viewportMiddle - contentTop) / contentHeight);
 }
 
@@ -71,18 +69,23 @@ export function getReadingProgress(content) {
  * `bottom` offset (px) for a fixed floating button that should lift above
  * the footer instead of overlapping it once the footer scrolls into view.
  * Shared by the TOC mobile trigger and the back-to-top button.
- * @param {Element} footer
- * @param {number} defaultBottom - resting `bottom` offset in px
- * @param {number} btnHeight - button height in px
- * @param {number} margin - gap to keep above the footer in px
- * @returns {number} the `bottom` offset to apply, in px
+ * @param footer
+ * @param defaultBottom - resting `bottom` offset in px
+ * @param btnHeight - button height in px
+ * @param margin - gap to keep above the footer in px
+ * @returns the `bottom` offset to apply, in px
  */
-export function getFooterAvoidingBottom(footer, defaultBottom, btnHeight, margin) {
+export function getFooterAvoidingBottom(
+  footer: Element | null,
+  defaultBottom: number,
+  btnHeight: number,
+  margin: number
+): number {
   if (!footer) return defaultBottom;
 
-  var footerTop = footer.getBoundingClientRect().top;
-  var windowHeight = window.innerHeight;
-  var btnTop = windowHeight - defaultBottom - btnHeight;
+  const footerTop = footer.getBoundingClientRect().top;
+  const windowHeight = window.innerHeight;
+  const btnTop = windowHeight - defaultBottom - btnHeight;
 
   if (footerTop < windowHeight && footerTop < btnTop + btnHeight + margin) {
     return windowHeight - footerTop + margin;

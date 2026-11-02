@@ -5,42 +5,42 @@
 
 import { qsa } from '../core/index.js';
 
-function getNumericAttribute(node, name) {
-  var value = node.getAttribute(name);
+function getNumericAttribute(node: Element, name: string): number | null {
+  const value = node.getAttribute(name);
   if (!value) return null;
-  var parsed = parseFloat(value);
+  const parsed = parseFloat(value);
   return parsed > 0 ? parsed : null;
 }
 
 /**
  * Setup portrait video detection
  */
-export function setupPortraitVideos() {
-  var videoCards = qsa('.kg-video-card');
+export function setupPortraitVideos(): void {
+  const videoCards = qsa<HTMLElement>('.kg-video-card');
   if (!videoCards.length) return;
 
-  Array.prototype.forEach.call(videoCards, function(card) {
-    var video = card.querySelector('video');
+  Array.prototype.forEach.call(videoCards, (card: HTMLElement) => {
+    const video = card.querySelector<HTMLVideoElement>('video');
     if (!video) return;
 
-    function applyPortraitStyle(width, height) {
+    function applyPortraitStyle(width: number | null, height: number | null): void {
       if (!width || !height || height <= width) return;
       card.classList.add('kg-video-portrait');
-      card.style.setProperty('--kg-video-aspect-ratio', width + ' / ' + height);
+      card.style.setProperty('--kg-video-aspect-ratio', `${width} / ${height}`);
     }
 
     // Ghost emits width/height attributes on the video element itself, so
     // the aspect ratio is known before a single byte downloads -- no need
     // to wait for loadedmetadata and risk a landscape-assumption reflow.
-    var attrWidth = getNumericAttribute(video, 'width');
-    var attrHeight = getNumericAttribute(video, 'height');
+    const attrWidth = getNumericAttribute(video, 'width');
+    const attrHeight = getNumericAttribute(video, 'height');
     if (attrWidth && attrHeight) {
       applyPortraitStyle(attrWidth, attrHeight);
       return;
     }
 
-    function onMetadata() {
-      applyPortraitStyle(video.videoWidth, video.videoHeight);
+    function onMetadata(): void {
+      applyPortraitStyle(video!.videoWidth, video!.videoHeight);
     }
     if (video.readyState >= 1) {
       onMetadata();
@@ -53,26 +53,26 @@ export function setupPortraitVideos() {
 /**
  * Setup portrait image detection
  */
-export function setupPortraitImages() {
-  var imageCards = qsa('.kg-image-card');
+export function setupPortraitImages(): void {
+  const imageCards = qsa<HTMLElement>('.kg-image-card');
   if (!imageCards.length) return;
 
-  Array.prototype.forEach.call(imageCards, function(card) {
-    var img = card.querySelector('.kg-image');
+  Array.prototype.forEach.call(imageCards, (card: HTMLElement) => {
+    const img = card.querySelector<HTMLImageElement>('.kg-image');
     if (!img) return;
 
     // Ghost emits width/height attributes on kg-image, so the aspect ratio
     // is known before the bytes arrive -- avoids a flash of full intrinsic
     // size before the portrait cap lands.
-    var attrWidth = getNumericAttribute(img, 'width');
-    var attrHeight = getNumericAttribute(img, 'height');
+    const attrWidth = getNumericAttribute(img, 'width');
+    const attrHeight = getNumericAttribute(img, 'height');
     if (attrWidth && attrHeight) {
       if (attrHeight > attrWidth) card.classList.add('kg-image-portrait');
       return;
     }
 
-    function applyPortraitStyle() {
-      if (img.naturalHeight > img.naturalWidth) {
+    function applyPortraitStyle(): void {
+      if (img!.naturalHeight > img!.naturalWidth) {
         card.classList.add('kg-image-portrait');
       }
     }

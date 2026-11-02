@@ -8,21 +8,21 @@ import { qsa } from '../core/index.js';
 /**
  * Initialize gallery image aspect ratio handling
  */
-export function initGallery() {
-  var images = qsa('.kg-gallery-image img');
+export function initGallery(): void {
+  const images = qsa<HTMLImageElement>('.kg-gallery-image img');
 
-  requestAnimationFrame(function() {
-    Array.prototype.forEach.call(images, function(image) {
-      function getNumericValue(value) {
+  requestAnimationFrame(() => {
+    Array.prototype.forEach.call(images, (image: HTMLImageElement) => {
+      function getNumericValue(value: string | null): number | null {
         if (!value) return null;
-        var numberValue = parseFloat(value);
+        const numberValue = parseFloat(value);
         if (isNaN(numberValue)) return null;
         return numberValue > 0 ? numberValue : null;
       }
 
-      function getImageRatio(img) {
-        var widthAttr = getNumericValue(img.getAttribute('width'));
-        var heightAttr = getNumericValue(img.getAttribute('height'));
+      function getImageRatio(img: HTMLImageElement): number | null {
+        const widthAttr = getNumericValue(img.getAttribute('width'));
+        const heightAttr = getNumericValue(img.getAttribute('height'));
         if (widthAttr && heightAttr) return widthAttr / heightAttr;
         if (img.naturalWidth && img.naturalHeight) {
           return img.naturalWidth / img.naturalHeight;
@@ -30,18 +30,18 @@ export function initGallery() {
         return null;
       }
 
-      function applyRatio(img) {
-        var container = img.closest('.kg-gallery-image');
+      function applyRatio(img: HTMLImageElement): void {
+        const container = img.closest<HTMLElement>('.kg-gallery-image');
         if (!container) return;
-        var ratio = getImageRatio(img);
+        const ratio = getImageRatio(img);
         if (!ratio) return;
-        container.style.flex = ratio + ' 1 0%';
+        container.style.flex = `${ratio} 1 0%`;
       }
 
       if (image.complete && image.naturalWidth > 0) {
         applyRatio(image);
       } else {
-        var onLoad = function() {
+        const onLoad = () => {
           applyRatio(image);
           image.removeEventListener('load', onLoad);
         };

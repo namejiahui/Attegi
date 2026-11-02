@@ -19,8 +19,8 @@ import { detectContentLanguage } from '../features/lang-detect.js';
 import { initToggleCards } from '../features/toggle-cards.js';
 import { setupBackToTop } from '../features/back-to-top.js';
 
-onReady(function() {
-  var postContent = qs('.post-content');
+onReady(() => {
+  const postContent = qs<HTMLElement>('.post-content');
   if (!postContent) return;
 
   detectContentLanguage(postContent);
@@ -33,8 +33,8 @@ onReady(function() {
   // Get highlight.js URL from script tag. Valid here because this file loads
   // as a deferred classic script: `currentScript` is only reliable during a
   // script's own synchronous run.
-  var currentScript = doc.currentScript || null;
-  var highlightUrl = currentScript ? currentScript.getAttribute('data-highlight') : '';
+  const currentScript = doc.currentScript || null;
+  const highlightUrl = currentScript ? (currentScript.getAttribute('data-highlight') || '') : '';
 
   // Core post features
   wrapEmbeds(postContent);

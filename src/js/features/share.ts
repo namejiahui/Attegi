@@ -8,8 +8,8 @@ import { doc, qsa } from '../core/index.js';
 /**
  * Initialize native share button
  */
-export function setupShare() {
-  var shareButton = doc.getElementById('share-button');
+export function setupShare(): void {
+  const shareButton = doc.getElementById('share-button');
   if (!shareButton) return;
 
   if (!navigator.share) {
@@ -19,12 +19,12 @@ export function setupShare() {
     return;
   }
 
-  shareButton.addEventListener('click', function(event) {
+  shareButton.addEventListener('click', (event: MouseEvent) => {
     event.preventDefault();
     navigator.share({
       title: doc.title,
       url: window.location.href
-    })['catch'](function() {});
+    }).catch(() => {});
   });
 }
 
@@ -33,15 +33,15 @@ export function setupShare() {
  * window instead of a full navigation. Delegated via a click listener
  * rather than inline `onclick` attributes, which a strict CSP would block.
  */
-export function setupSharePopups() {
-  var links = qsa('.js-share-popup');
+export function setupSharePopups(): void {
+  const links = qsa<HTMLAnchorElement>('.js-share-popup');
   if (!links.length) return;
 
-  Array.prototype.forEach.call(links, function(link) {
-    link.addEventListener('click', function(event) {
+  Array.prototype.forEach.call(links, (link: HTMLAnchorElement) => {
+    link.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault();
-      var size = (link.dataset.popupSize || '600,400').split(',');
-      window.open(link.href, 'share-popup', 'width=' + size[0] + ',height=' + size[1]);
+      const size = (link.dataset.popupSize || '600,400').split(',');
+      window.open(link.href, 'share-popup', `width=${size[0]},height=${size[1]}`);
     });
   });
 }

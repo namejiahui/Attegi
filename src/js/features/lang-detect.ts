@@ -6,15 +6,15 @@
  * apply where the post is really Chinese.
  */
 
-var CJK_PATTERN = /[一-鿿㐀-䶿]/g;
+const CJK_PATTERN = /[\u4e00-\u9fff\u3400-\u4dbf]/g;
 
-export function detectContentLanguage(content) {
+export function detectContentLanguage(content: HTMLElement | null): void {
   if (!content) return;
 
-  var text = content.textContent || '';
+  const text = content.textContent || '';
   if (!text.trim()) return;
 
-  var cjkCount = (text.match(CJK_PATTERN) || []).length;
+  const cjkCount = (text.match(CJK_PATTERN) || []).length;
   if (cjkCount / text.length > 0.15) {
     content.lang = 'zh';
   }

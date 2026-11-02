@@ -13,7 +13,7 @@ import { initTagCards } from '../features/tag-cards.js';
 import { initLinksMotion } from '../features/links-motion.js';
 import { initFloatNav } from '../features/float-nav.js';
 
-onReady(function() {
+onReady(() => {
   // Initialize core site features
   initMenu();
   initParallax();
@@ -23,7 +23,7 @@ onReady(function() {
   initFloatNav();
 
   // Defer non-critical features
-  setTimeout(function() {
+  setTimeout(() => {
     initGallery();
     initThemeSwitcher();
   }, 0);

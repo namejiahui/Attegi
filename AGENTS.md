@@ -34,7 +34,7 @@ There is no linter. `pnpm run validate` is the floor for every change.
 - `dev:preview` is the default loop for template, CSS, and JS work. It needs
   `GHOST_CONTENT_API_URL` and `GHOST_CONTENT_API_KEY` in `.env.local`
   (see `.env.example`). It is a renderer approximation in
-  `scripts/dev-preview.js`: portal, comments, search, and Ghost image transforms
+  `scripts/dev-preview.ts`: portal, comments, search, and Ghost image transforms
   are stubbed. When a template uses a new Ghost helper, teach the renderer too.
 - `dev:hot` gives real Ghost output, but template edits only show up if the
   target Ghost has this theme installed. Local `assets/` are served over it.
@@ -49,7 +49,7 @@ There is no linter. `pnpm run validate` is the floor for every change.
 - `src/css/style.css` is the main stylesheet: one large file split by
   `/* ===== */` banners, tab-indented. Modules: `colors.css`, `fonts.css`,
   `tokens.css`, `highlight.css`, `toc.css`, `poem-card.css`, `normalize.css`.
-- JS: `src/js/entries/{site,post,page}.js` bundle to `assets/js/` via
+- JS: `src/js/entries/{site,post,page}.ts` bundle to `assets/js/` via
   Vite (configured in `vite.config.ts`). Features live in `src/js/features/` and export
   `init*` / `setup*` functions; shared helpers (`qs`, `qsa`, `onReady`,
   `throttle`, `getI18n`) come from `src/js/core/`. Two-space indent, semicolons, no jQuery.

@@ -12,8 +12,8 @@ import { initToggleCards } from '../features/toggle-cards.js';
 import { initPoemCards } from '../features/poem-cards.js';
 import { setupCoverBrightnessDetection } from '../features/cover-detect.js';
 
-onReady(function() {
-  var pageContent = qs('.post-content');
+onReady(() => {
+  const pageContent = qs<HTMLElement>('.post-content');
   if (!pageContent) return;
 
   detectContentLanguage(pageContent);
@@ -21,8 +21,8 @@ onReady(function() {
 
   // Valid here because this file loads as a deferred classic script:
   // `currentScript` is only reliable during a script's own synchronous run.
-  var currentScript = doc.currentScript || null;
-  var highlightUrl = currentScript ? currentScript.getAttribute('data-highlight') : '';
+  const currentScript = doc.currentScript || null;
+  const highlightUrl = currentScript ? (currentScript.getAttribute('data-highlight') || '') : '';
 
   wrapEmbeds(pageContent);
   highlightCode(pageContent, highlightUrl);

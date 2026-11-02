@@ -39,7 +39,7 @@
     "dev:hot": "node scripts/dev.ts hot",
     "dev:preview": "node scripts/dev.ts preview",
     "serve:hot": "node scripts/dev-hot.ts",
-    "serve:preview": "node scripts/dev-preview.js",
+    "serve:preview": "node scripts/dev-preview.ts",
     "build": "vite build",
     "build:watch": "vite build --watch",
     "typecheck": "tsc",

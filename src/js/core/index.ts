@@ -6,4 +6,5 @@
 export { onReady, qs, qsa, each, doc, docEl } from './dom.js';
 export { getI18n } from './i18n.js';
 export { throttle, debounce, raf } from './perf.js';
-export { onScroll, getReadingProgress } from './scroll.js';
+export { onScroll, getReadingProgress, getFooterAvoidingBottom } from './scroll.js';
+export { openDialog, closeDialog, isPointerClick, type DialogElement, type DialogOptions } from './dialog.js';

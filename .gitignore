@@ -22,3 +22,6 @@ assets/css/style.css
 assets/css/style.css.map
 assets/js/*.js
 !assets/js/.gitkeep
+
+# Knowledge base & private notes
+KNOWLEDGE.md
