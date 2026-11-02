@@ -6,6 +6,7 @@
  */
 
 import fs from 'node:fs';
+import path from 'node:path';
 import { createHmac } from 'node:crypto';
 
 const ACCEPT_VERSION = process.env.GHOST_ADMIN_API_VERSION || 'v6.0';
@@ -114,7 +115,7 @@ function base64url(value: string | Buffer): string {
 
 async function uploadTheme({ adminApiUrl, token, zipPath }: { adminApiUrl: string; token: string; zipPath: string }): Promise<UploadedTheme> {
   const formData = new FormData();
-  const fileName = zipPath.split('/').pop() || 'theme.zip';
+  const fileName = path.basename(zipPath) || 'theme.zip';
   const zipBuffer = fs.readFileSync(zipPath);
   const uploadFile = new File([zipBuffer], fileName, {
     type: 'application/zip'

@@ -1,10 +1,12 @@
 import { ZipArchive } from 'archiver';
 import fs from 'node:fs';
 import path from 'node:path';
+import pkg from '../package.json' with { type: 'json' };
 
 // Output configuration
 const distDir = path.resolve('dist');
-let outputPath = '';
+const themeName = pkg.name || 'attegi';
+const outputPath = path.join(distDir, `${themeName}.zip`);
 
 // Files and directories to exclude
 const excludePatterns: string[] = [
@@ -42,17 +44,11 @@ async function compress(): Promise<void> {
   console.log('  Attegi Theme Compression');
   console.log('========================================\n');
 
-  const pkg = JSON.parse(fs.readFileSync(path.resolve('package.json'), 'utf8')) as { name?: string };
-  const themeName = pkg.name || 'attegi';
-  outputPath = path.join(distDir, `${themeName}.zip`);
-
   // Ensure dist directory exists
   fs.mkdirSync(distDir, { recursive: true });
 
-  // Remove existing zip if present
-  if (fs.existsSync(outputPath)) {
-    fs.unlinkSync(outputPath);
-  }
+  // Clean existing archive if present
+  fs.rmSync(outputPath, { force: true });
 
   // Create write stream
   const output = fs.createWriteStream(outputPath);

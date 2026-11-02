@@ -1,13 +1,10 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import Handlebars from 'handlebars';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const themeRoot = process.env.THEME_ROOT || path.resolve(__dirname, '../..');
+const themeRoot = process.env.THEME_ROOT || path.resolve(import.meta.dirname, '../..');
 const networks = ['twitter', 'facebook', 'linkedin', 'bluesky', 'threads', 'mastodon', 'tiktok', 'youtube', 'instagram'];
 
 function renderer() {

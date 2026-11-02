@@ -12,6 +12,7 @@ import path from 'node:path';
 import { URL } from 'node:url';
 import Handlebars from 'handlebars';
 import bs from 'browser-sync';
+import packageConfig from '../package.json' with { type: 'json' };
 
 const browserSync = bs.create();
 
@@ -49,12 +50,11 @@ const localeCache = new Map();
 
 if (!contentUrl || !contentKey) {
   console.error('\n[preview] Missing Ghost Content API config.');
-  console.error('[preview] Set GHOST_CONTENT_API_URL and GHOST_CONTENT_API_KEY, then run bun run dev:preview.\n');
+  console.error('[preview] Set GHOST_CONTENT_API_URL and GHOST_CONTENT_API_KEY, then run pnpm run dev:preview.\n');
   process.exit(1);
 }
 
 const api = createGhostApi(contentUrl, contentKey);
-const packageConfig = readJson('package.json');
 const themeCustom = packageConfig.config && packageConfig.config.custom ? packageConfig.config.custom : {};
 const postsPerPage = Number(packageConfig.config && packageConfig.config.posts_per_page) || DEFAULT_POSTS_PER_PAGE;
 

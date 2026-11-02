@@ -23,7 +23,7 @@ function ghostThemePlugin(): Plugin {
     name: 'ghost-theme-builder',
     buildStart() {
       // In watch mode, register src/js files so modifying JS triggers a rebuild
-      const jsDir = path.resolve(__dirname, 'src/js');
+      const jsDir = path.resolve(import.meta.dirname, 'src/js');
       if (fs.existsSync(jsDir)) {
         const addFilesRecursively = (dir: string) => {
           const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -42,8 +42,8 @@ function ghostThemePlugin(): Plugin {
     async writeBundle() {
       // Copy vendor libraries
       for (const { src, dest } of vendorFiles) {
-        const srcPath = path.resolve(__dirname, src);
-        const destPath = path.resolve(__dirname, dest);
+        const srcPath = path.resolve(import.meta.dirname, src);
+        const destPath = path.resolve(import.meta.dirname, dest);
         if (fs.existsSync(srcPath)) {
           fs.mkdirSync(path.dirname(destPath), { recursive: true });
           fs.copyFileSync(srcPath, destPath);
@@ -58,13 +58,13 @@ function ghostThemePlugin(): Plugin {
       ];
 
       for (const entry of entries) {
-        const entryPath = path.resolve(__dirname, entry.file);
+        const entryPath = path.resolve(import.meta.dirname, entry.file);
         if (!fs.existsSync(entryPath)) continue;
 
         await build({
           configFile: false,
           build: {
-            outDir: path.resolve(__dirname, 'assets/js'),
+            outDir: path.resolve(import.meta.dirname, 'assets/js'),
             emptyOutDir: false,
             minify: isProduction,
             sourcemap: !isProduction ? 'inline' : false,
@@ -89,7 +89,7 @@ export default defineConfig({
     sourcemap: !isProduction ? 'inline' : false,
     rollupOptions: {
       input: {
-        style: path.resolve(__dirname, 'src/sass/style.scss')
+        style: path.resolve(import.meta.dirname, 'src/sass/style.scss')
       },
       output: {
         assetFileNames: 'css/[name][extname]'
