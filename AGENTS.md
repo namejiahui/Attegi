@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Attegi is a Ghost theme: Handlebars templates, SCSS, and TypeScript/ES modules
+Attegi is a Ghost theme: Handlebars templates, Native CSS, and TypeScript/ES modules
 bundled by Vite. Tooling runs on pnpm and Node.js. `CLAUDE.md` is a symlink to this file.
 
 ## Rules
@@ -46,9 +46,9 @@ There is no linter. `pnpm run validate` is the floor for every change.
   navigation, footer); `index`, `post`, `page`, `tag`, `author`, `error`, plus
   custom templates `page-tags.hbs` and `page-links.hbs`. Partials in
   `partials/`, inline SVG icons in `partials/icons/`.
-- `src/sass/style.scss` is the main stylesheet: one large file split by
-  `/* ===== */` banners, tab-indented. Modules: `_colors`, `_fonts`,
-  `_highlight`, `_toc`, `_poem-card`, `_normalize`, `_breakpoints`.
+- `src/css/style.css` is the main stylesheet: one large file split by
+  `/* ===== */` banners, tab-indented. Modules: `colors.css`, `fonts.css`,
+  `tokens.css`, `highlight.css`, `toc.css`, `poem-card.css`, `normalize.css`.
 - JS: `src/js/entries/{site,post,page}.js` bundle to `assets/js/` via
   Vite (configured in `vite.config.ts`). Features live in `src/js/features/` and export
   `init*` / `setup*` functions; shared helpers (`qs`, `qsa`, `onReady`,
@@ -67,24 +67,23 @@ There is no linter. `pnpm run validate` is the floor for every change.
 
 ## Design system
 
-- Color tokens are CSS custom properties in `src/sass/_colors.scss`
+- Color tokens are CSS custom properties in `src/css/colors.css`
   (`--color-background-*`, `--color-content-*`, `--color-menu-*`). Dark mode
   overrides them under `.theme-dark:root` and, for the System setting,
   `prefers-color-scheme`. A blocking script in `default.hbs` sets the class
   before paint. Every color change needs both themes.
 - Accent: `--ghost-accent-color` from Ghost admin; dark mode swaps in
   `@custom.darkmode_accent_color` from `default.hbs`.
-- Type: `--gh-font-heading` and `--gh-font-body` in `_fonts.scss`, system
+- Type: `--gh-font-heading` and `--gh-font-body` in `fonts.css`, system
   stacks with CJK fallbacks. Posts are bilingual (English and Chinese), so check both.
 - `html { font-size: 62.5% }`, so `1rem` is 10px. Body text sizes use `em`.
-- Breakpoints: `$breakpoint-large` 960, `-medium` 640, `-small` 480,
-  `-xsmall` 420. Content width is `$inner`.
+- Breakpoints: 960px, 640px, 480px, 420px. Content width is `--inner`.
 
 ## Design skills
 
 Project skills live in `.agents/skills/`, symlinked into `.claude/skills/`,
 pinned in `skills-lock.json`, all gitignored. They assume React in places;
-translate to Handlebars, SCSS, and vanilla JS.
+translate to Handlebars, CSS, and vanilla JS.
 
 - `better-interface`: one review pass across the other `better-*` skills
   (accessibility, layout, typography, color, UI polish, writing).

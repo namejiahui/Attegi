@@ -1,5 +1,3 @@
-@use "mixins" as *;
-
 /*
  * Modern Syntax Highlighting Theme
  * Inspired by One Dark Pro with custom enhancements
@@ -32,8 +30,38 @@
     --code-addition: #1d7a34;
     --code-label-bg: #f8f9fa;
     --code-label-text: #5a6570;
+}
 
-    @include dark($root: true) {
+.theme-dark:root {
+    --code-bg: #282c34;
+    --code-border: #3e4451;
+    --code-text: #abb2bf;
+    --code-comment: #969cab;
+    --code-keyword: #c678dd;
+    --code-string: #98c379;
+    --code-number: #d19a66;
+    --code-function: #61afef;
+    --code-variable: #e6858c;
+    --code-operator: #56b6c2;
+    --code-class: #e5c07b;
+    --code-constant: #d19a66;
+    --code-tag: #e6858c;
+    --code-attribute: #d19a66;
+    --code-selector: #e6858c;
+    --code-property: #61afef;
+    --code-punctuation: #abb2bf;
+    --code-builtin: #e5c07b;
+    --code-type: #e5c07b;
+    --code-meta: #969cab;
+    --code-regexp: #98c379;
+    --code-deletion: #e6858c;
+    --code-addition: #98c379;
+    --code-label-bg: #282c34;
+    --code-label-text: #9da5b4;
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not(.theme-light):root {
         --code-bg: #282c34;
         --code-border: #3e4451;
         --code-text: #abb2bf;
@@ -77,19 +105,19 @@
         font-weight: 400;
     }
 
-    // Built-in commands (cd, ls, mkdir, etc.)
+    /* Built-in commands (cd, ls, mkdir, etc.) */
     .hljs-built_in {
         color: var(--code-keyword);
         font-weight: 600;
     }
 
-    // Strings and paths
+    /* Strings and paths */
     .hljs-string {
         color: var(--code-string);
         font-weight: 400;
     }
 
-    // Variables ($VAR, ${VAR})
+    /* Variables ($VAR, ${VAR}) */
     .hljs-variable {
         color: var(--code-variable);
         font-weight: 500;

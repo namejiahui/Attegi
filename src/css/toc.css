@@ -1,34 +1,27 @@
 /* ==========================================================================
    Table of Contents - Using tocbot
    ========================================================================== */
-@use "breakpoints" as *;
 
-// TOC Variables
-// Width and breakpoint are tuned together: at $toc-breakpoint there must be
-// enough space left of the centered $measure column for $toc-width, a
-// $toc-gap-min (48px) gap and a ~24px margin before the sidebar is shown.
-// That space requirement is why $toc-breakpoint is its own value instead of
-// one of the shared $breakpoint-* tokens: it's not a content-reflow point,
-// it's the viewport width where the sidebar starts fitting beside the
-// reading column.
-$toc-width: 220px;
-$toc-gap-min: 4.8rem;
-$toc-offset-top: 3rem;
-$toc-gap: 3rem;
-$toc-transition: opacity var(--duration-slow) var(--ease-standard), visibility var(--duration-slow) var(--ease-standard), transform var(--duration-slow) var(--ease-standard);
-$toc-breakpoint: 1200px;
+/* TOC Variables
+   Width and breakpoint are tuned together: at 1200px there must be
+   enough space left of the centered var(--measure) column for 220px TOC width, a
+   4.8rem gap and a ~24px margin before the sidebar is shown.
+   That space requirement is why 1200px is its own value instead of
+   one of the shared breakpoint tokens: it's not a content-reflow point,
+   it's the viewport width where the sidebar starts fitting beside the
+   reading column. */
 
-// When TOC is present, fix overflow to allow sticky positioning
+/* When TOC is present, fix overflow to allow sticky positioning */
 .has-toc {
   overflow-x: clip !important;
 }
 
-// Desktop TOC Sidebar - fixed position on the left side of viewport
+/* Desktop TOC Sidebar - fixed position on the left side of viewport */
 .toc-sidebar {
   position: fixed;
-  top: 7rem; // Leave space for the floating menu button
-  left: calc((100vw - #{$measure}) / 2 - #{$toc-width} - #{$toc-gap-min});
-  width: $toc-width;
+  top: 7rem; /* Leave space for the floating menu button */
+  left: calc((100vw - var(--measure)) / 2 - 220px - 4.8rem);
+  width: 220px;
   max-height: calc(100vh - 7rem - 2rem);
   overflow-y: auto;
   scrollbar-width: none;
@@ -48,22 +41,22 @@ $toc-breakpoint: 1200px;
     display: none;
   }
 
-  @media only screen and (max-width: $toc-breakpoint) {
+  @media only screen and (max-width: 1200px) {
     display: none;
   }
 }
 
-// TOC Container
+/* TOC Container */
 .toc-container {
   padding: 0;
 }
 
-// TOC Header
+/* TOC Header */
 .toc-header {
   margin-bottom: 1rem;
 }
 
-// TOC Title - uppercase with letter spacing
+/* TOC Title - uppercase with letter spacing */
 .toc-title {
   font-family: var(--gh-font-body);
   font-size: var(--font-size-3xs);
@@ -75,8 +68,8 @@ $toc-breakpoint: 1200px;
   text-transform: uppercase;
 }
 
-// TOC List - one hairline rail down the left; the active link paints its
-// segment of it in the accent color.
+/* TOC List - one hairline rail down the left; the active link paints its */
+/* segment of it in the accent color. */
 .toc-list {
   list-style: none;
   margin: 0;
@@ -86,8 +79,8 @@ $toc-breakpoint: 1200px;
     border-left: 1px solid var(--color-border);
   }
 
-  // Nested lists clip for the fold animation; pull their box 1px left over
-  // the rail so the active link's marker (margin-left: -1px) isn't clipped.
+  /* Nested lists clip for the fold animation; pull their box 1px left over */
+  /* the rail so the active link's marker (margin-left: -1px) isn't clipped. */
   .toc-list {
     margin: 0 0 0 -1px;
     padding-left: 1px;
@@ -96,11 +89,11 @@ $toc-breakpoint: 1200px;
 
 }
 
-// Sub-sections stay folded until their h2 is active (tocbot collapseDepth),
-// unless the reader overrides it with the chevron (data-fold, see toc.js).
-// The item is a two-row grid: the link, then the sub-list, whose
-// 0fr <-> 1fr track animates the fold. Visibility lags the
-// close so folded links leave the tab order once the fold finishes.
+/* Sub-sections stay folded until their h2 is active (tocbot collapseDepth), */
+/* unless the reader overrides it with the chevron (data-fold, see toc.js). */
+/* The item is a two-row grid: the link, then the sub-list, whose */
+/* 0fr <-> 1fr track animates the fold. Visibility lags the */
+/* close so folded links leave the tab order once the fold finishes. */
 .toc-sidebar .toc-item:has(> .toc-list) {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -124,7 +117,7 @@ $toc-breakpoint: 1200px;
       transform: rotate(-90deg);
     }
 
-    // The active sub-heading is folded away: mark its section instead
+    /* The active sub-heading is folded away: mark its section instead */
     &:has(.toc-link.is-active) > .toc-link {
       color: var(--color-content-lead);
       border-left-color: var(--color-content-lead);
@@ -140,9 +133,9 @@ $toc-breakpoint: 1200px;
   }
 }
 
-// Fold chevron: sits in the gutter between the rail and the link text, on
-// the link's first line, so the TOC's right edge stays ragged text. Quiet
-// until the row is hovered.
+/* Fold chevron: sits in the gutter between the rail and the link text, on */
+/* the link's first line, so the TOC's right edge stays ragged text. Quiet */
+/* until the row is hovered. */
 .toc-fold {
   position: absolute;
   top: 0;
@@ -151,7 +144,7 @@ $toc-breakpoint: 1200px;
   align-items: center;
   justify-content: center;
   width: 1.8rem;
-  height: 2.96rem; // one link line: 1.4rem * 1.4 + 1rem padding
+  height: 2.96rem; /* one link line: 1.4rem * 1.4 + 1rem padding */
   padding: 0;
   border: 0;
   border-radius: var(--radius-xs);
@@ -183,7 +176,7 @@ $toc-breakpoint: 1200px;
   }
 }
 
-// TOC Item
+/* TOC Item */
 .toc-item {
   position: relative;
   margin: 0;
@@ -194,7 +187,7 @@ $toc-breakpoint: 1200px;
   }
 }
 
-// TOC Link
+/* TOC Link */
 .toc-link {
   display: block;
   margin-left: -1px;
@@ -218,7 +211,7 @@ $toc-breakpoint: 1200px;
   }
 }
 
-// Text indent per heading level; leaves a gutter for the fold chevron
+/* Text indent per heading level; leaves a gutter for the fold chevron */
 .toc-sidebar .toc-list {
   --toc-indent: 2.4rem;
 
@@ -235,7 +228,7 @@ $toc-breakpoint: 1200px;
    Mobile TOC - Mini Floating Panel
    ========================================================================== */
 
-// Floating trigger button with progress ring
+/* Floating trigger button with progress ring */
 .toc-mobile-trigger {
   display: none;
   position: fixed;
@@ -256,7 +249,7 @@ $toc-breakpoint: 1200px;
   .theme-dark & {
     background: rgba(30,30,30,0.85);
   }
-  transition: $toc-transition;
+  transition: opacity var(--duration-slow) var(--ease-standard), visibility var(--duration-slow) var(--ease-standard), transform var(--duration-slow) var(--ease-standard);
   opacity: 0;
   visibility: hidden;
   transform: scale(0.9);
@@ -275,34 +268,34 @@ $toc-breakpoint: 1200px;
   }
 
 
-  // Icon
+  /* Icon */
   .toc-trigger-icon {
     width: 2rem;
     height: 2rem;
   }
 
-  // Hide when panel is open
+  /* Hide when panel is open */
   &.is-hidden {
     opacity: 0;
     visibility: hidden;
     transform: scale(0.8);
   }
 
-  // Hide when scrolling down (slide to right)
+  /* Hide when scrolling down (slide to right) */
   &.is-hidden-scroll {
     opacity: 0;
     visibility: hidden;
     transform: translateX(8rem) scale(0.9);
   }
 
-  @media only screen and (max-width: $toc-breakpoint) {
+  @media only screen and (max-width: 1200px) {
     display: flex;
     align-items: center;
     justify-content: center;
   }
 }
 
-// Progress ring SVG
+/* Progress ring SVG */
 .toc-progress-ring {
   position: absolute;
   top: 0;
@@ -327,9 +320,9 @@ $toc-breakpoint: 1200px;
   transition: stroke-dashoffset var(--duration-fast) var(--ease-standard);
 }
 
-// Bottom sheet - full width, anchored to the viewport's bottom edge with a
-// rounded top edge, not a floating card. The dialog open/close/focus-trap
-// behavior comes from src/js/core/dialog.js; this is presentation only.
+/* Bottom sheet - full width, anchored to the viewport's bottom edge with a */
+/* rounded top edge, not a floating card. The dialog open/close/focus-trap */
+/* behavior comes from src/js/core/dialog.js; this is presentation only. */
 .toc-mobile-drawer {
   display: none;
   position: fixed;
@@ -368,13 +361,13 @@ $toc-breakpoint: 1200px;
     border-color: var(--color-border);
   }
 
-  @media only screen and (max-width: $toc-breakpoint) {
+  @media only screen and (max-width: 1200px) {
     display: flex;
     flex-direction: column;
   }
 }
 
-// Overlay - subtle backdrop
+/* Overlay - subtle backdrop */
 .toc-mobile-overlay {
   display: none;
   position: fixed;
@@ -391,12 +384,12 @@ $toc-breakpoint: 1200px;
     visibility: visible;
   }
 
-  @media only screen and (max-width: $toc-breakpoint) {
+  @media only screen and (max-width: 1200px) {
     display: block;
   }
 }
 
-// Panel header
+/* Panel header */
 .toc-mobile-header {
   display: flex;
   align-items: center;
@@ -437,7 +430,7 @@ $toc-breakpoint: 1200px;
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 
-  // Expand the tap target to 44px without growing the visible button.
+  /* Expand the tap target to 44px without growing the visible button. */
   &::before {
     content: '';
     position: absolute;
@@ -455,7 +448,7 @@ $toc-breakpoint: 1200px;
   }
 }
 
-// Content area
+/* Content area */
 .toc-mobile-content {
   padding: 0.8rem 0;
   overflow-y: auto;
@@ -464,7 +457,7 @@ $toc-breakpoint: 1200px;
   min-height: 0;
   scrollbar-width: none;
 
-  // Performance optimizations
+  /* Performance optimizations */
   will-change: scroll-position;
   contain: layout style paint;
 
@@ -473,7 +466,7 @@ $toc-breakpoint: 1200px;
   }
 }
 
-// Mobile TOC List
+/* Mobile TOC List */
 .toc-mobile-list {
   list-style: none;
   margin: 0;
@@ -519,7 +512,7 @@ $toc-breakpoint: 1200px;
   }
 }
 
-// Mobile nested heading levels
+/* Mobile nested heading levels */
 .toc-mobile-list .toc-mobile-list {
   .toc-mobile-link {
     padding-left: 2.4rem;

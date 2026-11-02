@@ -1,6 +1,3 @@
-@use "mixins" as *;
-@use "breakpoints" as *;
-
 /* ==========================================================================
    Poem Card Component - Poetry Display
    ========================================================================== */
@@ -15,29 +12,24 @@
 		max-width: 600px;
 		margin: 0 0 2.5rem;
 		padding: 2.8rem 3.2rem;
-		background: var(--color-background-secondary);
-		border: 1px solid var(--color-background-contrast);
+		background: var(--poem-card-bg);
+		border: 1px solid var(--poem-card-border);
 		border-radius: var(--radius-md);
 
-		@include dark {
-			background: rgba(255, 255, 255, 0.04);
-			border-color: rgba(255, 255, 255, 0.08);
-		}
-
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			min-width: auto;
 			max-width: 100%;
 			width: 100%;
 			padding: 2.4rem 2.8rem;
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			padding: 2rem 2.2rem;
 		}
 	}
 
-	// Sizes are in em so the card tracks the post's body size: verses read at
-	// body size, the title and credit a step below.
+	/* Sizes are in em so the card tracks the post's body size: verses read at
+	   body size, the title and credit a step below. */
 	.kg-poem-title {
 		font-family: var(--gh-font-heading);
 		font-size: 0.9em;
@@ -47,7 +39,7 @@
 		color: var(--color-content-lead);
 	}
 
-	// Divider under the title
+	/* Divider under the title */
 	.kg-poem-divider {
 		height: 1px;
 		margin: 1.2rem 0 1.6rem;
@@ -55,9 +47,9 @@
 		border: none;
 	}
 
-	// Poem content container. It's a real <blockquote> for quotation
-	// semantics, so reset the generic .post-content blockquote styling
-	// (border, padding, italics) that would otherwise double up here.
+	/* Poem content container. It's a real <blockquote> for quotation
+	   semantics, so reset the generic .post-content blockquote styling
+	   (border, padding, italics) that would otherwise double up here. */
 	.kg-poem-content {
 		margin: 0;
 		padding: 0;
@@ -75,7 +67,7 @@
 		margin-bottom: 0;
 	}
 
-	// Individual verse lines
+	/* Individual verse lines */
 	.kg-poem-line {
 		font-family: var(--gh-font-body);
 		font-size: 1em;
@@ -90,9 +82,9 @@
 		}
 	}
 
-	// Author attribution: flush right under the verses, the usual place for
-	// an epigraph credit. Resets the generic `figure figcaption` styling
-	// (centered, padded, width-capped) meant for image captions.
+	/* Author attribution: flush right under the verses, the usual place for
+	   an epigraph credit. Resets the generic figure figcaption styling
+	   (centered, padded, width-capped) meant for image captions. */
 	.kg-poem-author {
 		max-width: none;
 		margin: 1.2rem 0 0;
@@ -106,7 +98,7 @@
 		font-style: normal;
 	}
 
-	// Centered layout variant
+	/* Centered layout variant */
 	.kg-poem-card.kg-poem-centered {
 		text-align: center;
 
@@ -119,7 +111,7 @@
 		}
 	}
 
-	// Optional: Remove italic style variant
+	/* Optional: Remove italic style variant */
 	.kg-poem-card.kg-poem-plain {
 		.kg-poem-line {
 			font-style: normal;

@@ -1,16 +1,13 @@
 /* ==========================================================================
    Includes
    ========================================================================== */
-@use "normalize";
-@use "mixins" as *;
-@use "breakpoints" as *;
-@use "tokens";
-@use "colors";
-@use "fonts";
-@use "highlight";
-@use "toc";
-@use "poem-card";
-$inner: min(calc(64rem + 8vw), 76rem);
+@import "./normalize.css";
+@import "./tokens.css";
+@import "./colors.css";
+@import "./fonts.css";
+@import "./highlight.css";
+@import "./toc.css";
+@import "./poem-card.css";
 /* ==========================================================================
    Basics
    ========================================================================== */
@@ -27,7 +24,7 @@ html.menu-active {
 
 body {
 	font-family: var(--gh-font-body);
-	font-size: 1em; // Keep at 1em to avoid cascading em unit issues
+	font-size: 1em; /* Keep at 1em to avoid cascading em unit issues */
 	line-height: 1.75;
 	font-weight: 400;
 	color: var(--color-content-main);
@@ -36,12 +33,12 @@ body {
 	overflow-x: hidden;
 	background: var(--color-background-main);
 	-webkit-text-size-adjust: 100%;
-	// A thin gap between Han characters and Latin letters or digits, so
-	// "用Attegi写作" doesn't need hand-typed spaces. No-op for pure English.
+	/* A thin gap between Han characters and Latin letters or digits, so */
+	/* "用Attegi写作" doesn't need hand-typed spaces. No-op for pure English. */
 	text-autospace: normal;
 }
 
-// Keep monospace text exactly as typed.
+/* Keep monospace text exactly as typed. */
 pre,
 code,
 kbd,
@@ -54,8 +51,6 @@ samp {
    A single keyboard-only ring for the whole theme. Components that already
    set their own visible `:focus` state (border/box-shadow) keep it; this
    only adds the ring where nothing else does, and only for keyboard focus.
-   Reuse %focus-ring (src/sass/_mixins.scss) if a component needs the same
-   ring on a selector this rule doesn't reach.
    ========================================================================== */
 :focus-visible {
 	outline: 2px solid var(--ghost-accent-color);
@@ -63,8 +58,8 @@ samp {
 }
 
 :focus:not(:focus-visible),
-// Script-focused regions (focus handed to loaded content, skip targets)
-// are not controls; a ring around a whole section is just noise.
+/* Script-focused regions (focus handed to loaded content, skip targets) */
+/* are not controls; a ring around a whole section is just noise. */
 [tabindex="-1"]:focus {
 	outline: none;
 }
@@ -73,29 +68,29 @@ samp {
    CLS Prevention - Layout Shift Optimization (Sukka's Best Practices)
    ========================================================================== */
 
-// Prevent CLS from images: scale down responsively, keeping the intrinsic
-// aspect ratio from the image's own width/height HTML attributes (Ghost
-// always renders those). No CSS aspect-ratio is needed for that; `attr()`
-// as a numeric aspect-ratio value isn't supported by any browser engine.
+/* Prevent CLS from images: scale down responsively, keeping the intrinsic */
+/* aspect ratio from the image's own width/height HTML attributes (Ghost */
+/* always renders those). No CSS aspect-ratio is needed for that; `attr()` */
+/* as a numeric aspect-ratio value isn't supported by any browser engine. */
 img {
 	max-width: 100%;
 	height: auto;
 
-	// Smooth fade-in for lazy-loaded images
+	/* Smooth fade-in for lazy-loaded images */
 	&[loading="lazy"] {
 		opacity: 1;
 		transition: opacity var(--duration-slow) var(--ease-standard);
 	}
 }
 
-// Bookmark card thumbnail - handled by detailed styles below (lines 1372-1391)
-// Removed global aspect-ratio to prevent conflicts with absolute positioning
+/* Bookmark card thumbnail - handled by detailed styles below (lines 1372-1391) */
+/* Removed global aspect-ratio to prevent conflicts with absolute positioning */
 
-// Embed cards - use padding-bottom technique for 16:9 aspect ratio
+/* Embed cards - use padding-bottom technique for 16:9 aspect ratio */
 .kg-embed-card {
 	position: relative;
 
-	// YouTube, Vimeo, and other video embeds
+	/* YouTube, Vimeo, and other video embeds */
 	iframe[src*="youtube"],
 	iframe[src*="vimeo"],
 	iframe[src*="player"] {
@@ -105,23 +100,23 @@ img {
 	}
 }
 
-// Navigation logo - fixed height to prevent CLS
+/* Navigation logo - fixed height to prevent CLS */
 .nav-header .logo img {
 	width: auto;
 	height: 4rem;
 }
 
-// Cover images - use contain-intrinsic-size for better LCP
+/* Cover images - use contain-intrinsic-size for better LCP */
 .blog-cover,
 .post-cover {
 	contain: layout style paint;
 	contain-intrinsic-size: 100vw 50vh;
 }
 
-// Skeleton loading placeholder for dynamic content.
-// default.hbs keeps its own inline copy of this rule + the keyframe below
-// in its critical CSS (it has to paint before this stylesheet loads); keep
-// both in sync by hand.
+/* Skeleton loading placeholder for dynamic content. */
+/* default.hbs keeps its own inline copy of this rule + the keyframe below */
+/* in its critical CSS (it has to paint before this stylesheet loads); keep */
+/* both in sync by hand. */
 .skeleton {
 	background: linear-gradient(
 		90deg,
@@ -152,8 +147,8 @@ img {
 	}
 }
 
-// Content visibility for below-fold content (improves initial render)
-// Note: .post-nav excluded to prevent border clipping on hover effects
+/* Content visibility for below-fold content (improves initial render) */
+/* Note: .post-nav excluded to prevent border clipping on hover effects */
 .post-comments,
 .post-footer {
 	content-visibility: auto;
@@ -172,20 +167,20 @@ textarea {
 	line-height: var(--line-height-body);
 	letter-spacing: var(--letter-spacing-normal);
 
-	// 18 / 17 / 16px. Never below 16px, so iOS doesn't zoom form fields and
-	// phones get a real reading size.
-	@media only screen and (max-width: $breakpoint-medium) {
+	/* 18 / 17 / 16px. Never below 16px, so iOS doesn't zoom form fields and */
+	/* phones get a real reading size. */
+	@media only screen and (max-width: 640px) {
 		font-size: 1.7rem;
 	}
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 1.6rem;
 	}
 
-	// CJK content: the site-wide `<html lang>` doesn't vary per bilingual
-	// post, so `src/js/features/lang-detect.js` marks the actual language
-	// on `.post-content` for these rules to match via inheritance.
-	// Negative tracking squeezes CJK glyphs, so drop it everywhere for zh.
+	/* CJK content: the site-wide `<html lang>` doesn't vary per bilingual */
+	/* post, so `src/js/features/lang-detect.js` marks the actual language */
+	/* on `.post-content` for these rules to match via inheritance. */
+	/* Negative tracking squeezes CJK glyphs, so drop it everywhere for zh. */
 	:lang(zh) {
 		letter-spacing: 0;
 	}
@@ -204,8 +199,8 @@ textarea {
 		line-height: 1.4;
 	}
 
-	// CJK typefaces have no true italic; a synthetic slant just distorts
-	// the glyphs, so drop it instead of faking it.
+	/* CJK typefaces have no true italic; a synthetic slant just distorts */
+	/* the glyphs, so drop it instead of faking it. */
 	em:lang(zh),
 	i:lang(zh),
 	blockquote:lang(zh),
@@ -214,9 +209,9 @@ textarea {
 		font-style: normal;
 	}
 
-	// Links: body-colored text with a thin accent underline that fills in on
-	// hover. The accent stays a hint, not a highlighter, and the underline
-	// skips descenders instead of cutting through them.
+	/* Links: body-colored text with a thin accent underline that fills in on */
+	/* hover. The accent stays a hint, not a highlighter, and the underline */
+	/* skips descenders instead of cutting through them. */
 	a:not([class]) {
 		color: inherit;
 		text-decoration: underline;
@@ -232,9 +227,9 @@ textarea {
 		}
 	}
 
-	// One margin for every level, in the heading's own em: the larger the
-	// heading, the more room above it. h2 lands at ~2.6 body em above and
-	// ~0.8 below, so a heading clearly belongs to the text that follows.
+	/* One margin for every level, in the heading's own em: the larger the */
+	/* heading, the more room above it. h2 lands at ~2.6 body em above and */
+	/* ~0.8 below, so a heading clearly belongs to the text that follows. */
 	h1,
 	h2,
 	h3,
@@ -250,14 +245,14 @@ textarea {
 		text-wrap: balance;
 	}
 
-	// ~1.2 step scale. Long-form sections need signposts, not billboards.
-	// Phones compress the top of the scale: the post title drops to 28px
-	// there, and h1/h2 must stay below it.
+	/* ~1.2 step scale. Long-form sections need signposts, not billboards. */
+	/* Phones compress the top of the scale: the post title drops to 28px */
+	/* there, and h1/h2 must stay below it. */
 	h1 {
 		font-size: 1.8em;
 		font-weight: 700;
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			font-size: 1.6em;
 		}
 	}
@@ -265,7 +260,7 @@ textarea {
 	h2 {
 		font-size: 1.6em;
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			font-size: 1.45em;
 		}
 	}
@@ -273,7 +268,7 @@ textarea {
 	h3 {
 		font-size: 1.3em;
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			font-size: 1.25em;
 		}
 	}
@@ -297,8 +292,8 @@ textarea {
 		color: var(--color-content-secondary);
 	}
 
-	// A heading straight after another heading (section title + first
-	// subsection) reads as one block, so it only needs a small gap.
+	/* A heading straight after another heading (section title + first */
+	/* subsection) reads as one block, so it only needs a small gap. */
 	:is(h1, h2, h3, h4, h5, h6) + :is(h1, h2, h3, h4, h5, h6) {
 		margin-top: 0.3em;
 	}
@@ -312,15 +307,15 @@ textarea {
 		text-wrap: pretty;
 	}
 
-	// Lists use native markers, so `start`, `reversed` and nesting work
-	// without counters. The marker is secondary ink: it orders the text,
-	// it doesn't compete with it.
+	/* Lists use native markers, so `start`, `reversed` and nesting work */
+	/* without counters. The marker is secondary ink: it orders the text, */
+	/* it doesn't compete with it. */
 	ol,
 	ul {
 		margin: 0 0 1.25em;
 		padding-left: 1.5em;
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			padding-left: 1.25em;
 		}
 	}
@@ -354,7 +349,7 @@ textarea {
 		margin-top: 0.25em;
 	}
 
-	// Loose Markdown lists wrap each item in <p>; keep them list-tight.
+	/* Loose Markdown lists wrap each item in <p>; keep them list-tight. */
 	li > p {
 		margin: 0;
 	}
@@ -363,7 +358,7 @@ textarea {
 		margin-top: 0.5em;
 	}
 
-	// A list usually finishes the sentence that introduces it.
+	/* A list usually finishes the sentence that introduces it. */
 	p + ul,
 	p + ol {
 		margin-top: -0.5em;
@@ -387,16 +382,16 @@ textarea {
 		}
 	}
 
-	// Footnote jump targets (see src/js/features/footnotes.js): clear the
-	// fixed reading-progress bar and floating menu button so a jump doesn't
-	// land flush against the viewport edge.
+	/* Footnote jump targets (see src/js/features/footnotes.js): clear the */
+	/* fixed reading-progress bar and floating menu button so a jump doesn't */
+	/* land flush against the viewport edge. */
 	sup[id^="fnref"],
 	li[id^="fn"] {
 		scroll-margin-top: 8rem;
 	}
 
-	// Markdown-card footnotes: accent-colored reference numbers without an
-	// underline, and a smaller, quieter note list.
+	/* Markdown-card footnotes: accent-colored reference numbers without an */
+	/* underline, and a smaller, quieter note list. */
 	.footnote-ref a {
 		color: var(--color-accent-text);
 		text-decoration: none;
@@ -429,14 +424,14 @@ textarea {
 		}
 	}
 
-	// Also the no-JS fallback for `[!poem]` blockquotes (see
-	// src/js/features/poem-cards.js): Ghost has no server-side hook to turn
-	// that syntax into a real card, so RSS readers, crawlers, and the
-	// no-JS case see this styling -- accent border, italic, indented --
-	// rather than raw unstyled text. With JS, post.hbs hides the blockquote
-	// until the card replaces it. There's no CSS way to hide just the
-	// literal "[!poem]"/"--" markers (no text-pattern selector exists), so
-	// this is the ceiling for that state; JS supersedes it once it runs.
+	/* Also the no-JS fallback for `[!poem]` blockquotes (see */
+	/* src/js/features/poem-cards.js): Ghost has no server-side hook to turn */
+	/* that syntax into a real card, so RSS readers, crawlers, and the */
+	/* no-JS case see this styling -- accent border, italic, indented -- */
+	/* rather than raw unstyled text. With JS, post.hbs hides the blockquote */
+	/* until the card replaces it. There's no CSS way to hide just the */
+	/* literal "[!poem]"/"--" markers (no text-pattern selector exists), so */
+	/* this is the ceiling for that state; JS supersedes it once it runs. */
 	blockquote {
 		margin: 0 0 1.5em;
 		padding: 0 0 0 1.25em;
@@ -444,8 +439,8 @@ textarea {
 		font-style: italic;
 	}
 
-	// Ghost's "alternative" quote: a pull quote. Centered and larger, so it
-	// needs no rule to stand apart.
+	/* Ghost's "alternative" quote: a pull quote. Centered and larger, so it */
+	/* needs no rule to stand apart. */
 	blockquote.kg-blockquote-alt {
 		margin: 2em 0;
 		padding: 0 1.5em;
@@ -457,19 +452,19 @@ textarea {
 		text-align: center;
 		text-wrap: balance;
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			padding: 0;
 			font-size: 1.15em;
 		}
 	}
 
-	// Set by partials/poem-pending.hbs after {{content}}; poem-cards.js
-	// replaces the blockquote (or drops the class) once it runs.
+	/* Set by partials/poem-pending.hbs after {{content}}; poem-cards.js */
+	/* replaces the blockquote (or drops the class) once it runs. */
 	blockquote.kg-poem-pending {
 		visibility: hidden;
 	}
 
-	// Optimized: use child selector instead of universal selector
+	/* Optimized: use child selector instead of universal selector */
 	blockquote > * {
 		margin: 0 0 1em;
 		font-family: inherit;
@@ -484,7 +479,7 @@ textarea {
 		margin-bottom: 0;
 	}
 
-	// Callout styles - Emoji-based color detection
+	/* Callout styles - Emoji-based color detection */
 	.kg-callout-card {
 		display: flex;
 		padding: 1.25rem var(--space-4);
@@ -524,44 +519,44 @@ textarea {
 			}
 		}
 
-		// Info/Blue callout (💡 ℹ️ 📘 📝 ✏️ 📌)
+		/* Info/Blue callout (💡 ℹ️ 📘 📝 ✏️ 📌) */
 		&.kg-callout-card-blue,
 		&.kg-callout-card-accent {
 			background: color-mix(in srgb, var(--color-callout-info) 8%, var(--color-background-secondary));
 			border-color: color-mix(in srgb, var(--color-callout-info) 20%, var(--color-background-contrast));
 		}
 
-		// Warning/Red callout (🚫 ⚠️ ❌ 🛑 ⛔ 🔴)
+		/* Warning/Red callout (🚫 ⚠️ ❌ 🛑 ⛔ 🔴) */
 		&.kg-callout-card-red {
 			background: color-mix(in srgb, var(--color-callout-danger) 8%, var(--color-background-secondary));
 			border-color: color-mix(in srgb, var(--color-callout-danger) 20%, var(--color-background-contrast));
 		}
 
-		// Yellow/Caution callout (⚡ 💛 ⭐ 🌟 ✨)
+		/* Yellow/Caution callout (⚡ 💛 ⭐ 🌟 ✨) */
 		&.kg-callout-card-yellow {
 			background: color-mix(in srgb, var(--color-callout-warning) 8%, var(--color-background-secondary));
 			border-color: color-mix(in srgb, var(--color-callout-warning) 20%, var(--color-background-contrast));
 		}
 
-		// Green/Success callout (✅ ✔️ 💚 🟢 ☑️)
+		/* Green/Success callout (✅ ✔️ 💚 🟢 ☑️) */
 		&.kg-callout-card-green {
 			background: color-mix(in srgb, var(--color-callout-success) 8%, var(--color-background-secondary));
 			border-color: color-mix(in srgb, var(--color-callout-success) 20%, var(--color-background-contrast));
 		}
 
-		// Purple callout (💜 🟣 🔮)
+		/* Purple callout (💜 🟣 🔮) */
 		&.kg-callout-card-purple {
 			background: color-mix(in srgb, var(--color-callout-purple) 8%, var(--color-background-secondary));
 			border-color: color-mix(in srgb, var(--color-callout-purple) 20%, var(--color-background-contrast));
 		}
 
-		// Grey/Neutral callout (📎 🔗 💬 📄)
+		/* Grey/Neutral callout (📎 🔗 💬 📄) */
 		&.kg-callout-card-grey {
 			background: var(--color-background-secondary);
 			border-color: var(--color-background-contrast);
 		}
 
-		// White/Light callout
+		/* White/Light callout */
 		&.kg-callout-card-white {
 			background: var(--color-background-main);
 			border-color: var(--color-background-contrast);
@@ -756,8 +751,8 @@ textarea {
 			transition: color var(--duration-fast) var(--ease-standard);
 			user-select: none;
 
-			// Visuals stay compact; the pseudo-element grows the tap target
-			// to the 44px minimum without affecting layout.
+			/* Visuals stay compact; the pseudo-element grows the tap target */
+			/* to the 44px minimum without affecting layout. */
 			&::after {
 				content: '';
 				position: absolute;
@@ -813,9 +808,9 @@ textarea {
 		vertical-align: middle;
 	}
 
-	// Editorial table: no box, no zebra, no hover. A strong rule under the
-	// header, hairlines between rows, numbers aligned. Scrolls sideways on
-	// narrow screens instead of squeezing columns.
+	/* Editorial table: no box, no zebra, no hover. A strong rule under the */
+	/* header, hairlines between rows, numbers aligned. Scrolls sideways on */
+	/* narrow screens instead of squeezing columns. */
 	table {
 		width: 100%;
 		max-width: 100%;
@@ -825,7 +820,7 @@ textarea {
 		line-height: 1.5;
 		font-variant-numeric: tabular-nums;
 
-		@media (max-width: $breakpoint-medium) {
+		@media (max-width: 640px) {
 			display: block;
 			overflow-x: auto;
 			-webkit-overflow-scrolling: touch;
@@ -880,7 +875,7 @@ textarea {
 	/* Enhanced Video Responsive Support (Reframe-style) */
 	.js-reframe {
 		width: 100%;
-		aspect-ratio: 16 / 9; // overridden inline once the real ratio is known
+		aspect-ratio: 16 / 9; /* overridden inline once the real ratio is known */
 		overflow: hidden;
 		margin: 0 0 var(--space-6);
 
@@ -968,10 +963,10 @@ textarea {
 	input[type="reset"],
 	input[type="submit"],
 	input[type="button"],
-	// Scoped under .kg-button-card: Ghost core's own `.kg-button-card a.kg-btn`
-	// rule in the auto-injected cards.min.css ties this on raw specificity
-	// and loads after the theme's stylesheet, so a bare `a.kg-btn` here
-	// never wins.
+	/* Scoped under .kg-button-card: Ghost core's own `.kg-button-card a.kg-btn` */
+	/* rule in the auto-injected cards.min.css ties this on raw specificity */
+	/* and loads after the theme's stylesheet, so a bare `a.kg-btn` here */
+	/* never wins. */
 	.kg-button-card a.kg-btn,
 	.button {
 		display: inline-flex;
@@ -1033,7 +1028,7 @@ textarea {
 	figure figcaption {
 		position: relative;
 		color: var(--color-content-secondary);
-		max-width: $inner;
+		max-width: var(--inner);
 		margin: auto;
 		font-size: 0.85em;
 		line-height: 1.6;
@@ -1055,7 +1050,7 @@ textarea {
 		margin: 0 0 var(--space-6);
 	}
 
-	// KG File
+	/* KG File */
 
 	.kg-file-card {
 		margin: 0 0 var(--space-6);
@@ -1111,7 +1106,7 @@ textarea {
 					.kg-file-card-filesize {
 						display: inline-block;
 						line-height: inherit;
-						// cards.min.css fades this to 0.6, below AA on the tinted card
+						/* cards.min.css fades this to 0.6, below AA on the tinted card */
 						opacity: 1;
 
 						&::before {
@@ -1145,7 +1140,7 @@ textarea {
 				background: color-mix(in srgb, var(--ghost-accent-color) 16%, var(--color-background-main));
 			}
 
-			@media only screen and (max-width: $breakpoint-small) {
+			@media only screen and (max-width: 480px) {
 				padding: var(--space-4) 1.75rem;
 
 				.kg-file-card-icon {
@@ -1157,7 +1152,7 @@ textarea {
 		}
 	}
 
-	// KG Image - Apple Newsroom style, contained within content width
+	/* KG Image - Apple Newsroom style, contained within content width */
 
 	.kg-image-card {
 		max-width: none !important;
@@ -1178,7 +1173,7 @@ textarea {
 			margin-left: -4rem;
 			margin-right: -4rem;
 
-			@media only screen and (max-width: $breakpoint-medium) {
+			@media only screen and (max-width: 640px) {
 				max-width: 100% !important;
 				width: 100%;
 				margin-left: 0;
@@ -1188,7 +1183,7 @@ textarea {
 			.kg-image {
 				border-radius: var(--radius-md);
 
-				@media only screen and (max-width: $breakpoint-medium) {
+				@media only screen and (max-width: 640px) {
 					border-radius: var(--radius-sm);
 				}
 			}
@@ -1196,7 +1191,7 @@ textarea {
 			figcaption {
 				padding-left: var(--space-8);
 				padding-right: var(--space-8);
-				@media only screen and (max-width: $breakpoint-medium) {
+				@media only screen and (max-width: 640px) {
 					padding-left: 0;
 					padding-right: 0;
 				}
@@ -1217,7 +1212,7 @@ textarea {
 			figcaption {
 				padding-left: 8rem;
 				padding-right: 8rem;
-				@media only screen and (max-width: $breakpoint-medium) {
+				@media only screen and (max-width: 640px) {
 					padding-left: var(--space-8);
 					padding-right: var(--space-8);
 				}
@@ -1226,16 +1221,12 @@ textarea {
 
 		.kg-image {
 			margin: 0 auto;
-			// Subtle edge definition so light images don't bleed into the
-			// page background.
-			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
-
-			@include dark {
-				box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-			}
+			/* Subtle edge definition so light images don't bleed into the */
+			/* page background. */
+			box-shadow: inset 0 0 0 1px var(--color-image-inset);
 		}
 
-		// Portrait images - limit height on desktop
+		/* Portrait images - limit height on desktop */
 		&.kg-image-portrait .kg-image {
 			max-height: 80vh;
 			width: auto;
@@ -1247,7 +1238,7 @@ textarea {
 		}
 	}
 
-	// KG Gallery - Apple Newsroom inspired, proportional to content width
+	/* KG Gallery - Apple Newsroom inspired, proportional to content width */
 
 	.kg-gallery-card {
 		max-width: calc(100% + 6rem) !important;
@@ -1256,7 +1247,7 @@ textarea {
 		margin-left: -3rem;
 		margin-right: -3rem;
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			max-width: 100% !important;
 			width: 100%;
 			margin-left: 0;
@@ -1267,7 +1258,7 @@ textarea {
 			padding-left: var(--space-7);
 			padding-right: var(--space-7);
 			text-align: center;
-			@media only screen and (max-width: $breakpoint-medium) {
+			@media only screen and (max-width: 640px) {
 				padding-left: 0;
 				padding-right: 0;
 			}
@@ -1293,14 +1284,10 @@ textarea {
 		width: 100%;
 		height: 100%;
 		border-radius: var(--radius-sm);
-		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
-
-		@include dark {
-			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-		}
+		box-shadow: inset 0 0 0 1px var(--color-image-inset);
 	}
 
-	// Optimized: split :not() into separate rules for better performance
+	/* Optimized: split :not() into separate rules for better performance */
 	.kg-gallery-row {
 		margin: 0;
 	}
@@ -1317,7 +1304,7 @@ textarea {
 		margin: 0;
 	}
 
-	// KG Video
+	/* KG Video */
 
 	.kg-video-card {
 		margin: 0 0 var(--space-6);
@@ -1330,7 +1317,7 @@ textarea {
 			margin-left: -4rem;
 			margin-right: -4rem;
 
-			@media only screen and (max-width: $breakpoint-medium) {
+			@media only screen and (max-width: 640px) {
 				max-width: 100% !important;
 				width: 100%;
 				margin-left: 0;
@@ -1364,7 +1351,7 @@ textarea {
 			object-fit: contain;
 		}
 
-		// Portrait video (9:16) - constrained size, centered
+		/* Portrait video (9:16) - constrained size, centered */
 		&.kg-video-portrait {
 			background: transparent;
 
@@ -1383,8 +1370,8 @@ textarea {
 		}
 	}
 
-	// KG Audio - Ghost core (cards.min.css) hardcodes a light background
-	// with zero dark-mode handling, so give it the theme's own card surface.
+	/* KG Audio - Ghost core (cards.min.css) hardcodes a light background */
+	/* with zero dark-mode handling, so give it the theme's own card surface. */
 	.kg-audio-card {
 		background: var(--color-background-secondary);
 		color: var(--color-content-main);
@@ -1412,8 +1399,8 @@ textarea {
 		}
 	}
 
-	// KG Collection - Ghost core ships no default look for the card
-	// container itself; give it the theme's own card surface.
+	/* KG Collection - Ghost core ships no default look for the card */
+	/* container itself; give it the theme's own card surface. */
 	.kg-collection-card {
 		margin: 0 0 var(--space-6);
 		padding: var(--space-4);
@@ -1422,9 +1409,9 @@ textarea {
 		border-radius: var(--radius-md);
 	}
 
-	// KG NFT & Transistor - same gap as the collection card above: Ghost
-	// core ships no theme-aware surface for these, just structural markup.
-	// Minimal styling only, consistent with the other cards.
+	/* KG NFT & Transistor - same gap as the collection card above: Ghost */
+	/* core ships no theme-aware surface for these, just structural markup. */
+	/* Minimal styling only, consistent with the other cards. */
 	.kg-nft-card {
 		margin: 0 0 2.5rem;
 	}
@@ -1480,7 +1467,7 @@ textarea {
 		border-radius: var(--radius-md);
 	}
 
-	// KG Embed
+	/* KG Embed */
 
 	.kg-embed-card {
 		margin: 0 0 var(--space-6);
@@ -1497,7 +1484,7 @@ textarea {
 		}
 	}
 
-	// KG Code
+	/* KG Code */
 
 	.kg-code-card {
 		min-width: 100%;
@@ -1507,7 +1494,7 @@ textarea {
 		margin: 0;
 	}
 
-	// KG Bookmark - Mobile-First Optimized Design
+	/* KG Bookmark - Mobile-First Optimized Design */
 
 	.kg-bookmark-card {
 		width: 100%;
@@ -1518,7 +1505,7 @@ textarea {
 		background: var(--color-background-secondary);
 		border: 1px solid var(--color-border);
 
-		// Desktop hover effect
+		/* Desktop hover effect */
 		@media (hover: hover) and (pointer: fine) {
 			&:hover {
 				border-color: var(--color-border-strong);
@@ -1532,7 +1519,7 @@ textarea {
 			}
 		}
 
-		// Mobile: subtle active state
+		/* Mobile: subtle active state */
 		@media (hover: none) and (pointer: coarse) {
 			&:active {
 				transform: scale(0.98);
@@ -1558,11 +1545,11 @@ textarea {
 			border-radius: 0;
 			box-shadow: none !important;
 			overflow: hidden;
-			// Touch-friendly minimum tap target
+			/* Touch-friendly minimum tap target */
 			min-height: 44px;
 
-			// Mobile: vertical layout for better readability
-			@media only screen and (max-width: $breakpoint-small) {
+			/* Mobile: vertical layout for better readability */
+			@media only screen and (max-width: 480px) {
 				flex-direction: column;
 				min-height: auto;
 			}
@@ -1578,13 +1565,13 @@ textarea {
 		padding: var(--space-5) var(--space-6);
 		color: var(--color-content-secondary);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			padding: 1.75rem var(--space-5);
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
-			padding: var(--space-4) var(--space-4) 1.25rem; // Optimized padding for mobile
-			order: 2; // Content below thumbnail on mobile
+		@media only screen and (max-width: 480px) {
+			padding: var(--space-4) var(--space-4) 1.25rem; /* Optimized padding for mobile */
+			order: 2; /* Content below thumbnail on mobile */
 		}
 	}
 
@@ -1597,20 +1584,20 @@ textarea {
 		letter-spacing: -0.02em;
 		margin-bottom: var(--space-2);
 		text-align: left;
-		// Better text wrapping
+		/* Better text wrapping */
 		word-break: break-word;
 		overflow-wrap: break-word;
 		hyphens: auto;
-		// Smooth transition for hover effects
+		/* Smooth transition for hover effects */
 		transition: color var(--duration-base) var(--ease-standard);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			font-size: 1.8rem;
 			line-height: 1.35;
 			margin-bottom: 0.6rem;
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			font-size: var(--font-size-sm);
 			margin-bottom: var(--space-1);
 			line-height: 1.35;
@@ -1631,17 +1618,17 @@ textarea {
 		color: var(--color-content-secondary);
 		text-align: left;
 		opacity: 0.9;
-		// Better text wrapping
+		/* Better text wrapping */
 		word-break: break-word;
 		overflow-wrap: break-word;
-		// Smooth transition
+		/* Smooth transition */
 		transition: opacity var(--duration-base) var(--ease-standard);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			line-height: 1.55;
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			-webkit-line-clamp: 2;
 			line-height: 1.5;
 		}
@@ -1654,20 +1641,20 @@ textarea {
 		flex-shrink: 0;
 		overflow: hidden;
 		border-radius: 0 var(--radius-md) var(--radius-md) 0;
-		aspect-ratio: 4 / 3; // Classic 4:3 aspect ratio for balanced display
+		aspect-ratio: 4 / 3; /* Classic 4:3 aspect ratio for balanced display */
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			min-width: 180px;
 			max-width: 220px;
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			min-width: 100%;
 			max-width: 100%;
-			height: auto; // Changed from 0 to auto
-			aspect-ratio: 2 / 1; // Use aspect-ratio instead of padding-bottom
+			height: auto; /* Changed from 0 to auto */
+			aspect-ratio: 2 / 1; /* Use aspect-ratio instead of padding-bottom */
 			border-radius: var(--radius-md) var(--radius-md) 0 0;
-			order: 1; // Thumbnail above content on mobile
+			order: 1; /* Thumbnail above content on mobile */
 		}
 	}
 
@@ -1679,17 +1666,15 @@ textarea {
 		height: 100%;
 		object-fit: cover;
 		border-radius: 0;
-		margin: 0; // Override .post-content img margin
+		margin: 0; /* Override .post-content img margin */
 		transition: transform var(--ease-standard) var(--duration-slow);
 
-		// Most bookmarked pages ship a white/light thumbnail; dim it
-		// slightly so it doesn't glare against the dark card surface.
-		@include dark {
-			filter: brightness(0.9);
-		}
+		/* Most bookmarked pages ship a white/light thumbnail; dim it */
+		/* slightly so it doesn't glare against the dark card surface. */
+		filter: var(--color-bookmark-thumb-filter);
 
-		@media only screen and (max-width: $breakpoint-small) {
-			// Ensure image displays correctly on mobile
+		@media only screen and (max-width: 480px) {
+			/* Ensure image displays correctly on mobile */
 			display: block;
 		}
 
@@ -1698,7 +1683,7 @@ textarea {
 		}
 	}
 
-	// Only apply hover effect on desktop
+	/* Only apply hover effect on desktop */
 	@media (hover: hover) and (pointer: fine) {
 		.kg-bookmark-card:hover .kg-bookmark-thumbnail img {
 			transform: scale(1.03);
@@ -1722,11 +1707,11 @@ textarea {
 		flex-wrap: wrap;
 		gap: var(--space-1);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			margin-top: var(--space-2);
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			margin-top: 0.65rem;
 			gap: 0.4rem;
 		}
@@ -1739,7 +1724,7 @@ textarea {
 		border-radius: var(--radius-xs);
 		flex-shrink: 0;
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			width: 1.8rem;
 			height: 1.8rem;
 			margin: 0 0.4rem 0 0;
@@ -1766,7 +1751,7 @@ textarea {
 		}
 	}
 
-	// KG Toggle - Redesigned with larger border radius
+	/* KG Toggle - Redesigned with larger border radius */
 
 	.kg-toggle-card {
 		background: var(--color-background-secondary);
@@ -1802,7 +1787,7 @@ textarea {
 				flex: 1;
 			}
 
-			// cards.min.css paints the chevron at 50% gray; give it real ink.
+			/* cards.min.css paints the chevron at 50% gray; give it real ink. */
 			svg {
 				flex-shrink: 0;
 				width: 1.25rem;
@@ -1834,7 +1819,7 @@ textarea {
 			}
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			padding: var(--space-3) var(--space-4);
 		}
 	}
@@ -1843,9 +1828,9 @@ textarea {
 		margin-top: 0;
 	}
 
-	// KG Header Card
-	// Always renders over its own background image + gradient scrim,
-	// so text stays literal white regardless of theme.
+	/* KG Header Card */
+	/* Always renders over its own background image + gradient scrim, */
+	/* so text stays literal white regardless of theme. */
 	.kg-header-card {
 		position: relative;
 		padding: 6rem var(--space-8);
@@ -1912,7 +1897,7 @@ textarea {
 			}
 		}
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			padding: var(--space-8) var(--space-5);
 
 			.kg-header-card-header {
@@ -1925,7 +1910,7 @@ textarea {
 		}
 	}
 
-	// KG Signup Card
+	/* KG Signup Card */
 	.kg-signup-card {
 		position: relative;
 		padding: var(--space-8) var(--space-7);
@@ -1977,7 +1962,7 @@ textarea {
 			gap: var(--space-3);
 			margin-bottom: var(--space-3);
 
-			@media only screen and (max-width: $breakpoint-small) {
+			@media only screen and (max-width: 480px) {
 				flex-direction: column;
 			}
 		}
@@ -2028,7 +2013,7 @@ textarea {
 			margin: 0;
 		}
 
-		// With background image: literal white text over the image, not theme color.
+		/* With background image: literal white text over the image, not theme color. */
 		&.kg-signup-card-image {
 			.kg-signup-card-heading,
 			.kg-signup-card-subheading,
@@ -2041,7 +2026,7 @@ textarea {
 			}
 		}
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			padding: var(--space-7) var(--space-5);
 
 			.kg-signup-card-heading {
@@ -2050,7 +2035,7 @@ textarea {
 		}
 	}
 
-	// KG Product Card - Refined, flexible design
+	/* KG Product Card - Refined, flexible design */
 	.kg-product-card {
 		display: block;
 		width: 100%;
@@ -2062,7 +2047,7 @@ textarea {
 		border-radius: var(--radius-md);
 		overflow: hidden;
 
-		// Reset Ghost's default container styles + compact grid layout
+		/* Reset Ghost's default container styles + compact grid layout */
 		.kg-product-card-container {
 			display: grid;
 			grid-template-columns: 1fr auto;
@@ -2080,7 +2065,7 @@ textarea {
 			text-align: left;
 		}
 
-		// Image container
+		/* Image container */
 		.kg-product-card-image {
 			grid-area: image;
 			display: block;
@@ -2097,7 +2082,7 @@ textarea {
 				var(--color-background-contrast) 100%);
 		}
 
-		// Title container
+		/* Title container */
 		.kg-product-card-title-wrapper,
 		.kg-product-card-title-container {
 			grid-area: title;
@@ -2106,7 +2091,7 @@ textarea {
 			align-self: center;
 		}
 
-		// Title
+		/* Title */
 		.kg-product-card-title {
 			font-family: var(--gh-font-heading);
 			font-size: var(--font-size-sm);
@@ -2116,7 +2101,7 @@ textarea {
 			color: var(--color-content-lead);
 		}
 
-		// Rating
+		/* Rating */
 		.kg-product-card-rating {
 			grid-area: rating;
 			display: flex;
@@ -2146,7 +2131,7 @@ textarea {
 			}
 		}
 
-		// Description
+		/* Description */
 		.kg-product-card-description {
 			grid-area: desc;
 			font-size: var(--font-size-2xs);
@@ -2164,7 +2149,7 @@ textarea {
 			}
 		}
 
-		// Button
+		/* Button */
 		.kg-product-card-button {
 			grid-area: button;
 			display: block;
@@ -2199,8 +2184,8 @@ textarea {
 			}
 		}
 
-		// Responsive
-		@media only screen and (max-width: $breakpoint-medium) {
+		/* Responsive */
+		@media only screen and (max-width: 640px) {
 			max-width: 100%;
 			margin-bottom: 2.6rem;
 
@@ -2229,7 +2214,7 @@ textarea {
 		}
 	}
 
-	// Dark theme - enhanced contrast
+	/* Dark theme - enhanced contrast */
 	.theme-dark .post-content .kg-product-card {
 		background: var(--color-background-main);
 		border-color: rgba(255, 255, 255, 0.1);
@@ -2242,10 +2227,10 @@ textarea {
 		}
 	}
 
-	// KG CTA card. Ghost's cards.css already handles layout, alignment and
-	// button colors, and the author picks a background in the editor. The
-	// theme only maps that background onto its own surfaces, like callouts,
-	// so text keeps body contrast in both themes.
+	/* KG CTA card. Ghost's cards.css already handles layout, alignment and */
+	/* button colors, and the author picks a background in the editor. The */
+	/* theme only maps that background onto its own surfaces, like callouts, */
+	/* so text keeps body contrast in both themes. */
 	.kg-cta-card {
 		--cta-tint: transparent;
 		margin: 2em 0;
@@ -2291,8 +2276,8 @@ textarea {
 				color: var(--color-content-lead);
 			}
 
-			// Same treatment as body links; Ghost gives these a class, so
-			// `a:not([class])` above skips them.
+			/* Same treatment as body links; Ghost gives these a class, so */
+			/* `a:not([class])` above skips them. */
 			a {
 				color: inherit;
 				text-decoration: underline;
@@ -2308,9 +2293,9 @@ textarea {
 				}
 			}
 
-			// Ghost wraps each text run in an inline `white-space: pre-wrap`,
-			// which keeps the space before a line break inside the link and
-			// underlines it. Only !important beats an inline style.
+			/* Ghost wraps each text run in an inline `white-space: pre-wrap`, */
+			/* which keeps the space before a line break inside the link and */
+			/* underlines it. Only !important beats an inline style. */
 			span[style*="pre-wrap"] {
 				white-space: normal !important;
 			}
@@ -2325,8 +2310,8 @@ textarea {
 			border-radius: var(--radius-pill);
 		}
 
-		// Ghost inlines a text color picked against the admin accent, but dark
-		// mode swaps in a lighter accent, so take the computed one instead.
+		/* Ghost inlines a text color picked against the admin accent, but dark */
+		/* mode swaps in a lighter accent, so take the computed one instead. */
 		a.kg-cta-button.kg-style-accent {
 			color: var(--color-on-accent) !important;
 		}
@@ -2433,7 +2418,7 @@ textarea {
 		text-align: center;
 		border-bottom: 1px solid var(--color-border);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			padding-bottom: var(--space-8);
 			margin-bottom: var(--space-7);
 		}
@@ -2465,8 +2450,8 @@ textarea {
 		align-self: stretch;
 	}
 
-	// Full-bleed scrim so white header text stays legible on bright photos
-	// without boxing the text in.
+	/* Full-bleed scrim so white header text stays legible on bright photos */
+	/* without boxing the text in. */
 	&:after {
 		content: '';
 		position: absolute;
@@ -2579,8 +2564,8 @@ textarea {
 		margin-top: var(--space-3);
 
 		a .sr-only {
-			// Visually hidden but still exposed to assistive tech, unlike
-			// `display: none` (which drops it from the accessible name too).
+			/* Visually hidden but still exposed to assistive tech, unlike */
+			/* `display: none` (which drops it from the accessible name too). */
 			position: absolute;
 			width: 1px;
 			height: 1px;
@@ -2604,7 +2589,7 @@ textarea {
 
 	&.archive-author {
 		padding-left: 16rem;
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			padding-left: 0;
 			padding-right: 10rem;
 		}
@@ -2619,7 +2604,7 @@ textarea {
 			border-radius: 50%;
 			overflow: hidden;
 
-			@media only screen and (max-width: $breakpoint-medium) {
+			@media only screen and (max-width: 640px) {
 				left: auto;
 				right: 0;
 				top: 2rem;
@@ -2679,17 +2664,17 @@ textarea {
 }
 
 .inner {
-	max-width: $inner;
+	max-width: var(--inner);
 	margin: 0 auto;
 	padding: 0 8rem;
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		padding: 0 var(--space-8);
 	}
 }
 
-// Posts and pages read in a narrower column than the lists around them.
+/* Posts and pages read in a narrower column than the lists around them. */
 .inner-reading {
-	max-width: $measure;
+	max-width: var(--measure);
 }
 
 /* ==========================================================================
@@ -2715,7 +2700,7 @@ textarea {
 	height: 6.4rem;
 	padding: 0 var(--space-8);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		height: 6rem;
 		padding: 0 var(--space-5);
 	}
@@ -2746,8 +2731,8 @@ textarea {
 		color: var(--color-content-lead);
 	}
 
-	// A long title without a logo would otherwise push the menu button off
-	// narrow screens: let it shrink and truncate instead.
+	/* A long title without a logo would otherwise push the menu button off */
+	/* narrow screens: let it shrink and truncate instead. */
 	&:has(.wordmark) {
 		flex-shrink: 1;
 
@@ -2763,7 +2748,7 @@ textarea {
 	flex: 1;
 	min-width: 0;
 
-	@media only screen and (max-width: $breakpoint-large) {
+	@media only screen and (max-width: 960px) {
 		display: none;
 	}
 
@@ -2837,7 +2822,7 @@ textarea {
 	align-items: center;
 	gap: var(--space-2);
 
-	@media only screen and (max-width: $breakpoint-large) {
+	@media only screen and (max-width: 960px) {
 		display: none;
 	}
 }
@@ -2846,7 +2831,10 @@ textarea {
    Sign in, Subscribe, the mobile Menu button and the floating menu share one
    surface: a translucent fill, hairline border, a top highlight and a soft
    drop shadow, with a static sheen (::before). */
-%glass-surface {
+.nav-link-text,
+.nav-button-primary,
+.nav-menu,
+.float-nav-trigger {
 	position: relative;
 	background: var(--glass-surface);
 	border: 1px solid var(--glass-border);
@@ -2867,8 +2855,9 @@ textarea {
 	}
 }
 
-%glass-pill {
-	@extend %glass-surface;
+.nav-link-text,
+.nav-button-primary,
+.nav-menu {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -2907,14 +2896,9 @@ textarea {
 	}
 }
 
-.nav-link-text {
-	@extend %glass-pill;
-}
-
-// Accent glass: the accent thinned with white so the fill stays translucent
-// rather than a solid brand block.
+/* Accent glass: the accent thinned with white so the fill stays translucent */
+/* rather than a solid brand block. */
 .nav-button-primary {
-	@extend %glass-pill;
 	color: var(--color-on-accent);
 	text-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
 	background: color-mix(in srgb, var(--ghost-accent-color) 72%, #fff);
@@ -2939,16 +2923,15 @@ textarea {
 	}
 }
 
-// Flatter than the desktop pills: on the plain mobile header the drop
-// shadow made it read as a raised chip next to the bare search icon.
+/* Flatter than the desktop pills: on the plain mobile header the drop */
+/* shadow made it read as a raised chip next to the bare search icon. */
 .nav-menu {
-	@extend %glass-pill;
 	display: none;
 	padding: 0 1.6rem;
 	box-shadow: inset 0 1px 0 var(--glass-highlight);
 	-webkit-tap-highlight-color: transparent;
 
-	@media only screen and (max-width: $breakpoint-large) {
+	@media only screen and (max-width: 960px) {
 		display: inline-flex;
 	}
 }
@@ -3007,7 +2990,7 @@ textarea {
    Once the header has scrolled away (`.nav-offscreen`), a glass button in
    the top left mirrors back-to-top in the bottom right and opens a glass
    panel with the site navigation, search and member actions.
-   - Only above $breakpoint-large: below it the header uses the Menu pill
+   - Only above 960px: below it the header uses the Menu pill
      and the gutter is too narrow for a floating control.
    - Stays within the top 7rem, where the desktop TOC begins.
    - The panel is a popover in the top layer; without Popover API support
@@ -3015,7 +2998,7 @@ textarea {
 .float-nav {
 	display: none;
 
-	@media only screen and (min-width: $breakpoint-large + 1) {
+	@media only screen and (min-width: 961px) {
 		display: block;
 	}
 
@@ -3029,7 +3012,6 @@ textarea {
 }
 
 .float-nav-trigger {
-	@extend %glass-surface;
 	position: fixed;
 	top: calc(1.6rem + env(safe-area-inset-top, 0px));
 	left: 1.6rem;
@@ -3072,7 +3054,7 @@ textarea {
 	}
 }
 
-// Two bars that cross into an X while the panel is open.
+/* Two bars that cross into an X while the panel is open. */
 .float-nav-icon {
 	position: relative;
 	width: 1.6rem;
@@ -3145,8 +3127,10 @@ textarea {
 	}
 }
 
-// Rows share one shape: 12px corners inside the 20px panel with 8px padding.
-%float-nav-row {
+/* Rows share one shape: 12px corners inside the 20px panel with 8px padding. */
+.float-nav-home,
+.float-nav-links a,
+.float-nav-search {
 	display: flex;
 	align-items: center;
 	gap: 1rem;
@@ -3167,7 +3151,6 @@ textarea {
 }
 
 .float-nav-home {
-	@extend %float-nav-row;
 	min-height: 4.8rem;
 	font-family: var(--gh-font-heading);
 	font-size: var(--font-size-sm);
@@ -3200,7 +3183,6 @@ textarea {
 	}
 
 	a {
-		@extend %float-nav-row;
 		font-size: var(--font-size-xs, 1.5rem);
 		font-weight: 500;
 	}
@@ -3219,7 +3201,6 @@ textarea {
 }
 
 .float-nav-search {
-	@extend %float-nav-row;
 	font-size: var(--font-size-xs, 1.5rem);
 	color: var(--color-content-secondary);
 
@@ -3260,7 +3241,7 @@ textarea {
 		transform var(--duration-slow) var(--ease-standard),
 		visibility 0s var(--ease-standard) var(--duration-slow);
 
-	@media only screen and (min-width: #{$breakpoint-large + 1}) {
+	@media only screen and (min-width: 961px) {
 		display: none;
 	}
 }
@@ -3397,7 +3378,7 @@ textarea {
 	align-items: center;
 	gap: var(--space-5);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		flex-direction: column;
 		text-align: center;
 		gap: var(--space-4);
@@ -3411,7 +3392,7 @@ textarea {
 	gap: 0.25rem;
 	flex: 1;
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		align-items: center;
 		order: 3;
 	}
@@ -3443,7 +3424,7 @@ textarea {
 	list-style: none;
 	font-size: var(--font-size-2xs);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		justify-content: center;
 	}
 }
@@ -3467,7 +3448,7 @@ textarea {
 	justify-content: center;
 	text-align: center;
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		order: 1;
 		width: 100%;
 	}
@@ -3487,7 +3468,7 @@ textarea {
 	flex: 1;
 	justify-content: flex-end;
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		order: 2;
 		justify-content: center;
 	}
@@ -3524,13 +3505,13 @@ textarea {
 		background: var(--color-background-contrast);
 	}
 
-	// Size the .icon box, not the svg: an svg larger than its 1em box
-	// overflows to the bottom right and sits off center.
+	/* Size the .icon box, not the svg: an svg larger than its 1em box */
+	/* overflows to the bottom right and sits off center. */
 	.icon {
 		font-size: 1.8rem;
 	}
 
-	// Solid glyph reads heavier than the stroked icons; its ink sits low-left
+	/* Solid glyph reads heavier than the stroked icons; its ink sits low-left */
 	.icon-rss {
 		font-size: 1.6rem;
 
@@ -3565,7 +3546,7 @@ textarea {
 		font-size: 1.8rem;
 	}
 
-	// Optical nudges toward each glyph's ink centroid
+	/* Optical nudges toward each glyph's ink centroid */
 	.theme-icon-monitor svg {
 		transform: translateY(0.015em);
 	}
@@ -3618,7 +3599,7 @@ textarea {
 		margin-bottom: 0;
 	}
 
-	// Search results separation
+	/* Search results separation */
 	#results .post {
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: var(--space-8);
@@ -3629,7 +3610,7 @@ textarea {
 		}
 	}
 
-	// Modern card design
+	/* Modern card design */
 	.post .post-box {
 		position: relative;
 		padding: var(--space-6) 0;
@@ -3645,17 +3626,17 @@ textarea {
 			cursor: pointer;
 		}
 
-		// Stretched link: the title anchor is the only real link, but its
-		// ::after covers the same area the hover highlight below does, so
-		// the whole card is clickable without a second link fighting it
-		// for an accessible name. Tag chips sit above it (z-index) to stay
-		// individually clickable.
-		//
-		// The shared `.post-title` rule sets `position: relative` on both
-		// the heading and its anchor for the single-post header, which
-		// would make one of them the containing block here and shrink the
-		// ::after down to the title's own box. Reset both to static in
-		// this card context only.
+		/* Stretched link: the title anchor is the only real link, but its */
+		/* ::after covers the same area the hover highlight below does, so */
+		/* the whole card is clickable without a second link fighting it */
+		/* for an accessible name. Tag chips sit above it (z-index) to stay */
+		/* individually clickable. */
+		/*  */
+		/* The shared `.post-title` rule sets `position: relative` on both */
+		/* the heading and its anchor for the single-post header, which */
+		/* would make one of them the containing block here and shrink the */
+		/* ::after down to the title's own box. Reset both to static in */
+		/* this card context only. */
 		.post-title {
 			position: static;
 
@@ -3675,16 +3656,16 @@ textarea {
 			z-index: 1;
 		}
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			padding: var(--space-6) 0;
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			padding: var(--space-5) 0;
 		}
 	}
 
-	// Desktop hover effect
+	/* Desktop hover effect */
 	@media (hover: hover) and (pointer: fine) {
 		.post .post-box {
 			&::before {
@@ -3718,7 +3699,7 @@ textarea {
 		}
 	}
 
-	// Mobile touch feedback
+	/* Mobile touch feedback */
 	@media (hover: none) and (pointer: coarse) {
 		.post .post-box {
 			&:active {
@@ -3732,7 +3713,7 @@ textarea {
 	}
 }
 
-// Dark theme adjustments
+/* Dark theme adjustments */
 .theme-dark .container {
 	.post .post-box::before {
 		background: rgba(255, 255, 255, 0.04);
@@ -3745,7 +3726,7 @@ textarea {
 	}
 }
 
-// Post excerpt styling
+/* Post excerpt styling */
 .container .post .post-excerpt {
 	margin: 0;
 	display: -webkit-box;
@@ -3753,19 +3734,19 @@ textarea {
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	line-height: 1.75;
-	max-height: calc(1.75em * 2); // Fallback for browsers without line-clamp support
+	max-height: calc(1.75em * 2); /* Fallback for browsers without line-clamp support */
 	color: var(--color-content-secondary);
 	transition: color var(--duration-slow) var(--ease-standard);
 	text-overflow: ellipsis;
 	word-break: break-word;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		-webkit-line-clamp: 3;
 		max-height: calc(1.75em * 3);
 	}
 }
 
-// Post title styling
+/* Post title styling */
 .container .post .post-title {
 	margin: 0;
 	text-align: left;
@@ -3777,7 +3758,7 @@ textarea {
 		transition: color var(--duration-base) var(--ease-standard);
 	}
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		font-size: 2em;
 	}
 }
@@ -3790,7 +3771,7 @@ textarea {
 	color: var(--color-content-secondary);
 	font-variant-numeric: tabular-nums;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 1.3em;
 	}
 }
@@ -3864,7 +3845,7 @@ textarea {
 	position: static;
 }
 
-// Fixed size (prevents CLS), shrink disabled so it never squeezes in flex rows.
+/* Fixed size (prevents CLS), shrink disabled so it never squeezes in flex rows. */
 .post-meta-avatar {
 	position: relative;
 	display: block;
@@ -3921,20 +3902,20 @@ textarea {
 	font-variant-numeric: tabular-nums;
 }
 
-// Responsive post-meta for narrow viewports (iPhone Pro and smaller)
-@media only screen and (max-width: $breakpoint-xsmall) {
+/* Responsive post-meta for narrow viewports (iPhone Pro and smaller) */
+@media only screen and (max-width: 420px) {
 	.post-header .post-meta,
 	.post-meta {
 		flex-wrap: nowrap;
 		gap: 0.6rem;
 		font-size: var(--font-size-2xs);
 
-		// Prevent avatar from shrinking
+		/* Prevent avatar from shrinking */
 		.post-meta-avatars {
 			flex-shrink: 0;
 		}
 
-		// Allow author name to truncate if needed
+		/* Allow author name to truncate if needed */
 		.post-meta-author {
 			flex-shrink: 1;
 			min-width: 0;
@@ -3944,13 +3925,13 @@ textarea {
 			white-space: nowrap;
 		}
 
-		// Keep date/reading time together, allow truncation
+		/* Keep date/reading time together, allow truncation */
 		.post-meta-details {
 			flex-shrink: 0;
 		}
 	}
 
-	// Smaller avatar on very narrow screens
+	/* Smaller avatar on very narrow screens */
 	.post-meta-avatar {
 		width: 2.8rem;
 		height: 2.8rem;
@@ -3999,10 +3980,10 @@ textarea {
 		object-fit: cover;
 	}
 
-	// Baseline scrim behind the title/meta text, always on: brightness
-	// detection (`.light-cover`, below) only adds to this, since JS
-	// detection can fail silently (a cross-origin cover image taints the
-	// canvas) and text must stay readable either way.
+	/* Baseline scrim behind the title/meta text, always on: brightness */
+	/* detection (`.light-cover`, below) only adds to this, since JS */
+	/* detection can fail silently (a cross-origin cover image taints the */
+	/* canvas) and text must stay readable either way. */
 	&:after {
 		content: '';
 		position: absolute;
@@ -4015,14 +3996,14 @@ textarea {
 	}
 }
 
-// Feature image caption/credit. It lives below the cover in the document
-// flow (the cover itself is an absolutely-positioned background behind the
-// header), not actually overlapping the image's bottom scrim, so it uses the
-// normal theme-aware secondary text color rather than a fixed light color.
+/* Feature image caption/credit. It lives below the cover in the document */
+/* flow (the cover itself is an absolutely-positioned background behind the */
+/* header), not actually overlapping the image's bottom scrim, so it uses the */
+/* normal theme-aware secondary text color rather than a fixed light color. */
 .post-cover-credit {
 	display: block;
-	// Pull up into the content's top padding so the credit sits right
-	// under the cover it belongs to.
+	/* Pull up into the content's top padding so the credit sits right */
+	/* under the cover it belongs to. */
 	margin: calc(-3rem - 2vw) 0 var(--space-6);
 	padding: var(--space-3) 0;
 	font-size: var(--font-size-2xs);
@@ -4041,7 +4022,7 @@ textarea {
 		}
 	}
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: var(--font-size-3xs);
 		padding: var(--space-2) 0;
 		margin: calc(-3rem - 2vw) 0 var(--space-5);
@@ -4066,7 +4047,7 @@ textarea {
 	color: var(--color-content-lead);
 	transition: color var(--ease-standard) var(--duration-base);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		hyphens: auto;
 		font-size: 2.2em;
 	}
@@ -4088,7 +4069,7 @@ textarea {
 	line-height: 1.15em;
 	text-wrap: balance;
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		font-size: 2.8em;
 		margin-bottom: var(--space-5);
 	}
@@ -4099,9 +4080,9 @@ textarea {
 	color: white;
 }
 
-// Light cover contrast enhancement - applied when cover image is bright
+/* Light cover contrast enhancement - applied when cover image is bright */
 .has-cover.light-cover {
-	// Stronger gradient overlay for light images, on top of the baseline scrim
+	/* Stronger gradient overlay for light images, on top of the baseline scrim */
 	.post-cover:after {
 		height: 80%;
 		background: linear-gradient(
@@ -4112,7 +4093,7 @@ textarea {
 		);
 	}
 
-	// Enhanced text shadows for better readability
+	/* Enhanced text shadows for better readability */
 	.post-title {
 		text-shadow:
 			0 1px 3px rgba(0, 0, 0, 0.4),
@@ -4247,9 +4228,9 @@ textarea {
 	max-width: 100%;
 }
 
-// flow-root, not flex: flex items never collapse margins, which doubled
-// every paragraph-to-heading gap. Wide/full cards break out with negative
-// margins, so they don't need flex centering.
+/* flow-root, not flex: flex items never collapse margins, which doubled */
+/* every paragraph-to-heading gap. Wide/full cards break out with negative */
+/* margins, so they don't need flex centering. */
 .post-content {
 	display: flow-root;
 }
@@ -4293,43 +4274,37 @@ textarea {
 		height: 42px;
 		max-width: 100%;
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			height: 36px;
 		}
 	}
 
-	// Theme-aware badge variants
-	&__icon {
+	/* Theme-aware badge variants */
+	.notbyai-badge__icon {
 		display: block;
+	}
 
-		// Light theme: show white badge (for dark backgrounds)
-		&--theme-light {
-			display: block;
-
-			.theme-dark & {
-				display: none;
-			}
-
-			@media (prefers-color-scheme: dark) {
-				html:not(.theme-light) & {
-					display: none;
-				}
-			}
-		}
-
-		// Dark theme: show black badge (for light backgrounds)
-		&--theme-dark {
+	.notbyai-badge__icon--theme-light {
+		display: block;
+	}
+	.theme-dark .notbyai-badge__icon--theme-light {
+		display: none;
+	}
+	@media (prefers-color-scheme: dark) {
+		html:not(.theme-light) .notbyai-badge__icon--theme-light {
 			display: none;
+		}
+	}
 
-			.theme-dark & {
-				display: block;
-			}
-
-			@media (prefers-color-scheme: dark) {
-				html:not(.theme-light) & {
-					display: block;
-				}
-			}
+	.notbyai-badge__icon--theme-dark {
+		display: none;
+	}
+	.theme-dark .notbyai-badge__icon--theme-dark {
+		display: block;
+	}
+	@media (prefers-color-scheme: dark) {
+		html:not(.theme-light) .notbyai-badge__icon--theme-dark {
+			display: block;
 		}
 	}
 }
@@ -4344,7 +4319,7 @@ textarea {
 	justify-content: space-between;
 	gap: var(--space-5);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		flex-direction: column;
 		gap: var(--space-5);
 	}
@@ -4367,12 +4342,12 @@ textarea {
 	gap: var(--space-3);
 	order: 2;
 
-	// Ensure hidden attribute works
+	/* Ensure hidden attribute works */
 	&[hidden] {
 		display: none !important;
 	}
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		order: 1;
 		width: 100%;
 	}
@@ -4396,7 +4371,7 @@ textarea {
 	border-radius: var(--radius-pill);
 	transition: background-color var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
 
-	// Expand the tap target to 44px without growing the visible circle.
+	/* Expand the tap target to 44px without growing the visible circle. */
 	&::before {
 		content: '';
 		position: absolute;
@@ -4418,12 +4393,12 @@ textarea {
 	flex: 1;
 	order: 1;
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		order: 2;
 		width: 100%;
 	}
 
-	// Hide the entire tags section if there are no tag links (only internal tags)
+	/* Hide the entire tags section if there are no tag links (only internal tags) */
 	&:not(:has(a)) {
 		display: none;
 	}
@@ -4449,7 +4424,7 @@ textarea {
 	box-sizing: border-box;
 	white-space: nowrap;
 
-	// Expand the tap target to 44px without growing the visible chip.
+	/* Expand the tap target to 44px without growing the visible chip. */
 	&::before {
 		content: '';
 		position: absolute;
@@ -4543,7 +4518,7 @@ textarea {
 	gap: var(--space-3);
 	margin: 0 0 var(--space-5);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		flex-direction: column;
 		align-items: flex-start;
 	}
@@ -4596,8 +4571,8 @@ textarea {
 		pointer-events: none;
 	}
 
-	// JS sets `hidden` once comments load; the display above would beat the
-	// UA's [hidden] rule, so restate it.
+	/* JS sets `hidden` once comments load; the display above would beat the */
+	/* UA's [hidden] rule, so restate it. */
 	&[hidden] {
 		display: none;
 	}
@@ -4606,8 +4581,8 @@ textarea {
 .post-comments-container {
 	margin-top: var(--space-5);
 
-	// The comments-ui document declares no color-scheme. When the page is dark,
-	// the mismatch makes browsers paint an opaque white canvas behind the iframe.
+	/* The comments-ui document declares no color-scheme. When the page is dark, */
+	/* the mismatch makes browsers paint an opaque white canvas behind the iframe. */
 	iframe {
 		color-scheme: light;
 	}
@@ -4623,7 +4598,7 @@ textarea {
 	padding: 0;
 	text-align: center;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		margin: var(--space-7) 0 var(--space-5);
 	}
 }
@@ -4635,15 +4610,15 @@ textarea {
 	font-weight: 400;
 	margin: 0 0 var(--space-4);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 1.3em;
 		margin-bottom: 1.25rem;
 	}
 }
 
-// One pill at every width: the input and the button share a single
-// outline, with the button docked inside the right edge. Portal adds
-// `loading`, `success` or `error` to the form on submit.
+/* One pill at every width: the input and the button share a single */
+/* outline, with the button docked inside the right edge. Portal adds */
+/* `loading`, `success` or `error` to the form on submit. */
 .post-subscribe-form {
 	display: flex;
 	align-items: center;
@@ -4671,7 +4646,7 @@ textarea {
 	min-width: 0;
 	height: 4.4rem;
 	padding: 0 0 0 1.4rem;
-	// 16px minimum: iOS Safari zooms the page when a smaller input is focused.
+	/* 16px minimum: iOS Safari zooms the page when a smaller input is focused. */
 	font-size: 1.6rem;
 	color: var(--color-content-main);
 	background: transparent;
@@ -4719,7 +4694,7 @@ textarea {
 		pointer-events: none;
 	}
 
-	@media only screen and (max-width: $breakpoint-xsmall) {
+	@media only screen and (max-width: 420px) {
 		padding: 0 var(--space-4);
 	}
 }
@@ -4771,7 +4746,7 @@ textarea {
 	gap: var(--space-4);
 	margin-top: var(--space-7);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		grid-template-columns: 1fr;
 		gap: var(--space-3);
 	}
@@ -4969,9 +4944,9 @@ textarea {
 	position: relative;
 	margin: 0;
 
-	// Three explicit columns keep the centered page label from ever
-	// overlapping the prev/next links, regardless of label length —
-	// no absolute positioning or z-index stacking needed.
+	/* Three explicit columns keep the centered page label from ever */
+	/* overlapping the prev/next links, regardless of label length — */
+	/* no absolute positioning or z-index stacking needed. */
 	.pagination-box {
 		display: grid;
 		grid-template-columns: 1fr auto 1fr;
@@ -5008,14 +4983,14 @@ textarea {
 	}
 }
 
-// "Newer Posts" (goes to the previous page)
+/* "Newer Posts" (goes to the previous page) */
 .pagination .pagination-prev {
 	grid-column: 1;
 	justify-self: start;
 	padding-left: 1.75rem;
 }
 
-// "Older Posts" (goes to the next page)
+/* "Older Posts" (goes to the next page) */
 .pagination .pagination-next {
 	grid-column: 3;
 	justify-self: end;
@@ -5024,7 +4999,7 @@ textarea {
 
 .pagination .pagination-label {
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		display: none;
 	}
 }
@@ -5052,7 +5027,7 @@ textarea {
 	gap: var(--space-4);
 	margin-bottom: var(--space-1);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		flex-direction: column;
 		gap: var(--space-2);
 	}
@@ -5074,7 +5049,7 @@ textarea {
 	flex-shrink: 0;
 	align-items: center;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		order: -1;
 	}
 }
@@ -5098,8 +5073,8 @@ a.post-tag-chip {
 	transition-timing-function: var(--ease-standard);
 	cursor: pointer;
 
-	// Extend the hit area to the 44px touch target floor without
-	// growing the visible chip.
+	/* Extend the hit area to the 44px touch target floor without */
+	/* growing the visible chip. */
 	&::before {
 		content: '';
 		position: absolute;
@@ -5142,7 +5117,7 @@ a.post-tag-chip {
 	}
 
 	/* Mobile: allow scrolling for recommendations */
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		overflow-y: auto;
 
 		body {
@@ -5179,7 +5154,7 @@ a.post-tag-chip {
 	}
 
 	/* Mobile: align to top so 404 content is visible first */
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		align-items: flex-start;
 		padding-top: 8rem;
 	}
@@ -5195,7 +5170,7 @@ a.post-tag-chip {
 	margin-bottom: var(--space-7);
 	height: 16rem;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		height: 12rem;
 		margin-bottom: var(--space-5);
 	}
@@ -5213,7 +5188,7 @@ a.post-tag-chip {
 	color: var(--color-content-lead);
 	user-select: none;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 8rem;
 	}
 }
@@ -5318,7 +5293,7 @@ a.post-tag-chip {
 	margin-bottom: var(--space-8);
 	transition: box-shadow var(--ease-standard) var(--duration-slow);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		padding: var(--space-6) var(--space-5);
 		border-radius: var(--radius-md);
 		margin-bottom: var(--space-7);
@@ -5338,7 +5313,7 @@ a.post-tag-chip {
 	margin: 0 0 var(--space-3);
 	color: var(--color-content-lead);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 2.2em;
 	}
 }
@@ -5352,7 +5327,7 @@ a.post-tag-chip {
 	margin-left: auto;
 	margin-right: auto;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 1.4em;
 		margin-bottom: var(--space-5);
 	}
@@ -5398,8 +5373,8 @@ a.post-tag-chip {
 .error-recommendations {
 	margin-top: var(--space-5);
 
-	@media only screen and (max-width: $breakpoint-small) {
-		padding-bottom: var(--space-8); // Extra space for mobile browser toolbars
+	@media only screen and (max-width: 480px) {
+		padding-bottom: var(--space-8); /* Extra space for mobile browser toolbars */
 	}
 }
 
@@ -5410,7 +5385,7 @@ a.post-tag-chip {
 	color: var(--color-content-secondary);
 	margin: 0 0 var(--space-5);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 1.5em;
 		margin-bottom: var(--space-4);
 	}
@@ -5421,11 +5396,11 @@ a.post-tag-chip {
 	grid-template-columns: repeat(3, 1fr);
 	gap: var(--space-5);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		grid-template-columns: repeat(2, 1fr);
 	}
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		grid-template-columns: 1fr;
 		gap: var(--space-4);
 	}
@@ -5542,7 +5517,7 @@ a.post-tag-chip {
 .links-header {
 	margin-bottom: var(--space-7);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		margin-bottom: var(--space-5);
 	}
 }
@@ -5562,7 +5537,7 @@ a.post-tag-chip {
 	animation: symbol-float 6s ease-in-out infinite;
 	overflow: visible;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		width: 9rem;
 		height: 4.5rem;
 	}
@@ -5600,7 +5575,7 @@ a.post-tag-chip {
 	color: var(--color-content-lead);
 	letter-spacing: -0.02em;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 2.8em;
 	}
 }
@@ -5612,7 +5587,7 @@ a.post-tag-chip {
 	margin: 0 auto;
 	max-width: 40rem;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 1.4em;
 	}
 }
@@ -5623,7 +5598,7 @@ a.post-tag-chip {
 	grid-template-columns: 1fr;
 	gap: var(--space-5);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		gap: var(--space-4);
 	}
 }
@@ -5646,7 +5621,7 @@ a.post-tag-chip {
 		background: var(--color-background-secondary);
 		border: 1px solid var(--color-border);
 
-		// Desktop hover effect
+		/* Desktop hover effect */
 		@media (hover: hover) and (pointer: fine) {
 			&:hover {
 				border-color: var(--color-border-strong);
@@ -5664,7 +5639,7 @@ a.post-tag-chip {
 			}
 		}
 
-		// Mobile: subtle active state
+		/* Mobile: subtle active state */
 		@media (hover: none) and (pointer: coarse) {
 			&:active {
 				transform: scale(0.98);
@@ -5681,11 +5656,11 @@ a.post-tag-chip {
 			border-radius: 0;
 			box-shadow: none !important;
 			overflow: hidden;
-			// Touch-friendly minimum tap target
+			/* Touch-friendly minimum tap target */
 			min-height: 44px;
 
-			// Mobile: vertical layout for better readability
-			@media only screen and (max-width: $breakpoint-small) {
+			/* Mobile: vertical layout for better readability */
+			@media only screen and (max-width: 480px) {
 				flex-direction: column;
 				min-height: auto;
 			}
@@ -5701,13 +5676,13 @@ a.post-tag-chip {
 		padding: var(--space-5) var(--space-6);
 		color: var(--color-content-secondary);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			padding: 1.75rem var(--space-5);
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
-			padding: var(--space-4) var(--space-4) 1.25rem; // Optimized padding for mobile
-			order: 2; // Content below thumbnail on mobile
+		@media only screen and (max-width: 480px) {
+			padding: var(--space-4) var(--space-4) 1.25rem; /* Optimized padding for mobile */
+			order: 2; /* Content below thumbnail on mobile */
 		}
 	}
 
@@ -5720,20 +5695,20 @@ a.post-tag-chip {
 		letter-spacing: -0.02em;
 		margin-bottom: var(--space-2);
 		text-align: left;
-		// Better text wrapping
+		/* Better text wrapping */
 		word-break: break-word;
 		overflow-wrap: break-word;
 		hyphens: auto;
-		// Smooth transition for hover effects
+		/* Smooth transition for hover effects */
 		transition: color var(--duration-base) var(--ease-standard);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			font-size: 1.8rem;
 			line-height: 1.35;
 			margin-bottom: 0.6rem;
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			font-size: var(--font-size-sm);
 			margin-bottom: var(--space-1);
 			line-height: 1.35;
@@ -5754,17 +5729,17 @@ a.post-tag-chip {
 		color: var(--color-content-secondary);
 		text-align: left;
 		opacity: 0.9;
-		// Better text wrapping
+		/* Better text wrapping */
 		word-break: break-word;
 		overflow-wrap: break-word;
-		// Smooth transition
+		/* Smooth transition */
 		transition: opacity var(--duration-base) var(--ease-standard);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			line-height: 1.55;
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			-webkit-line-clamp: 2;
 			line-height: 1.5;
 		}
@@ -5781,11 +5756,11 @@ a.post-tag-chip {
 		flex-wrap: wrap;
 		gap: var(--space-1);
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			margin-top: var(--space-2);
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			margin-top: 0.65rem;
 			gap: 0.4rem;
 		}
@@ -5798,7 +5773,7 @@ a.post-tag-chip {
 		border-radius: var(--radius-xs);
 		flex-shrink: 0;
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			width: 1.8rem;
 			height: 1.8rem;
 			margin: 0 0.4rem 0 0;
@@ -5832,20 +5807,20 @@ a.post-tag-chip {
 		flex-shrink: 0;
 		overflow: hidden;
 		border-radius: 0 var(--radius-md) var(--radius-md) 0;
-		aspect-ratio: 4 / 3; // Classic 4:3 aspect ratio for balanced display
+		aspect-ratio: 4 / 3; /* Classic 4:3 aspect ratio for balanced display */
 
-		@media only screen and (max-width: $breakpoint-medium) {
+		@media only screen and (max-width: 640px) {
 			min-width: 180px;
 			max-width: 220px;
 		}
 
-		@media only screen and (max-width: $breakpoint-small) {
+		@media only screen and (max-width: 480px) {
 			min-width: 100%;
 			max-width: 100%;
-			height: auto; // Changed from 0 to auto
-			aspect-ratio: 2 / 1; // Use aspect-ratio instead of padding-bottom
+			height: auto; /* Changed from 0 to auto */
+			aspect-ratio: 2 / 1; /* Use aspect-ratio instead of padding-bottom */
 			border-radius: var(--radius-md) var(--radius-md) 0 0;
-			order: 1; // Thumbnail above content on mobile
+			order: 1; /* Thumbnail above content on mobile */
 		}
 
 		img {
@@ -5856,11 +5831,11 @@ a.post-tag-chip {
 			height: 100%;
 			object-fit: cover;
 			border-radius: 0;
-			margin: 0; // Override .post-content img margin
+			margin: 0; /* Override .post-content img margin */
 			transition: transform var(--ease-standard) var(--duration-slow);
 
-			@media only screen and (max-width: $breakpoint-small) {
-				// Ensure image displays correctly on mobile
+			@media only screen and (max-width: 480px) {
+				/* Ensure image displays correctly on mobile */
 				display: block;
 			}
 		}
@@ -5930,7 +5905,7 @@ a.post-tag-chip {
 	padding: var(--space-5) var(--space-6);
 	min-width: 0;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		padding: var(--space-4);
 	}
 }
@@ -5943,7 +5918,7 @@ a.post-tag-chip {
 	color: var(--color-content-lead);
 	margin-bottom: var(--space-1);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 1.5em;
 	}
 }
@@ -5957,7 +5932,7 @@ a.post-tag-chip {
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		font-size: 1.3em;
 		-webkit-line-clamp: 2;
 	}
@@ -5991,12 +5966,12 @@ a.post-tag-chip {
 	flex-shrink: 0;
 	overflow: hidden;
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		min-width: 120px;
 		max-width: 150px;
 	}
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		min-width: 100px;
 		max-width: 120px;
 	}
@@ -6059,7 +6034,7 @@ a.post-tag-chip {
 	object-fit: contain !important;
 	border-radius: var(--radius-sm);
 	box-shadow: var(--shadow-overlay);
-	// WebKit gesture enhancements
+	/* WebKit gesture enhancements */
 	touch-action: pan-x pan-y pinch-zoom;
 	user-select: none;
 	transform-origin: center center;
@@ -6077,7 +6052,7 @@ a.post-tag-chip {
 	-webkit-backdrop-filter: blur(10px);
 	border-radius: 50% !important;
 	border: 1px solid rgba(255, 255, 255, 0.2) !important;
-	transition: background-color var(--duration-slow) var(--ease-standard) !important, transform var(--duration-slow) var(--ease-standard) !important;
+	transition: background-color var(--duration-slow) var(--ease-standard), transform var(--duration-slow) var(--ease-standard) !important;
 	opacity: 1 !important;
 
 	svg {
@@ -6115,7 +6090,7 @@ a.post-tag-chip {
 	border: 1px solid rgba(255, 255, 255, 0.2) !important;
 	top: 20px !important;
 	right: 20px !important;
-	transition: background-color var(--duration-slow) var(--ease-standard) !important, transform var(--duration-slow) var(--ease-standard) !important;
+	transition: background-color var(--duration-slow) var(--ease-standard), transform var(--duration-slow) var(--ease-standard) !important;
 	opacity: 1 !important;
 
 	svg {
@@ -6166,10 +6141,10 @@ a.post-tag-chip {
 }
 
 /* Mobile adjustments */
-@media only screen and (max-width: $breakpoint-medium) {
+@media only screen and (max-width: 640px) {
 	.glightbox-container .gslide {
 		padding: 20px !important;
-		// Enhanced touch handling on mobile
+		/* Enhanced touch handling on mobile */
 		touch-action: manipulation;
 	}
 
@@ -6179,7 +6154,7 @@ a.post-tag-chip {
 		width: auto !important;
 		height: auto !important;
 		object-fit: contain !important;
-		// Optimize for mobile gestures
+		/* Optimize for mobile gestures */
 		-webkit-touch-callout: none;
 	}
 
@@ -6244,7 +6219,7 @@ a.post-tag-chip {
 	transform: translateY(20px);
 	transition: opacity var(--duration-slow) var(--ease-standard), visibility var(--duration-slow) var(--ease-standard), transform var(--duration-slow) var(--ease-standard), bottom var(--duration-slow) var(--ease-standard);
 
-	// Liquid glass effect
+	/* Liquid glass effect */
 	background: rgba(255,255,255,0.08);
 	border: none;
 	box-shadow: var(--shadow-float);
@@ -6257,7 +6232,7 @@ a.post-tag-chip {
 		transform: translateY(0);
 	}
 
-	// Hide when scrolling down (slide to right)
+	/* Hide when scrolling down (slide to right) */
 	&.is-hidden-scroll {
 		opacity: 0;
 		transform: translateX(8rem) scale(0.9);
@@ -6272,7 +6247,7 @@ a.post-tag-chip {
 	}
 }
 
-// Dark theme
+/* Dark theme */
 .theme-dark .back-to-top {
 	background: rgba(255,255,255,0.1);
 }
@@ -6324,7 +6299,7 @@ a.post-tag-chip {
 }
 
 /* Mobile adjustments */
-@media only screen and (max-width: $breakpoint-medium) {
+@media only screen and (max-width: 640px) {
 	.back-to-top {
 		bottom: 24px;
 		right: 24px;
@@ -6373,7 +6348,7 @@ a.post-tag-chip {
 	line-height: 1.1;
 	color: var(--color-content-lead);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		font-size: 3em;
 	}
 }
@@ -6385,7 +6360,7 @@ a.post-tag-chip {
 	line-height: 1.5;
 	color: var(--color-content-secondary);
 
-	@media only screen and (max-width: $breakpoint-medium) {
+	@media only screen and (max-width: 640px) {
 		font-size: 1.6em;
 	}
 }
@@ -6395,7 +6370,7 @@ a.post-tag-chip {
 	grid-template-columns: repeat(auto-fill, minmax(32rem, 1fr));
 	gap: var(--space-5);
 
-	@media only screen and (max-width: $breakpoint-small) {
+	@media only screen and (max-width: 480px) {
 		grid-template-columns: 1fr;
 		gap: var(--space-4);
 	}
@@ -6407,15 +6382,15 @@ a.post-tag-chip {
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-md);
 	overflow: hidden;
-	// Skip layout and paint (and the glass backdrop-filter) for off-screen
-	// cards; /tags/ can list a hundred of them.
+	/* Skip layout and paint (and the glass backdrop-filter) for off-screen */
+	/* cards; /tags/ can list a hundred of them. */
 	content-visibility: auto;
 	contain-intrinsic-size: auto 26rem;
 	transition-property: transform, box-shadow, border-color;
 	transition-duration: var(--duration-slow);
 	transition-timing-function: var(--ease-spring);
 
-	// Use tag's custom accent color if available
+	/* Use tag's custom accent color if available */
 	--tag-color: var(--tag-accent-color, var(--ghost-accent-color));
 
 	@media (hover: hover) and (pointer: fine) {
@@ -6425,7 +6400,7 @@ a.post-tag-chip {
 		}
 	}
 
-	// Card with accent color (only for cards WITHOUT image)
+	/* Card with accent color (only for cards WITHOUT image) */
 	&.has-accent:not(.has-image) {
 		border-color: color-mix(in srgb, var(--tag-color) 25%, var(--color-background-contrast));
 
@@ -6448,21 +6423,21 @@ a.post-tag-chip {
 		}
 	}
 
-	// Card with background image - full cover style with glassmorphism
+	/* Card with background image - full cover style with glassmorphism */
 	&.has-image {
 		position: relative;
 		overflow: hidden;
-		min-height: 26rem; // Ensure enough space for image display
-		// Use image-derived color for border/shadow, fallback to subtle gray
+		min-height: 26rem; /* Ensure enough space for image display */
+		/* Use image-derived color for border/shadow, fallback to subtle gray */
 		--image-color: var(--tag-image-color, rgba(0, 0, 0, 0.15));
 		border-color: transparent;
-		background: #000; // Black background to prevent white line at bottom
+		background: #000; /* Black background to prevent white line at bottom */
 
 		&:hover {
 			border-color: color-mix(in srgb, var(--image-color) 50%, transparent);
 		}
 
-		// Background image covers entire card (absolute positioned)
+		/* Background image covers entire card (absolute positioned) */
 		.tag-card-bg {
 			position: absolute;
 			top: 0;
@@ -6481,16 +6456,16 @@ a.post-tag-chip {
 				transition: transform var(--duration-slower) var(--ease-standard);
 			}
 
-			// Hide the small thumbnail image in header
+			/* Hide the small thumbnail image in header */
 			.tag-card-image img {
 				position: static;
 				width: 100%;
 				height: 100%;
 			}
 
-			// The header sits at the top of the card here (unlike the
-			// banner variant, where it's at the bottom), so flip the
-			// readability gradient to be darkest at the top instead.
+			/* The header sits at the top of the card here (unlike the */
+			/* banner variant, where it's at the bottom), so flip the */
+			/* readability gradient to be darkest at the top instead. */
 			&::after {
 				background: linear-gradient(
 					to bottom,
@@ -6501,7 +6476,7 @@ a.post-tag-chip {
 			}
 		}
 
-		// Header - floating on image, aligned with non-image cards
+		/* Header - floating on image, aligned with non-image cards */
 		.tag-card-header {
 			position: absolute;
 			top: 2rem;
@@ -6521,7 +6496,7 @@ a.post-tag-chip {
 			margin-bottom: 0;
 		}
 
-		// Only the icon has glass background
+		/* Only the icon has glass background */
 		.tag-card-image {
 			width: 5rem;
 			height: 5rem;
@@ -6554,7 +6529,7 @@ a.post-tag-chip {
 			font-size: 1.3em;
 		}
 
-		// Posts list with liquid glass effect - no white overlay
+		/* Posts list with liquid glass effect - no white overlay */
 		.tag-card-posts {
 			position: absolute;
 			left: 0;
@@ -6570,16 +6545,16 @@ a.post-tag-chip {
 			border: none;
 			margin: 0;
 
-			// Scrollable posts container
+			/* Scrollable posts container */
 			&.is-scrollable {
 				.tag-posts-scroll {
-					max-height: 9.5rem; // ~3 posts visible
+					max-height: 9.5rem; /* ~3 posts visible */
 					overflow-y: auto;
 					scroll-behavior: smooth;
 					scrollbar-width: thin;
 					scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-					overscroll-behavior: contain; // Prevent scroll chaining
-					touch-action: pan-y; // Allow vertical touch scrolling
+					overscroll-behavior: contain; /* Prevent scroll chaining */
+					touch-action: pan-y; /* Allow vertical touch scrolling */
 
 					&::-webkit-scrollbar {
 						width: 4px;
@@ -6599,7 +6574,7 @@ a.post-tag-chip {
 					}
 				}
 
-				// Remove the white gradient overlay for image cards
+				/* Remove the white gradient overlay for image cards */
 				&::after {
 					display: none;
 				}
@@ -6636,7 +6611,7 @@ a.post-tag-chip {
 			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 		}
 
-		// Hover effect
+		/* Hover effect */
 		@media (hover: hover) and (pointer: fine) {
 			&:hover {
 				.tag-card-bg > img:first-of-type {
@@ -6647,7 +6622,7 @@ a.post-tag-chip {
 	}
 }
 
-// Tag card background image (banner style)
+/* Tag card background image (banner style) */
 .tag-card-bg {
 	display: block;
 	position: relative;
@@ -6664,7 +6639,7 @@ a.post-tag-chip {
 		transition: transform var(--duration-slower) var(--ease-standard);
 	}
 
-	// Gradient overlay for text readability
+	/* Gradient overlay for text readability */
 	&::after {
 		content: '';
 		position: absolute;
@@ -6725,7 +6700,7 @@ a.post-tag-chip {
 	&.has-accent:hover {
 	}
 
-	// Dark mode for image cards
+	/* Dark mode for image cards */
 	&.has-image {
 		.tag-card-image {
 			background: rgba(40, 42, 46, 0.9);
@@ -6746,7 +6721,7 @@ a.post-tag-chip {
 	}
 }
 
-// Dark mode for non-image card scrollable posts
+/* Dark mode for non-image card scrollable posts */
 .theme-dark .tag-card-posts.is-scrollable {
 	.tag-posts-scroll {
 		scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
@@ -6829,7 +6804,7 @@ a.post-tag-chip {
 	color: var(--color-content-lead);
 	transition: color var(--duration-base) var(--ease-standard);
 
-	// Only change color on hover for cards WITHOUT image
+	/* Only change color on hover for cards WITHOUT image */
 	.tag-card:not(.has-image):hover & {
 		color: var(--tag-color, var(--ghost-accent-color));
 	}
@@ -6862,16 +6837,16 @@ a.post-tag-chip {
 		display: none;
 	}
 
-	// Scrollable posts container for non-image cards
+	/* Scrollable posts container for non-image cards */
 	&.is-scrollable {
 		.tag-posts-scroll {
-			max-height: 11.5rem; // ~3 posts height
+			max-height: 11.5rem; /* ~3 posts height */
 			overflow-y: auto;
 			scroll-behavior: smooth;
 			scrollbar-width: thin;
 			scrollbar-color: color-mix(in srgb, var(--ghost-accent-color) 30%, transparent) transparent;
-			overscroll-behavior: contain; // Prevent scroll chaining
-			touch-action: pan-y; // Allow vertical touch scrolling
+			overscroll-behavior: contain; /* Prevent scroll chaining */
+			touch-action: pan-y; /* Allow vertical touch scrolling */
 
 			&::-webkit-scrollbar {
 				width: 4px;
@@ -6891,7 +6866,7 @@ a.post-tag-chip {
 			}
 		}
 
-		// Fade gradient at bottom to indicate more content
+		/* Fade gradient at bottom to indicate more content */
 		&::after {
 			content: '';
 			position: absolute;
@@ -6993,7 +6968,7 @@ a.post-tag-chip {
 		display: none !important;
 	}
 
-	// Always literal white paper/black ink here, independent of theme.
+	/* Always literal white paper/black ink here, independent of theme. */
 	html,
 	body {
 		background: #fff;
@@ -7008,8 +6983,8 @@ a.post-tag-chip {
 			text-decoration: underline;
 		}
 
-		// Print the destination of external content links since the
-		// underline alone is useless on paper.
+		/* Print the destination of external content links since the */
+		/* underline alone is useless on paper. */
 		a[href^="http"]::after {
 			content: " (" attr(href) ")";
 			font-size: 0.85em;

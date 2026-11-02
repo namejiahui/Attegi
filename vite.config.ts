@@ -9,7 +9,7 @@ const vendorFiles = [
   { src: 'src/js/libs/highlight.pack.js', dest: 'assets/js/highlight.pack.js' },
   { src: 'src/js/libs/glightbox.min.js', dest: 'assets/js/glightbox.min.js' },
   { src: 'node_modules/tocbot/dist/tocbot.min.js', dest: 'assets/js/tocbot.min.js' },
-  { src: 'src/sass/glightbox.min.css', dest: 'assets/css/glightbox.min.css' }
+  { src: 'src/css/glightbox.min.css', dest: 'assets/css/glightbox.min.css' }
 ];
 
 /**
@@ -89,7 +89,7 @@ export default defineConfig({
     sourcemap: !isProduction ? 'inline' : false,
     rollupOptions: {
       input: {
-        style: path.resolve(import.meta.dirname, 'src/sass/style.scss')
+        style: path.resolve(import.meta.dirname, 'src/css/style.css')
       },
       output: {
         assetFileNames: 'css/[name][extname]'

@@ -51,17 +51,12 @@
   "devDependencies": {
     "@types/archiver": "^8.0.0",
     "@types/browser-sync": "^2.29.1",
-    "@types/handlebars": "^4.1.0",
     "@types/node": "^26.6.6",
     "archiver": "^8.0.0",
-    "autoprefixer": "^10.6.1",
     "browser-sync": "^3.0.4",
-    "cssnano": "^9.0.5",
-    "postcss": "^8.5.28",
-    "sass": "^1.105.0",
     "tocbot": "^4.36.8",
     "typescript": "^7.0.2",
-    "vite": "^6.4.5"
+    "vite": "^8.3.5"
   },
   "config": {
     "posts_per_page": 8,

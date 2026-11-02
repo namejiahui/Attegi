@@ -178,7 +178,7 @@ own cover-active case is already covered there, so this attribute only needs the
 		</script>
 
 	{{!-- Critical CSS - Inlined for faster FCP and reduced CLS.
-	This is a hand-maintained subset of src/sass/style.scss (the "CLS
+	This is a hand-maintained subset of src/css/style.css (the "CLS
 	prevention rules" section and .nav-header) that has to paint before the
 	real stylesheet loads; keep the two in sync by hand when either changes. --}}
 	<style>
@@ -212,7 +212,7 @@ own cover-active case is already covered there, so this attribute only needs the
 			text-decoration: none;
 		}
 		/* Skeleton loading animation - kept in sync by hand with the real
-		   rule in src/sass/style.scss (.skeleton / @keyframes skeleton-loading);
+		   rule in src/css/style.css (.skeleton / @keyframes skeleton-loading);
 		   this copy has to paint before style.css loads. */
 		.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:skeleton-loading 1.5s ease-in-out infinite;border-radius:4px}
 		@keyframes skeleton-loading{0%{background-position:200% 0}100%{background-position:-200% 0}}

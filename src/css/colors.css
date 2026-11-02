@@ -1,25 +1,23 @@
-@use "mixins" as *;
-
 :root {
   --color-background-main: #FFF;
   --color-background-secondary: #F7F8FA;
   --color-background-contrast: #E1E3E6;
   --color-content-lead: #000;
   --color-content-main: #374151;
-  // AA on bg-main (6.42:1), bg-secondary (6.04:1) and bg-contrast (4.99:1)
+  /* AA on bg-main (6.42:1), bg-secondary (6.04:1) and bg-contrast (4.99:1) */
   --color-content-secondary: #5B5F66;
 
-  // Text/icon color for content painted on top of an accent-colored fill.
-  // Ghost admins can pick any accent, so the real value is computed at
-  // runtime from the accent's luminance (see default.hbs); these are the
-  // pre-JS/no-JS fallbacks for the shipped default accent colors.
+  /* Text/icon color for content painted on top of an accent-colored fill.
+     Ghost admins can pick any accent, so the real value is computed at
+     runtime from the accent's luminance (see default.hbs); these are the
+     pre-JS/no-JS fallbacks for the shipped default accent colors. */
   --color-on-accent: #fff;
 
-  // Accent color for TEXT (links, etc.), as opposed to accent-colored fills.
-  // Ghost admins can pick a light or low-contrast accent that reads fine as
-  // a small fill but fails as text on the page background; default.hbs
-  // checks that at runtime and overrides this with a darkened/lightened
-  // variant when needed. Static fallback: same as the fill color.
+  /* Accent color for TEXT (links, etc.), as opposed to accent-colored fills.
+     Ghost admins can pick a light or low-contrast accent that reads fine as
+     a small fill but fails as text on the page background; default.hbs
+     checks that at runtime and overrides this with a darkened/lightened
+     variant when needed. Static fallback: same as the fill color. */
   --color-accent-text: var(--ghost-accent-color);
 
   /* Hairlines: card outlines, table rules, dividers */
@@ -54,6 +52,12 @@
   --color-callout-success: #10b981;
   --color-callout-purple: #a855f7;
 
+  /* Media inset & filters */
+  --color-image-inset: rgba(0, 0, 0, 0.06);
+  --color-bookmark-thumb-filter: none;
+  --poem-card-bg: var(--color-background-secondary);
+  --poem-card-border: var(--color-background-contrast);
+
   /* Ghost portal/comments brand color - mirror accent.
      Kept as two names because some Portal builds read `--brand-color`
      instead of `--brandcolor`; both derive from the same source. */
@@ -61,8 +65,48 @@
   --brand-color: var(--brandcolor);
 
   color-scheme: light;
+}
 
-  @include dark($root: true) {
+.theme-dark:root {
+  --color-background-main: #1D1F21;
+  --color-background-secondary: #25282D;
+  --color-background-contrast: #353A40;
+  --color-content-lead: #F6F7FA;
+  --color-content-main: #E2E6EB;
+  --color-content-secondary: #B6BBC4;
+
+  --color-on-accent: #1D1F21;
+
+  --color-border: rgb(255 255 255 / 0.09);
+  --color-border-strong: rgb(255 255 255 / 0.18);
+  --color-error: #f2857b;
+
+  --shadow-float: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+  --shadow-sheet: 0 -12px 32px -12px rgb(0 0 0 / 0.6);
+  --shadow-overlay: 0 24px 48px -12px rgb(0 0 0 / 0.6);
+
+  --glass-surface: rgb(255 255 255 / 0.12);
+  --glass-surface-strong: rgb(29 31 33 / 0.84);
+  --glass-border: rgb(255 255 255 / 0.2);
+  --glass-border-strong: rgb(255 255 255 / 0.34);
+  --glass-highlight: rgb(255 255 255 / 0.12);
+  --glass-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
+
+  --color-image-inset: rgba(255, 255, 255, 0.08);
+  --color-bookmark-thumb-filter: brightness(0.9);
+  --poem-card-bg: rgba(255, 255, 255, 0.04);
+  --poem-card-border: rgba(255, 255, 255, 0.08);
+
+  /* A tint, not a solid fill: solid amber was the loudest thing on the page. */
+  --color-highlight: rgb(251 191 36 / 0.28);
+  --color-highlight-ink: #F6F7FA;
+  --color-social-github: #555; /* Lighter for dark mode */
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.theme-light):root {
     --color-background-main: #1D1F21;
     --color-background-secondary: #25282D;
     --color-background-contrast: #353A40;
@@ -87,7 +131,12 @@
     --glass-highlight: rgb(255 255 255 / 0.12);
     --glass-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
 
-    // A tint, not a solid fill: solid amber was the loudest thing on the page.
+    --color-image-inset: rgba(255, 255, 255, 0.08);
+    --color-bookmark-thumb-filter: brightness(0.9);
+    --poem-card-bg: rgba(255, 255, 255, 0.04);
+    --poem-card-border: rgba(255, 255, 255, 0.08);
+
+    /* A tint, not a solid fill: solid amber was the loudest thing on the page. */
     --color-highlight: rgb(251 191 36 / 0.28);
     --color-highlight-ink: #F6F7FA;
     --color-social-github: #555; /* Lighter for dark mode */

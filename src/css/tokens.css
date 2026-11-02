@@ -1,24 +1,28 @@
-// ==========================================================================
-// Design tokens: z-index, motion, radius, shadow
-// Color tokens live in _colors.scss.
-// ==========================================================================
+/* ==========================================================================
+   Design tokens: layout, z-index, motion, spacing, radius, shadow
+   Color tokens live in colors.css.
+   ========================================================================== */
 
 :root {
+	/* ---- layout measures ------------------------------------------------ */
+	--inner: min(calc(64rem + 8vw), 76rem);
+	--measure: min(calc(54rem + 6vw), 64rem);
+
 	/* ---- z-index ------------------------------------------------------- */
-	// Local paint-order layers: stacking a decorative pseudo-element,
-	// an image and its overlay/content within a single component.
+	/* Local paint-order layers: stacking a decorative pseudo-element,
+	   an image and its overlay/content within a single component. */
 	--z-behind: -1;
 	--z-base: 1;
 	--z-raised: 2;
 	--z-elevated: 3;
 
-	// Cover image stack (blog cover, post cover): image -> gradient -> content.
+	/* Cover image stack (blog cover, post cover): image -> gradient -> content. */
 	--z-cover-base: 5;
 	--z-cover-image: 6;
 	--z-cover-overlay: 8;
 	--z-content: 10;
 
-	// In-page fixed/sticky chrome.
+	/* In-page fixed/sticky chrome. */
 	--z-footer: 20;
 	--z-pagination-info: 50;
 	--z-pagination: 100;
@@ -27,13 +31,13 @@
 	--z-toc-overlay: 300;
 	--z-toc-panel: 350;
 
-	// Site header. --z-nav-scrim sits between the TOC panel and the nav
-	// itself so the mobile menu always wins over a post's TOC drawer.
+	/* Site header. --z-nav-scrim sits between the TOC panel and the nav
+	   itself so the mobile menu always wins over a post's TOC drawer. */
 	--z-nav: 400;
 	--z-nav-scrim: 390;
 	--z-nav-fixed: 500;
 
-	// Floating widgets and top-level overlays.
+	/* Floating widgets and top-level overlays. */
 	--z-floating-ui: 1000;
 	--z-top: 9999;
 
@@ -78,7 +82,7 @@
 	/* ---- shadow ----------------------------------------------------------
 	   Cards stay flat and are outlined by --color-border. Shadows are only
 	   for things that float above the page; dark mode overrides these in
-	   _colors.scss. */
+	   colors.css. */
 	--shadow-float: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -8px rgb(0 0 0 / 0.16);
 	--shadow-sheet: 0 -12px 32px -12px rgb(0 0 0 / 0.18);
 	--shadow-overlay: 0 24px 48px -12px rgb(0 0 0 / 0.3);
