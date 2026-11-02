@@ -1,9 +1,12 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const {test} = require('node:test');
-const Handlebars = require('handlebars');
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { test } from 'node:test';
+import Handlebars from 'handlebars';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const themeRoot = process.env.THEME_ROOT || path.resolve(__dirname, '../..');
 const networks = ['twitter', 'facebook', 'linkedin', 'bluesky', 'threads', 'mastodon', 'tiktok', 'youtube', 'instagram'];
 
@@ -17,15 +20,18 @@ function renderer() {
     }
     return '';
   });
-  hbs.registerHelper('social_url', function (options) {
+  hbs.registerHelper('social_url', (options) => {
     return `https://social.example/${options.hash.type}`;
   });
-  hbs.registerHelper('t', value => value);
-  hbs.registerHelper('asset', value => `/assets/${value}`);
+  hbs.registerHelper('t', (value) => value);
+  hbs.registerHelper('asset', (value) => `/assets/${value}`);
   for (const name of ['block', 'date', 'navigation', 'body_class', 'ghost_head', 'ghost_foot', 'plural', 'img_url']) {
     hbs.registerHelper(name, () => '');
   }
-  hbs.registerHelper('author', function (options) { return options.fn(this.author); });
+  hbs.registerHelper('author', function (this: unknown, options) {
+    const ctx = this as { author?: unknown };
+    return options.fn(ctx ? ctx.author : {});
+  });
   hbs.registerPartial('loop', '');
   hbs.registerPartial('social-links', fs.readFileSync(path.join(themeRoot, 'partials/social-links.hbs'), 'utf8'));
   for (const file of fs.readdirSync(path.join(themeRoot, 'partials/icons'))) {
@@ -36,24 +42,24 @@ function renderer() {
   return hbs;
 }
 
-function renderTemplate(hbs, name, context, site = {}) {
+function renderTemplate(hbs: typeof Handlebars, name: string, context: Record<string, unknown>, site: Record<string, unknown> = {}) {
   return hbs.compile(fs.readFileSync(path.join(themeRoot, name), 'utf8'))(context, {
-    data: {site, custom: {color_scheme: 'System'}}
+    data: { site, custom: { color_scheme: 'System' } }
   });
 }
 
 for (const network of networks) {
   test(`footer and error shell render with ${network} configured`, () => {
     const hbs = renderer();
-    const site = {title: 'Test site', url: 'https://example.com', [network]: 'account'};
+    const site = { title: 'Test site', url: 'https://example.com', [network]: 'account' };
     for (const body of ['Home', '404', '500', '400']) {
-      const html = renderTemplate(hbs, 'default.hbs', {body}, site);
+      const html = renderTemplate(hbs, 'default.hbs', { body }, site);
       assert.match(html, new RegExp(`class="social-link" href="https://social.example/${network}"`));
       assert.ok(html.includes(body));
     }
   });
   test(`author renders ${network} without a class parameter`, () => {
-    const html = renderTemplate(renderer(), 'author.hbs', {author: {name: 'Author', [network]: 'account'}, pagination: {total: 0}});
+    const html = renderTemplate(renderer(), 'author.hbs', { author: { name: 'Author', [network]: 'account' }, pagination: { total: 0 } });
     assert.match(html, new RegExp(`class="" href="https://social.example/${network}"`));
     assert.ok(!html.includes('class="social-link"'));
   });
@@ -61,15 +67,15 @@ for (const network of networks) {
 
 test('no accounts render no social links, including site accounts on an author without accounts', () => {
   const hbs = renderer();
-  const html = renderTemplate(hbs, 'author.hbs', {author: {name: 'Author'}, pagination: {total: 0}}, {twitter: 'site-account'});
+  const html = renderTemplate(hbs, 'author.hbs', { author: { name: 'Author' }, pagination: { total: 0 } }, { twitter: 'site-account' });
   assert.doesNotMatch(html, /href="https:\/\/social\.example\//);
-  assert.doesNotThrow(() => renderTemplate(hbs, 'default.hbs', {body: 'Home'}));
+  assert.doesNotThrow(() => renderTemplate(hbs, 'default.hbs', { body: 'Home' }));
 });
 
 test('partial escapes its caller-provided class', () => {
   const hbs = renderer();
   const html = hbs.compile('{{> "social-links" source=source social_link_class=cssClass}}')({
-    source: {twitter: 'account'}, cssClass: 'social-link" onclick="alert(1)'
+    source: { twitter: 'account' }, cssClass: 'social-link" onclick="alert(1)'
   });
   assert.ok(html.includes('social-link&quot; onclick&#x3D;&quot;alert(1)'));
 });

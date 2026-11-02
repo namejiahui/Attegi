@@ -6,12 +6,14 @@
  * remote Ghost Content API, so template, CSS, and JS edits can reload together.
  */
 
-const fs = require('fs');
-const http = require('http');
-const path = require('path');
-const { URL } = require('url');
-const Handlebars = require('handlebars');
-const browserSync = require('browser-sync').create();
+import fs from 'node:fs';
+import http from 'node:http';
+import path from 'node:path';
+import { URL } from 'node:url';
+import Handlebars from 'handlebars';
+import bs from 'browser-sync';
+
+const browserSync = bs.create();
 
 const ROOT = process.cwd();
 const DEFAULT_PREVIEW_PORT = 3020;

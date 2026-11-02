@@ -1,7 +1,7 @@
 # AGENTS.md
 
-Attegi is a Ghost theme: Handlebars templates, SCSS, and vanilla ES modules
-bundled by esbuild. Tooling runs on Bun. `CLAUDE.md` is a symlink to this file.
+Attegi is a Ghost theme: Handlebars templates, SCSS, and TypeScript/ES modules
+bundled by Vite. Tooling runs on pnpm and Node.js. `CLAUDE.md` is a symlink to this file.
 
 ## Rules
 
@@ -16,16 +16,17 @@ bundled by esbuild. Tooling runs on Bun. `CLAUDE.md` is a symlink to this file.
 ## Commands
 
 ```bash
-bun install
-bun run dev:preview   # Local .hbs render + remote Content API content, http://localhost:3020
-bun run dev:hot       # BrowserSync proxy over a real Ghost (GHOST_DEV_URL), http://localhost:3010
-bun run dev           # Asset watchers only: sass, tailwind, esbuild
-bun run build         # Production CSS + JS
-bun run test:templates  # Handlebars render tests in scripts/tests
-bun run validate      # tests, build, zip to dist/attegi.zip, run GScan
+pnpm install
+pnpm run dev:preview   # Local .hbs render + remote Content API content, http://localhost:3020
+pnpm run dev:hot       # BrowserSync proxy over a real Ghost (GHOST_DEV_URL), http://localhost:3010
+pnpm run dev           # Asset watcher (Vite watch mode)
+pnpm run build         # Production CSS + JS via Vite
+pnpm run typecheck     # TypeScript 7 check
+pnpm run test:templates  # Handlebars render tests in scripts/tests
+pnpm run validate      # typecheck, tests, build, zip to dist/attegi.zip, run GScan
 ```
 
-There is no linter. `bun run validate` is the floor for every change.
+There is no linter. `pnpm run validate` is the floor for every change.
 
 - Partial parameters and bare `{{names}}` must not reuse a Ghost helper name
   (`link_class`, `url`, `title`, ...): Handlebars calls the helper first.
@@ -49,7 +50,7 @@ There is no linter. `bun run validate` is the floor for every change.
   `/* ===== */` banners, tab-indented. Modules: `_colors`, `_fonts`,
   `_highlight`, `_toc`, `_poem-card`, `_normalize`, `_breakpoints`.
 - JS: `src/js/entries/{site,post,page}.js` bundle to `assets/js/` via
-  `scripts/build.js`. Features live in `src/js/features/` and export
+  Vite (configured in `vite.config.ts`). Features live in `src/js/features/` and export
   `init*` / `setup*` functions; shared helpers (`qs`, `qsa`, `onReady`,
   `throttle`, `getI18n`) come from `src/js/core/`. Two-space indent, semicolons, no jQuery.
 - Vendor scripts (`highlight.pack.js`, `glightbox`, `tocbot`) are copied, not bundled.

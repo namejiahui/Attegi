@@ -59,10 +59,11 @@ fi
 
 # Update package.json
 echo "Updating package.json..."
-bun -e "
+node -e "
+const fs = require('fs');
 const pkg = require('./package.json');
 pkg.version = '${NEW_VERSION}';
-await Bun.write('./package.json', JSON.stringify(pkg, null, 2) + '\n');
+fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
 "
 
 echo -e "${GREEN}✓ Version updated to ${NEW_VERSION}${NC}"

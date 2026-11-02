@@ -5,12 +5,14 @@
  * Proxies a running Ghost instance and reloads when theme files change.
  */
 
-const browserSync = require('browser-sync').create();
+import bs from 'browser-sync';
+
+const browserSync = bs.create();
 
 const DEFAULT_GHOST_URL = 'http://127.0.0.1:2368';
 const DEFAULT_HOT_PORT = 3010;
 
-function normalizeUrl(rawUrl) {
+function normalizeUrl(rawUrl?: string): string {
   const value = (rawUrl || '').trim();
 
   if (!value) {
@@ -24,12 +26,12 @@ function normalizeUrl(rawUrl) {
   return `http://${value}`;
 }
 
-function parsePort(rawPort, fallback) {
+function parsePort(rawPort: string | undefined, fallback: number): number {
   const parsed = Number.parseInt(String(rawPort || ''), 10);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-function parseBoolean(rawValue) {
+function parseBoolean(rawValue?: string): boolean {
   const normalized = String(rawValue || '').trim().toLowerCase();
   return ['1', 'true', 'yes', 'on'].includes(normalized);
 }
@@ -88,7 +90,7 @@ browserSync.init(
   }
 );
 
-function shutdown() {
+function shutdown(): void {
   browserSync.exit();
   process.exit(0);
 }

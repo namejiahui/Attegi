@@ -1,11 +1,12 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 /**
  * Uploads and activates a Ghost theme via the Admin API.
  * Replaces the archived third-party GitHub Action with a small, inspectable flow.
  */
 
-const { createHmac } = require('node:crypto');
+import fs from 'node:fs';
+import { createHmac } from 'node:crypto';
 
 const ACCEPT_VERSION = process.env.GHOST_ADMIN_API_VERSION || 'v6.0';
 const apiUrl = process.env.GHOST_ADMIN_API_URL;
@@ -27,8 +28,7 @@ if (!apiUrl || !apiKey) {
   process.exit(1);
 }
 
-const zipFile = Bun.file(zipPath);
-if (!(await zipFile.exists())) {
+if (!fs.existsSync(zipPath)) {
   console.error(`[deploy] Theme zip not found: ${zipPath}`);
   process.exit(1);
 }
@@ -40,10 +40,13 @@ console.log(`[deploy] Uploading ${zipPath}`);
 console.log(`[deploy] Admin API: ${adminApiUrl}`);
 console.log(`[deploy] Accept-Version: ${ACCEPT_VERSION}`);
 
+interface UploadedTheme {
+  name: string;
+}
+
 const theme = await uploadTheme({
   adminApiUrl,
   token,
-  zipFile,
   zipPath
 });
 
@@ -55,12 +58,12 @@ await activateTheme({
 
 console.log(`[deploy] Theme active: ${theme.name}`);
 
-function printUsage(exitCode) {
-  console.log('Usage: bun scripts/deploy-theme.js <path-to-theme-zip>');
+function printUsage(exitCode: number): never {
+  console.log('Usage: node scripts/deploy-theme.ts <path-to-theme-zip>');
   process.exit(exitCode);
 }
 
-function normalizeAdminApiUrl(rawUrl) {
+function normalizeAdminApiUrl(rawUrl: string): string {
   const trimmed = String(rawUrl).trim().replace(/\/+$/, '');
   if (!trimmed) {
     throw new Error('Ghost Admin API URL is empty.');
@@ -73,7 +76,7 @@ function normalizeAdminApiUrl(rawUrl) {
   return `${trimmed}/ghost/api/admin`;
 }
 
-function createAdminToken(key) {
+function createAdminToken(key: string): string {
   const [id, secret] = String(key).trim().split(':');
   if (!id || !secret) {
     throw new Error('Ghost Admin API key must be in "<id>:<secret>" format.');
@@ -100,7 +103,7 @@ function createAdminToken(key) {
   return `${unsignedToken}.${signature}`;
 }
 
-function base64url(value) {
+function base64url(value: string | Buffer): string {
   return Buffer
     .from(value)
     .toString('base64')
@@ -109,10 +112,11 @@ function base64url(value) {
     .replace(/=+$/g, '');
 }
 
-async function uploadTheme({ adminApiUrl, token, zipFile, zipPath }) {
+async function uploadTheme({ adminApiUrl, token, zipPath }: { adminApiUrl: string; token: string; zipPath: string }): Promise<UploadedTheme> {
   const formData = new FormData();
   const fileName = zipPath.split('/').pop() || 'theme.zip';
-  const uploadFile = new File([await zipFile.arrayBuffer()], fileName, {
+  const zipBuffer = fs.readFileSync(zipPath);
+  const uploadFile = new File([zipBuffer], fileName, {
     type: 'application/zip'
   });
   formData.set('file', uploadFile);
@@ -136,7 +140,7 @@ async function uploadTheme({ adminApiUrl, token, zipFile, zipPath }) {
   return theme;
 }
 
-async function activateTheme({ adminApiUrl, token, themeName }) {
+async function activateTheme({ adminApiUrl, token, themeName }: { adminApiUrl: string; token: string; themeName: string }): Promise<void> {
   const response = await fetch(`${adminApiUrl}/themes/${encodeURIComponent(themeName)}/activate/`, {
     method: 'PUT',
     headers: {
@@ -148,7 +152,7 @@ async function activateTheme({ adminApiUrl, token, themeName }) {
   await parseResponse(response);
 }
 
-async function parseResponse(response) {
+async function parseResponse(response: Response): Promise<any> {
   const text = await response.text();
   const payload = text ? safeJsonParse(text) : null;
 
@@ -160,7 +164,7 @@ async function parseResponse(response) {
   return payload;
 }
 
-function safeJsonParse(text) {
+function safeJsonParse(text: string): any {
   try {
     return JSON.parse(text);
   } catch {
