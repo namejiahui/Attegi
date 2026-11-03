@@ -2,9 +2,16 @@
 
 # Attegi
 
+> [!NOTE]
+> 本项目是 [bunizao/Attegi](https://github.com/bunizao/Attegi) 的独立分支（Fork）。
+>
+> **主要调整与增强：**
+> - **通用多语言下拉选择器**：支持在 Ghost 后台配置任意多种语言（2/3/4+ 种），自适应二级路由与路径保留跳转。
+> - **原生专栏与标签导航支持**：菜单标签国际化自适应翻译，去除冗余模板。
+> - **工具链迁移**：工作流从 Bun + esbuild 迁移至 pnpm + Vite 8 + TypeScript 7。
+
 [![Ghost 5+](https://img.shields.io/badge/Ghost-5%2B-000?logo=ghost&logoColor=white)](https://ghost.org/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](LICENSE)
-[![Build (esbuild)](https://github.com/bunizao/Attegi/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/bunizao/Attegi/actions/workflows/build.yml)
 [![Demo](https://img.shields.io/badge/demo-attegi.tuuhub.com-4F46E5)](https://attegi.tuuhub.com)
 
 一款现代、优雅的 Ghost 主题，专注于清晰排版、移动端可读性和对 [Ghost](https://ghost.org) 的深度支持。
@@ -187,7 +194,7 @@ Attegi 在 [Google PageSpeed Insights](https://pagespeed.web.dev/analysis/https-
 
 ## 快速开始
 
-1. 从 [GitHub Releases](https://github.com/bunizao/Attegi/releases) 下载
+1. 从 [GitHub Releases](https://github.com/namejiahui/Attegi/releases) 下载
 2. Ghost 后台 → 设置 → 设计 → 上传主题
 3. 激活 Attegi
 
@@ -223,7 +230,7 @@ span.nav-copy { display: none !important; }
 <details>
 <summary><strong>前置要求</strong></summary>
 
-- Bun 1.3+
+- Node.js 22+ 与 pnpm
 - Ghost 实例（本机 Ghost CLI 或远程开发站点）
 - Docker（可选）
 - Git
@@ -238,7 +245,7 @@ span.nav-copy { display: none !important; }
 ghost start --development
 
 # 2) 在本主题仓库启动热重载（代理 + 资源监听）
-bun run dev:hot
+pnpm run dev:hot
 
 # 3) 打开热重载地址（本仓库默认端口）
 # http://localhost:3010
@@ -260,7 +267,7 @@ DEV_HOT_LOCAL_ASSETS=true
 轻量开发资源时，可以直接代理远程开发站点：
 
 ```bash
-GHOST_DEV_URL=https://your-dev-site.example bun run dev:hot
+GHOST_DEV_URL=https://your-dev-site.example pnpm run dev:hot
 ```
 
 Ghost 仍然负责渲染 Handlebars 模板。这个模式不需要本机跑 Ghost，并且本地 `assets/` 改动会热重载；但模板改动需要目标 Ghost 站点安装对应版本的主题。
@@ -275,7 +282,7 @@ Ghost 仍然负责渲染 Handlebars 模板。这个模式不需要本机跑 Ghos
 ```bash
 cp .env.example .env.local
 # 在 .env.local 填入 GHOST_CONTENT_API_URL 和 GHOST_CONTENT_API_KEY
-bun run dev:preview
+pnpm run dev:preview
 ```
 
 默认预览地址：
@@ -286,7 +293,7 @@ http://localhost:3020
 
 这个模式会在本地渲染 `.hbs`，并热重载 `assets/`、模板和语言文件。已覆盖主题的主要路由：首页、文章、页面、标签、作者、`page-tags`、`page-links`。
 
-它是开发预览器，不是 Ghost 本体。会员 Portal、评论、搜索、Ghost 图片转换会被跳过或近似模拟；发布主题 zip 前仍然要跑 `bun run validate` 并在 Ghost 里实测。
+它是开发预览器，不是 Ghost 本体。会员 Portal、评论、搜索、Ghost 图片转换会被跳过或近似模拟；发布主题 zip 前仍然要跑 `pnpm run validate` 并在 Ghost 里实测。
 
 </details>
 
@@ -305,11 +312,11 @@ docker-compose up -d
 <summary><strong>构建命令</strong></summary>
 
 ```bash
-bun run dev        # 监听模式
-bun run dev:hot    # BrowserSync 热重载（代理 Ghost）
-bun run build      # 生产构建
-bun run compress   # 创建 zip
-bun run validate   # 验证主题
+pnpm run dev        # 监听模式
+pnpm run dev:hot    # BrowserSync 热重载（代理 Ghost）
+pnpm run build      # 生产构建
+pnpm run compress   # 创建 zip
+pnpm run validate   # 验证主题
 ```
 
 </details>
@@ -323,8 +330,9 @@ Attegi/
 ├── locales/       # 32 种语言文件
 ├── partials/      # 模板组件
 ├── src/
-│   ├── sass/      # 源样式
+│   ├── css/       # 源样式
 │   └── js/        # 源脚本
+├── scripts/       # 构建工具 (Vite)
 ├── *.hbs          # 模板
 └── package.json
 ```
@@ -336,8 +344,8 @@ Attegi/
 ## 支持
 
 - **文档**：[Ghost 主题文档](https://ghost.org/docs/themes/)
-- **问题**：[GitHub Issues](https://github.com/bunizao/Attegi/issues)
-- **讨论**：[GitHub Discussions](https://github.com/bunizao/Attegi/discussions)
+- **问题**：[GitHub Issues](https://github.com/namejiahui/Attegi/issues)
+- **讨论**：[GitHub Discussions](https://github.com/namejiahui/Attegi/discussions)
 - **付费支持与定制**：可提供付费技术支持与主题定制，请向我发送[**邮件**](mailto:me@tutuis.me)沟通需求。
 
 ---

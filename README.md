@@ -2,9 +2,16 @@
 
 # Attegi
 
+> [!NOTE]
+> This repository is an independent fork of [bunizao/Attegi](https://github.com/bunizao/Attegi).
+>
+> **Notable Changes in this Fork:**
+> - **Universal Multilingual Selector**: Scalable language dropdown/popover (2, 3, 4+ languages) configurable via Ghost Admin `@custom.multilingual_locales`.
+> - **Native Column / Taxonomy Support**: Streamlined tag navigation and bilingual label auto-translation without template duplication.
+> - **Toolchain Migration**: Migrated workflow from Bun + esbuild to pnpm + Vite 8 + TypeScript 7.
+
 [![Ghost 5+](https://img.shields.io/badge/Ghost-5%2B-000?logo=ghost&logoColor=white)](https://ghost.org/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](LICENSE)
-[![Build (esbuild)](https://github.com/bunizao/Attegi/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/bunizao/Attegi/actions/workflows/build.yml)
 [![Demo](https://img.shields.io/badge/demo-attegi.tuuhub.com-4F46E5)](https://attegi.tuuhub.com)
 
 A modern, elegant Ghost theme focused on clean typography, mobile readability, and deep support for [Ghost](https://ghost.org).
@@ -187,7 +194,7 @@ Attegi achieves excellent scores on [Google PageSpeed Insights](https://pagespee
 
 ## Quick Start
 
-1. Download the latest version from [GitHub Releases](https://github.com/bunizao/Attegi/releases)
+1. Download the latest version from [GitHub Releases](https://github.com/namejiahui/Attegi/releases)
 2. `Ghost Admin` → `Settings` → `Design` → `Upload Theme`
 3. Activate `Attegi`
 4. Enjoy!
@@ -239,7 +246,7 @@ span.nav-copy { display: none !important; }
 ghost start --development
 
 # 2) In this theme repo, run hot dev (proxy + asset watchers)
-bun run dev:hot
+pnpm run dev:hot
 
 # 3) Open hot-reload URL (default port for this repo)
 # http://localhost:3010
@@ -261,7 +268,7 @@ DEV_HOT_LOCAL_ASSETS=true
 For lightweight asset work, use a remote dev Ghost instance:
 
 ```bash
-GHOST_DEV_URL=https://your-dev-site.example bun run dev:hot
+GHOST_DEV_URL=https://your-dev-site.example pnpm run dev:hot
 ```
 
 Ghost still renders the Handlebars templates. This mode avoids running Ghost locally and makes local `assets/` changes hot reload, but template changes require the target Ghost site to have the matching theme installed.
@@ -276,7 +283,7 @@ Use this for a local preview loop: local templates, local CSS, and local JS with
 ```bash
 cp .env.example .env.local
 # Fill GHOST_CONTENT_API_URL and GHOST_CONTENT_API_KEY in .env.local
-bun run dev:preview
+pnpm run dev:preview
 ```
 
 Default preview URL:
@@ -287,7 +294,7 @@ http://localhost:3020
 
 This mode renders `.hbs` files locally and hot reloads `assets/`, templates, and locales. It covers the main theme routes: home, posts, pages, tags, authors, `page-tags`, and `page-links`.
 
-It is a development renderer, not Ghost itself. Member portal, comments, search, and exact Ghost image transforms are stubbed or approximated; run `bun run validate` and test in Ghost before shipping a theme zip.
+It is a development renderer, not Ghost itself. Member portal, comments, search, and exact Ghost image transforms are stubbed or approximated; run `pnpm run validate` and test in Ghost before shipping a theme zip.
 
 </details>
 
@@ -306,12 +313,12 @@ docker-compose up -d
 <summary><strong>Build Commands</strong></summary>
 
 ```bash
-bun run dev        # Watch mode (CSS + JS concurrent)
-bun run dev:hot    # Hot reload via BrowserSync proxy
-bun run build      # Production build
-bun run compress   # Create zip
-bun run validate   # Validate theme with GScan
-bun run clean      # Remove build artifacts
+pnpm run dev        # Watch mode (CSS + JS concurrent)
+pnpm run dev:hot    # Hot reload via BrowserSync proxy
+pnpm run build      # Production build
+pnpm run compress   # Create zip
+pnpm run validate   # Validate theme with GScan
+pnpm run clean      # Remove build artifacts
 ```
 
 </details>
@@ -325,12 +332,12 @@ Attegi/
 ├── locales/       # 32 language files
 ├── partials/      # Template components
 ├── src/
-│   ├── sass/      # Source styles
+│   ├── css/       # Source styles
 │   └── js/        # Modular ES modules
 │       ├── core/      # Shared utilities
 │       ├── features/  # Feature modules
 │       └── entries/   # Bundle entry points
-├── scripts/       # Build tools (esbuild)
+├── scripts/       # Build tools (Vite)
 ├── *.hbs          # Templates
 └── package.json
 ```
@@ -342,8 +349,8 @@ Attegi/
 ## Support
 
 - **Docs**: [Ghost Theme Documentation](https://ghost.org/docs/themes/)
-- **Issues**: [GitHub Issues](https://github.com/bunizao/Attegi/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/bunizao/Attegi/discussions)
+- **Issues**: [GitHub Issues](https://github.com/namejiahui/Attegi/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/namejiahui/Attegi/discussions)
 - **Paid support & Customization**: Available for technical support and theme customization. [**email**](mailto:me@tutuis.me) me to discuss scope.
 
 ---
