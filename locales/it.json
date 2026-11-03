@@ -1,8 +1,11 @@
 {
     "Logo": "Logo",
+    "Language": "Lingua",
     "Close": "Chiudi",
+    "Skip to content": "Vai al contenuto",
     "Get the latest posts delivered right to your inbox.": "Ricevi gli ultimi articoli recapitati direttamente nella tua casella di posta elettronica.",
     "Home": "Principale",
+    "About": "Informazioni",
     "Menu": "Menu",
     "Newer Posts": "Nuovi articoli",
     "Older Posts": "Vecchi articoli",
@@ -29,6 +32,8 @@
     "Author": "Autore",
     "Topic": "Argomento",
     "Topics": "Argomenti",
+    "Columns": "Rubriche",
+    "Tags": "Tag",
     "Share": "Condividi",
     "Search": "Ricerca",
     "Search all posts": "Cerca in tutti gli articoli",
@@ -75,7 +80,12 @@
     "On this page": "In questa pagina",
     "Open table of contents": "Apri indice",
     "Close table of contents": "Chiudi indice",
+    "Toggle subsections": "Mostra/nascondi sottosezioni",
     "This content was created by humans": "Questo contenuto è stato creato da esseri umani",
     "Open image": "Apri immagine",
-    "Skip to content": "Vai al contenuto"
+    "Check your inbox to confirm your subscription.": "Controlla la tua casella di posta per confermare l'iscrizione.",
+    "Something went wrong. Please try again.": "Si è verificato un errore. Riprova.",
+    "Footer navigation": "Navigazione a piè di pagina",
+    "Recommendations": "Raccomandazioni",
+    "Support": "Supporto"
 }

@@ -1,8 +1,11 @@
 {
     "Logo": "Logo",
+    "Language": "Język",
     "Close": "Zamknij",
+    "Skip to content": "Przejdź do treści",
     "Get the latest posts delivered right to your inbox.": "Otrzymuj najnowsze posty prosto na swoją skrzynkę.",
     "Home": "Strona Główna",
+    "About": "O nas",
     "Menu": "Menu",
     "Newer Posts": "Nowsze Posty",
     "Older Posts": "Starsze Posty",
@@ -29,6 +32,8 @@
     "Author": "Autor",
     "Topic": "Temat",
     "Topics": "Tematy",
+    "Columns": "Kolumny",
+    "Tags": "Tagi",
     "Share": "Udostępnij",
     "Search": "Szukaj",
     "Search all posts": "Szukaj wśród wszystkich postów",
@@ -75,7 +80,12 @@
     "On this page": "Na tej stronie",
     "Open table of contents": "Otwórz spis treści",
     "Close table of contents": "Zamknij spis treści",
+    "Toggle subsections": "Przełącz podsekcje",
     "This content was created by humans": "Ta treść została stworzona przez ludzi",
     "Open image": "Otwórz obraz",
-    "Skip to content": "Przejdź do treści"
+    "Check your inbox to confirm your subscription.": "Sprawdź skrzynkę odbiorczą, aby potwierdzić subskrypcję.",
+    "Something went wrong. Please try again.": "Coś poszło nie tak. Spróbuj ponownie.",
+    "Footer navigation": "Nawigacja w stopce",
+    "Recommendations": "Rekomendacje",
+    "Support": "Wsparcie"
 }

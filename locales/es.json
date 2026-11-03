@@ -1,8 +1,11 @@
 {
     "Logo": "Logo",
+    "Language": "Idioma",
     "Close": "Cerrar",
+    "Skip to content": "Saltar al contenido",
     "Get the latest posts delivered right to your inbox.": "Recibe los últimos artículos directamente en tu buzón.",
     "Home": "Página principal",
+    "About": "Acerca de",
     "Menu": "Menú",
     "Newer Posts": "Artículos Nuevos",
     "Older Posts": "Artículos Antiguos",
@@ -29,6 +32,8 @@
     "Author": "Autor",
     "Topic": "Tema",
     "Topics": "Temas",
+    "Columns": "Columnas",
+    "Tags": "Etiquetas",
     "Share": "Compartir",
     "Search": "Buscar",
     "Search all posts": "Buscar en todos los posts",
@@ -75,7 +80,12 @@
     "On this page": "En esta página",
     "Open table of contents": "Abrir tabla de contenido",
     "Close table of contents": "Cerrar tabla de contenido",
+    "Toggle subsections": "Alternar subsecciones",
     "This content was created by humans": "Este contenido fue creado por humanos",
     "Open image": "Abrir imagen",
-    "Skip to content": "Saltar al contenido"
+    "Check your inbox to confirm your subscription.": "Revisa tu bandeja de entrada para confirmar tu suscripción.",
+    "Something went wrong. Please try again.": "Algo salió mal. Por favor, inténtalo de nuevo.",
+    "Footer navigation": "Navegación del pie de página",
+    "Recommendations": "Recomendaciones",
+    "Support": "Apoyo"
 }

@@ -1,8 +1,11 @@
 {
     "Logo": "Logo",
+    "Language": "Kieli",
     "Close": "Sulje",
+    "Skip to content": "Siirry sisältöön",
     "Get the latest posts delivered right to your inbox.": "Tilaa tieto uusista postauksista suoraan sähköpostiisi.",
     "Home": "Etusivu",
+    "About": "Tietoa",
     "Menu": "Valikko",
     "Newer Posts": "Uudemmat postaukset",
     "Older Posts": "Vanhemmat postaukset",
@@ -29,6 +32,8 @@
     "Author": "Kirjoittaja",
     "Topic": "Aihe",
     "Topics": "Aiheet",
+    "Columns": "Kolumnit",
+    "Tags": "Tunnisteet",
     "Share": "Jaa",
     "Search": "Etsi",
     "Search all posts": "Etsi kaikista postauksista",
@@ -75,7 +80,12 @@
     "On this page": "Tällä sivulla",
     "Open table of contents": "Avaa sisällysluettelo",
     "Close table of contents": "Sulje sisällysluettelo",
+    "Toggle subsections": "Vaihda alaosaa",
     "This content was created by humans": "Tämän sisällön ovat luoneet ihmiset",
     "Open image": "Avaa kuva",
-    "Skip to content": "Siirry sisältöön"
+    "Check your inbox to confirm your subscription.": "Vahvista tilauksesi tarkistamalla sähköpostisi.",
+    "Something went wrong. Please try again.": "Jokin meni pieleen. Yritä uudelleen.",
+    "Footer navigation": "Alatunnisteen navigointi",
+    "Recommendations": "Suositukset",
+    "Support": "Tuki"
 }

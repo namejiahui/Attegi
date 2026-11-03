@@ -1,8 +1,11 @@
 {
     "Logo": "شعار",
+    "Language": "اللغة",
     "Close": "اغلاق",
+    "Skip to content": "تخطَّ إلى المحتوى",
     "Get the latest posts delivered right to your inbox.": "أحصل على أحدث المنشورات فورا على بريدك الالكتروني ",
     "Home": "الصفحة الرئيسية",
+    "About": "حول",
     "Menu": "القائمة",
     "Newer Posts": "المنشورات الأحدث",
     "Older Posts": "المنشورات الأقدم",
@@ -29,6 +32,8 @@
     "Author": "الكاتب",
     "Topic": "موضوع",
     "Topics": "مواضيع",
+    "Columns": "أعمدة",
+    "Tags": "وسوم",
     "Share": "شارك",
     "Search": "بحث",
     "Search all posts": "بحث في كل المنشورات",
@@ -75,7 +80,12 @@
     "On this page": "في هذه الصفحة",
     "Open table of contents": "فتح جدول المحتويات",
     "Close table of contents": "إغلاق جدول المحتويات",
+    "Toggle subsections": "تبديل الأقسام الفرعية",
     "This content was created by humans": "تم إنشاء هذا المحتوى بواسطة البشر",
     "Open image": "فتح الصورة",
-    "Skip to content": "تخطَّ إلى المحتوى"
+    "Check your inbox to confirm your subscription.": "تحقق من صندوق الوارد لتأكيد اشتراكك.",
+    "Something went wrong. Please try again.": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "Footer navigation": "تنقل التذييل",
+    "Recommendations": "توصيات",
+    "Support": "الدعم"
 }

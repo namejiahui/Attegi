@@ -1,8 +1,11 @@
 {
     "Logo": "Logosu",
+    "Language": "Dil",
     "Close": "Kapat",
+    "Skip to content": "İçeriğe atla",
     "Get the latest posts delivered right to your inbox.": "Son gönderileri doğrudan posta kutunuza edinin.",
     "Home": "Anasayfa",
+    "About": "Hakkında",
     "Menu": "Menü",
     "Newer Posts": "Yeni Gönderiler",
     "Older Posts": "Eski Gönderiler",
@@ -29,6 +32,8 @@
     "Author": "Yazar",
     "Topic": "Konu",
     "Topics": "Konular",
+    "Columns": "Köşe Yazıları",
+    "Tags": "Etiketler",
     "Share": "Paylaş",
     "Search": "Ara",
     "Search all posts": "Tüm gönderilerde ara",
@@ -75,7 +80,12 @@
     "On this page": "Bu sayfada",
     "Open table of contents": "İçindekileri aç",
     "Close table of contents": "İçindekileri kapat",
+    "Toggle subsections": "Alt bölümleri aç/kapat",
     "This content was created by humans": "Bu içerik insanlar tarafından oluşturuldu",
     "Open image": "Görseli aç",
-    "Skip to content": "İçeriğe atla"
+    "Check your inbox to confirm your subscription.": "Aboneliğinizi onaylamak için gelen kutunuzu kontrol edin.",
+    "Something went wrong. Please try again.": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+    "Footer navigation": "Altbilgi gezintisi",
+    "Recommendations": "Öneriler",
+    "Support": "Destek"
 }

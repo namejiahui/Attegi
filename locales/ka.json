@@ -1,8 +1,11 @@
 {
     "Logo": "ლოგო",
+    "Language": "ენა",
     "Close": "დახურვა",
+    "Skip to content": "გადასვლა შინაარსზე",
     "Get the latest posts delivered right to your inbox.": "მიიღეთ უკანასკნელი პოსტები პირდაპირ თქვენს ინბოქსში",
     "Home": "მთავარი",
+    "About": "შესახებ",
     "Menu": "მენიუ",
     "Newer Posts": "ახალი პოსტები",
     "Older Posts": "ძველი პოსტები",
@@ -29,6 +32,8 @@
     "Author": "ავტორი",
     "Topic": "ტოპიკი",
     "Topics": "ტოპიკები",
+    "Columns": "სვეტები",
+    "Tags": "ტეგები",
     "Share": "გაზიარება",
     "Search": "ძებნა",
     "Search all posts": "მოძებნე ყველა პოსტები",
@@ -75,7 +80,12 @@
     "On this page": "ამ გვერდზე",
     "Open table of contents": "სარჩევის გახსნა",
     "Close table of contents": "სარჩევის დახურვა",
+    "Toggle subsections": "ქვეგანყოფილებების გადართვა",
     "This content was created by humans": "ეს კონტენტი შექმნილია ადამიანების მიერ",
     "Open image": "სურათის გახსნა",
-    "Skip to content": "გადასვლა შინაარსზე"
+    "Check your inbox to confirm your subscription.": "შეამოწმეთ თქვენი საფოსტო ყუთი გამოწერის დასადასტურებლად.",
+    "Something went wrong. Please try again.": "დაფიქსირდა შეცდომა. გთხოვთ, სცადოთ ხელახლა.",
+    "Footer navigation": "სარდაფის ნავიგაცია",
+    "Recommendations": "რეკომენდაციები",
+    "Support": "მხარდაჭერა"
 }

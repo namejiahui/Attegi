@@ -1,8 +1,11 @@
 {
     "Logo": "Logo",
+    "Language": "Språk",
     "Close": "Stäng",
+    "Skip to content": "Hoppa till innehåll",
     "Get the latest posts delivered right to your inbox.": "Få de senaste inläggen direkt till din inbox.",
     "Home": "Hem",
+    "About": "Om",
     "Menu": "Meny",
     "Newer Posts": "Nyare inlägg",
     "Older Posts": "Äldre inlägg",
@@ -29,6 +32,8 @@
     "Author": "Författare",
     "Topic": "Ämne",
     "Topics": "Ämnen",
+    "Columns": "Kolumner",
+    "Tags": "Taggar",
     "Share": "Dela",
     "Search": "Sök",
     "Search all posts": "Sök i alla inlägg",
@@ -75,7 +80,12 @@
     "On this page": "På den här sidan",
     "Open table of contents": "Öppna innehållsförteckning",
     "Close table of contents": "Stäng innehållsförteckning",
+    "Toggle subsections": "Växla underavsnitt",
     "This content was created by humans": "Detta innehåll skapades av människor",
     "Open image": "Öppna bild",
-    "Skip to content": "Hoppa till innehåll"
+    "Check your inbox to confirm your subscription.": "Kolla din inkorg för att bekräfta din prenumeration.",
+    "Something went wrong. Please try again.": "Något gick fel. Försök igen.",
+    "Footer navigation": "Sidfotsnavigering",
+    "Recommendations": "Rekommendationer",
+    "Support": "Stöd"
 }

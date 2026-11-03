@@ -1,8 +1,11 @@
 {
     "Logo": "ロゴ",
+    "Language": "言語",
     "Close": "閉じる",
+    "Skip to content": "コンテンツへスキップ",
     "Get the latest posts delivered right to your inbox.": "最新の投稿をメールでお届けします。",
     "Home": "ホーム",
+    "About": "概要",
     "Menu": "メニュー",
     "Newer Posts": "新しい投稿",
     "Older Posts": "古い投稿",
@@ -29,6 +32,8 @@
     "Author": "著者",
     "Topic": "話題",
     "Topics": "話題",
+    "Columns": "コラム",
+    "Tags": "タグ",
     "Share": "共有",
     "Search": "検索",
     "Search all posts": "すべての投稿を検索",
@@ -75,7 +80,12 @@
     "On this page": "このページ内",
     "Open table of contents": "目次を開く",
     "Close table of contents": "目次を閉じる",
+    "Toggle subsections": "サブセクションの切り替え",
     "This content was created by humans": "このコンテンツは人間によって作成されました",
     "Open image": "画像を開く",
-    "Skip to content": "コンテンツへスキップ"
+    "Check your inbox to confirm your subscription.": "メールを確認して登録を完了してください。",
+    "Something went wrong. Please try again.": "問題が発生しました。もう一度お試しください。",
+    "Footer navigation": "フッターナビゲーション",
+    "Recommendations": "おすすめ",
+    "Support": "サポート"
 }

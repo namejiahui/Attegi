@@ -249,33 +249,44 @@ async function serveRemoteAsset(pathname: string, response: http.ServerResponse)
 async function buildRouteModel(pathname: string): Promise<any> {
   const common = await getCommonContext(pathname);
 
-  if (pathname === '/') {
+  if (pathname === '/' || pathname === '/en' || pathname === '/en/') {
+    const isEn = pathname.startsWith('/en');
     const page = 1;
-    const posts = await listPosts({ page, limit: postsPerPage });
+    const posts = await listPosts({
+      page,
+      limit: postsPerPage,
+      filter: isEn ? 'tag:hash-en' : 'tag:-hash-en'
+    });
     return {
       ...common,
       routeType: 'home',
       template: 'index',
       posts: posts.items,
-      pagination: buildPagination(posts.meta.pagination, '/')
+      pagination: buildPagination(posts.meta.pagination, isEn ? '/en/' : '/')
     };
   }
 
-  const pageMatch = pathname.match(/^\/page\/(\d+)$/);
+  const pageMatch = pathname.match(/^\/(?:en\/)?page\/(\d+)$/);
   if (pageMatch) {
+    const isEn = pathname.startsWith('/en');
     const page = Number(pageMatch[1]);
-    const posts = await listPosts({ page, limit: postsPerPage });
+    const posts = await listPosts({
+      page,
+      limit: postsPerPage,
+      filter: isEn ? 'tag:hash-en' : 'tag:-hash-en'
+    });
     return {
       ...common,
       routeType: 'home',
       template: 'index',
       posts: posts.items,
-      pagination: buildPagination(posts.meta.pagination, '/')
+      pagination: buildPagination(posts.meta.pagination, isEn ? '/en/' : '/')
     };
   }
 
-  const tagMatch = pathname.match(/^\/tag\/([^/]+)(?:\/page\/(\d+))?$/);
+  const tagMatch = pathname.match(/^\/(?:tag|column)\/([^/]+)(?:\/page\/(\d+))?$/);
   if (tagMatch) {
+    const prefix = tagMatch[0].startsWith('/column') ? 'column' : 'tag';
     const slug = decodeURIComponent(tagMatch[1]);
     const page = Number(tagMatch[2] || 1);
     const [tagData, posts] = await Promise.all([
@@ -288,7 +299,7 @@ async function buildRouteModel(pathname: string): Promise<any> {
       template: 'tag',
       tag: decorateTag(tagData.tags[0], common.site.url),
       posts: posts.items,
-      pagination: buildPagination(posts.meta.pagination, `/tag/${slug}/`)
+      pagination: buildPagination(posts.meta.pagination, `/${prefix}/${slug}/`)
     };
   }
 
@@ -310,7 +321,7 @@ async function buildRouteModel(pathname: string): Promise<any> {
     };
   }
 
-  const slug = pathname.slice(1);
+  const slug = pathname.replace(/^\/en\//, '').replace(/^\//, '');
   const page = await maybe(() => api.pageBySlug(slug));
   if (page && page.pages && page.pages[0]) {
     const pageModel = decoratePost(page.pages[0], common.site.url, true);
@@ -361,6 +372,24 @@ async function getCommonContext(pathname: string): Promise<any> {
   const site = buildSite(ghostSettings);
   const custom = buildCustomSettings();
   const previewUrl = `http://localhost:${previewPort}`;
+
+  // For local development preview: provide fallback multilingual settings
+  if (!custom.multilingual_locales) {
+    custom.multilingual_locales = 'zh:中文, en:English';
+  }
+
+  const locales = (custom.multilingual_locales as string)
+    .split(',')
+    .map((s) => s.trim().split(':')[0].trim().toLowerCase())
+    .filter(Boolean);
+
+  for (const code of locales) {
+    if (code && new RegExp(`^/${code}(/|$)`, 'i').test(pathname)) {
+      site.locale = code;
+      site.lang = code;
+      break;
+    }
+  }
 
   site.url = previewUrl;
   site.navigation = decorateNavigation(site.navigation || [], pathname, previewUrl);
@@ -575,7 +604,11 @@ function buildHandlebarsData(model: any, root: any): any {
 }
 
 function compileTemplate(name: string): Handlebars.TemplateDelegate {
-  let source = fs.readFileSync(path.join(ROOT, `${name}.hbs`), 'utf8');
+  let filePath = path.join(ROOT, `${name}.hbs`);
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(ROOT, 'index.hbs');
+  }
+  let source = fs.readFileSync(filePath, 'utf8');
   source = source.replace(/^\s*\{\{!<\s+default\s*\}\}\s*/, '');
   return Handlebars.compile(source, { noEscape: false });
 }

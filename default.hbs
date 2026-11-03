@@ -417,6 +417,18 @@ own cover-active case is already covered there, so this attribute only needs the
 				</nav>
 
 				<div class="nav-actions">
+					{{#if @custom.multilingual_locales}}
+					<div class="lang-selector" data-locales="{{@custom.multilingual_locales}}">
+						<button type="button" class="lang-trigger" popovertarget="lang-menu-popover" aria-haspopup="true" aria-label="{{t "Language"}}">
+							<i class="icon icon-globe" aria-hidden="true">{{> "icons/icon-globe"}}</i>
+							<span class="lang-current-label"></span>
+							<i class="icon icon-chevron" aria-hidden="true">{{> "icons/icon-chevron-down"}}</i>
+						</button>
+						<div class="lang-popover" id="lang-menu-popover" popover>
+							<ul class="lang-menu" role="menu"></ul>
+						</div>
+					</div>
+					{{/if}}
 					<a class="nav-search" href="#search" role="button" aria-label="{{t "Search"}}" data-ghost-search><i class="icon icon-search" aria-hidden="true">{{> "icons/icon-search"}}</i></a>
 					{{#if @site.members_enabled}}
 						<span class="nav-members">
@@ -453,6 +465,12 @@ own cover-active case is already covered there, so this attribute only needs the
 					{{navigation}}
 				</nav>
 				<div class="float-nav-footer">
+					{{#if @custom.multilingual_locales}}
+					<div class="float-nav-lang" data-locales="{{@custom.multilingual_locales}}">
+						<span class="float-nav-lang-label"><i class="icon" aria-hidden="true">{{> "icons/icon-globe"}}</i>{{t "Language"}}</span>
+						<div class="float-nav-lang-pills"></div>
+					</div>
+					{{/if}}
 					<a class="float-nav-search" href="#search" role="button" data-ghost-search><i class="icon" aria-hidden="true">{{> "icons/icon-search"}}</i>{{t "Search"}}</a>
 					{{#if @site.members_enabled}}
 						<div class="float-nav-members">

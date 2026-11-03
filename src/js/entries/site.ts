@@ -13,6 +13,7 @@ import { initTagCards } from '../features/tag-cards.js';
 import { initLinksMotion } from '../features/links-motion.js';
 import { initFloatNav } from '../features/float-nav.js';
 import { setupBackToTop } from '../features/back-to-top.js';
+import { initLangSwitcher } from '../features/lang-switcher.js';
 
 onReady(() => {
   // Initialize core site features
@@ -23,6 +24,7 @@ onReady(() => {
   initLinksMotion();
   initFloatNav();
   setupBackToTop();
+  initLangSwitcher();
 
   // Defer non-critical features
   setTimeout(() => {

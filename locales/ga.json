@@ -1,8 +1,11 @@
 {
     "Logo": "Logo",
+    "Language": "Teanga",
     "Close": "Pechar",
+    "Skip to content": "Léim go dtí an t-ábhar",
     "Get the latest posts delivered right to your inbox.": "Obteña os últimos artigos directamente no teu buzón.",
     "Home": "Páxina principal",
+    "About": "Faoi",
     "Menu": "Menú",
     "Newer Posts": "Artigos Novos",
     "Older Posts": "Artigos Antigos",
@@ -29,6 +32,8 @@
     "Author": "Autor",
     "Topic": "Tema",
     "Topics": "Temas",
+    "Columns": "Colúin",
+    "Tags": "Clibeanna",
     "Share": "Compartir",
     "Search": "Buscar",
     "Search all posts": "Buscar en todos os artigos",
@@ -75,7 +80,12 @@
     "On this page": "Nesta páxina",
     "Open table of contents": "Abrir táboa de contidos",
     "Close table of contents": "Pechar táboa de contidos",
+    "Toggle subsections": "Scoránaigh fosranna",
     "This content was created by humans": "Chruthaigh daoine an t-ábhar seo",
     "Open image": "Oscail íomhá",
-    "Skip to content": "Léim go dtí an t-ábhar"
+    "Check your inbox to confirm your subscription.": "Seiceáil do bhosca isteach chun do shíntiús a dheimhniú.",
+    "Something went wrong. Please try again.": "Chuaigh rud éigin mícheart. Bain triail eile as le do thoil.",
+    "Footer navigation": "Nascleanúint buntáisc",
+    "Recommendations": "Moltaí",
+    "Support": "Tacaíocht"
 }

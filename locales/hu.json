@@ -1,8 +1,11 @@
 {
     "Logo": "Logó",
+    "Language": "Nyelv",
     "Close": "Bezárás",
+    "Skip to content": "Ugrás a tartalomra",
     "Get the latest posts delivered right to your inbox.": "Kapd meg a legújabb posztokat az emailedbe.",
     "Home": "Home",
+    "About": "Rólunk",
     "Menu": "Menü",
     "Newer Posts": "Újabb Posztok",
     "Older Posts": "Régebbi Posztok",
@@ -29,6 +32,8 @@
     "Author": "Szerző",
     "Topic": "Téma",
     "Topics": "Témák",
+    "Columns": "Rovatok",
+    "Tags": "Címkék",
     "Share": "Megosztás",
     "Search": "Keresés",
     "Search all posts": "Keresés az összes bejegyzésben",
@@ -75,7 +80,12 @@
     "On this page": "Ezen az oldalon",
     "Open table of contents": "Tartalomjegyzék megnyitása",
     "Close table of contents": "Tartalomjegyzék bezárása",
+    "Toggle subsections": "Alszakaszok be-/kikapcsolása",
     "This content was created by humans": "Ezt a tartalmat emberek készítették",
     "Open image": "Kép megnyitása",
-    "Skip to content": "Ugrás a tartalomra"
+    "Check your inbox to confirm your subscription.": "Kérjük, ellenőrizze a beérkező leveleit a feliratkozás megerősítéséhez.",
+    "Something went wrong. Please try again.": "Valami hiba történt. Kérjük, próbálja újra.",
+    "Footer navigation": "Lábléc navigáció",
+    "Recommendations": "Ajánlások",
+    "Support": "Támogatás"
 }

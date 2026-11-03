@@ -1,8 +1,11 @@
 {
     "Logo": "Logo",
+    "Language": "Jazyk",
     "Close": "Zavřít",
+    "Skip to content": "Přeskočit na obsah",
     "Get the latest posts delivered right to your inbox.": "Dostaňte nejnovější příspěvky přímo do vaší schránky.",
     "Home": "Domů",
+    "About": "O webu",
     "Menu": "Menu",
     "Newer Posts": "Novější příspěvky",
     "Older Posts": "Starší příspěvky",
@@ -29,6 +32,8 @@
     "Author": "Autor",
     "Topic": "Štítek",
     "Topics": "Štítky",
+    "Columns": "Sloupky",
+    "Tags": "Štítky",
     "Share": "Sdílet",
     "Search": "Hledat",
     "Search all posts": "Hledat ve všech příspěvcích",
@@ -75,7 +80,12 @@
     "On this page": "Na této stránce",
     "Open table of contents": "Otevřít obsah",
     "Close table of contents": "Zavřít obsah",
+    "Toggle subsections": "Přepnout podsekce",
     "This content was created by humans": "Tento obsah vytvořili lidé",
     "Open image": "Otevřít obrázek",
-    "Skip to content": "Přeskočit na obsah"
+    "Check your inbox to confirm your subscription.": "Zkontrolujte doručenou poštu pro potvrzení odběru.",
+    "Something went wrong. Please try again.": "Něco se pokazilo. Zkuste to prosím znovu.",
+    "Footer navigation": "Navigace v zápatí",
+    "Recommendations": "Doporučení",
+    "Support": "Podpora"
 }

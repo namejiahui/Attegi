@@ -1,8 +1,11 @@
 {
     "Logo": "لوگو",
+    "Language": "زبان",
     "Close": "بستن",
+    "Skip to content": "پرش به محتوا",
     "Get the latest posts delivered right to your inbox.": "آخرین پست‌ها را در ای‌میل خود داشته باشید.",
     "Home": "خانه",
+    "About": "درباره",
     "Menu": "منو",
     "Newer Posts": "نوشته‌های جدیدتر",
     "Older Posts": "نوشته‌های قدیمی‌تر",
@@ -29,6 +32,8 @@
     "Author": "نویسنده",
     "Topic": "موضوع",
     "Topics": "موضوعات",
+    "Columns": "ستون‌ها",
+    "Tags": "برچسب‌ها",
     "Share": "اشتراک گذاری",
     "Search": "جست‌وجو",
     "Search all posts": "جست‌وجو در همه‌ی نوشته‌ها",
@@ -75,7 +80,12 @@
     "On this page": "در این صفحه",
     "Open table of contents": "باز کردن فهرست مطالب",
     "Close table of contents": "بستن فهرست مطالب",
+    "Toggle subsections": "تغییر وضعیت زیربخش‌ها",
     "This content was created by humans": "این محتوا توسط انسان‌ها ایجاد شده است",
     "Open image": "باز کردن تصویر",
-    "Skip to content": "پرش به محتوا"
+    "Check your inbox to confirm your subscription.": "برای تایید اشتراک صندوق ورودی خود را بررسی کنید.",
+    "Something went wrong. Please try again.": "مشکلی پیش آمد. لطفاً دوباره امتحان کنید.",
+    "Footer navigation": "ناوبری پاورقی",
+    "Recommendations": "پیشنهادات",
+    "Support": "پشتیبانی"
 }

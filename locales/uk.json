@@ -1,8 +1,11 @@
 {
     "Logo": "Логотип",
+    "Language": "Мова",
     "Close": "Закрити",
+    "Skip to content": "Перейти до вмісту",
     "Get the latest posts delivered right to your inbox.": "Отримуйте останні публікації прямо у вашу поштову скриньку.",
     "Home": "Стартова сторінка",
+    "About": "Про нас",
     "Menu": "Меню",
     "Newer Posts": "Новіші публікації",
     "Older Posts": "Старіші публікації",
@@ -29,6 +32,8 @@
     "Author": "Автор",
     "Topic": "Тема",
     "Topics": "Теми",
+    "Columns": "Колонки",
+    "Tags": "Теги",
     "Share": "Поділитися",
     "Search": "Пошук",
     "Search all posts": "Шукати у всіх публікаціях",
@@ -75,7 +80,12 @@
     "On this page": "На цій сторінці",
     "Open table of contents": "Відкрити зміст",
     "Close table of contents": "Закрити зміст",
+    "Toggle subsections": "Перемкнути підрозділи",
     "This content was created by humans": "Цей контент створено людьми",
     "Open image": "Відкрити зображення",
-    "Skip to content": "Перейти до вмісту"
+    "Check your inbox to confirm your subscription.": "Перевірте поштову скриньку, щоб підтвердити підписку.",
+    "Something went wrong. Please try again.": "Щось пішло не так. Будь ласка, спробуйте ще раз.",
+    "Footer navigation": "Навігація у підвалі",
+    "Recommendations": "Рекомендації",
+    "Support": "Підтримка"
 }

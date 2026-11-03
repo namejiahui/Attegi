@@ -1,8 +1,11 @@
 {
     "Logo": "โลโก้",
+    "Language": "ภาษา",
     "Close": "ปิด",
+    "Skip to content": "ข้ามไปยังเนื้อหา",
     "Get the latest posts delivered right to your inbox.": "รับโพสล่าสุดส่งถึงอีเมลของคุณ",
     "Home": "หน้าหลัก",
+    "About": "เกี่ยวกับ",
     "Menu": "เมนู",
     "Newer Posts": "โพสใหม่",
     "Older Posts": "โพสเก่า",
@@ -29,6 +32,8 @@
     "Author": "ผู้เขียน",
     "Topic": "หัวข้อ",
     "Topics": "หัวข้อ",
+    "Columns": "คอลัมน์",
+    "Tags": "แท็ก",
     "Share": "แชร์",
     "Search": "ค้นหา",
     "Search all posts": "ค้นหาโพสทั้งหมด",
@@ -75,7 +80,12 @@
     "On this page": "ในหน้านี้",
     "Open table of contents": "เปิดสารบัญ",
     "Close table of contents": "ปิดสารบัญ",
+    "Toggle subsections": "สลับส่วนย่อย",
     "This content was created by humans": "เนื้อหานี้สร้างโดยมนุษย์",
     "Open image": "เปิดภาพ",
-    "Skip to content": "ข้ามไปยังเนื้อหา"
+    "Check your inbox to confirm your subscription.": "ตรวจสอบกล่องจดหมายของคุณเพื่อยืนยันการสมัคร",
+    "Something went wrong. Please try again.": "เกิดข้อผิดพลาด โปรดลองอีกครั้ง",
+    "Footer navigation": "การนำทางส่วนท้าย",
+    "Recommendations": "คำแนะนำ",
+    "Support": "สนับสนุน"
 }

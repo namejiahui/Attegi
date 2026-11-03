@@ -120,6 +120,11 @@
         "type": "text",
         "description": "Optional theme name for the OG image service."
       },
+      "multilingual_locales": {
+        "type": "text",
+        "default": "",
+        "description": "Languages (e.g. 'zh:中文, en:English'). First is default."
+      },
       "email_signup_text": {
         "type": "text",
         "default": "Sign up for more like this.",
