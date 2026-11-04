@@ -2,6 +2,7 @@ import { Show } from "solid-js";
 import { A, useLocation } from "@solidjs/router";
 import type { GhostPost } from "../lib/ghost/types.js";
 import { t, formatDate, formatIsoDateOnly, getActiveLocale } from "../lib/i18n";
+import { cleanExcerpt } from "../lib/content";
 
 interface PostNavProps {
   prevPost?: GhostPost | null;
@@ -45,7 +46,7 @@ export default function PostNav(props: PostNavProps) {
               </svg>
             </i>
             <h2 class="post-nav-title">{props.nextPost!.title}</h2>
-            <p class="post-nav-excerpt">{props.nextPost!.custom_excerpt || props.nextPost!.excerpt}</p>
+            <p class="post-nav-excerpt">{cleanExcerpt(props.nextPost!.custom_excerpt || props.nextPost!.excerpt)}</p>
             <p class="post-nav-meta">
               <time datetime={formatIsoDateOnly(props.nextPost!.published_at)}>
                 {formatDate(props.nextPost!.published_at, "MMMM D, YYYY")}
@@ -82,7 +83,7 @@ export default function PostNav(props: PostNavProps) {
               </svg>
             </i>
             <h2 class="post-nav-title">{props.prevPost!.title}</h2>
-            <p class="post-nav-excerpt">{props.prevPost!.custom_excerpt || props.prevPost!.excerpt}</p>
+            <p class="post-nav-excerpt">{cleanExcerpt(props.prevPost!.custom_excerpt || props.prevPost!.excerpt)}</p>
             <p class="post-nav-meta">
               <time datetime={formatIsoDateOnly(props.prevPost!.published_at)}>
                 {formatDate(props.prevPost!.published_at, "MMMM D, YYYY")}

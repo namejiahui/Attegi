@@ -2,6 +2,7 @@ import { Show, For } from "solid-js";
 import { A, useLocation } from "@solidjs/router";
 import type { GhostPost } from "../lib/ghost/types.js";
 import { t, formatDate, formatIsoDateOnly, getActiveLocale } from "../lib/i18n";
+import { cleanExcerpt } from "../lib/content";
 
 interface PostCardProps {
   post: GhostPost;
@@ -47,7 +48,7 @@ export default function PostCard(props: PostCardProps) {
               </time>
             </span>
             <p class="post-excerpt">
-              {post().custom_excerpt || post().excerpt}
+              {cleanExcerpt(post().custom_excerpt || post().excerpt)}
             </p>
           </div>
         </div>
