@@ -4,6 +4,7 @@ import { Show, For, Suspense, createEffect, onCleanup } from "solid-js";
 import { fetchAuthorData } from "../lib/server/ghost-data";
 import PostCard from "./PostCard";
 import Pagination from "./Pagination";
+import ErrorView from "./ErrorView";
 import { t, getLocales, getDefaultLocale } from "../lib/i18n";
 
 interface AuthorArchiveViewProps {
@@ -57,13 +58,7 @@ export default function AuthorArchiveView(props: AuthorArchiveViewProps) {
     >
       <Show
         when={author()}
-        fallback={
-          <div class="inner inner-reading view-status-container">
-            <h1>404</h1>
-            <p>{t("Not Found") || "未找到该作者"}</p>
-            <A href={homeUrl()} class="status-action-link">{t("Return to Home")}</A>
-          </div>
-        }
+        fallback={<ErrorView lang={props.lang} title={t("Author not found") || t("Page Not Found")} />}
       >
         <Title>{`${author()!.name} - ${data()?.settings?.title || "Attegi"}`}</Title>
         <Meta
@@ -104,18 +99,60 @@ export default function AuthorArchiveView(props: AuthorArchiveViewProps) {
                 {author()!.bio || `${t("Posts by")} ${author()!.name}`}
               </span>
 
-              <Show when={author()!.website}>
+              <Show when={author()!.website || author()!.twitter || author()!.facebook}>
                 <span class="archive-links">
-                  <a target="_blank" rel="noopener noreferrer" href={author()!.website!} title={t("Website")}>
-                    <i class="icon icon-globe" aria-hidden="true">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                        <path d="M2 12h20" />
-                      </svg>
-                    </i>
-                    <span class="sr-only">{t("Website")}</span>
-                  </a>
+                  <Show when={author()!.website}>
+                    <a target="_blank" rel="noopener noreferrer" href={author()!.website!} title={t("Website")}>
+                      <i class="icon icon-globe" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10" />
+                          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                          <path d="M2 12h20" />
+                        </svg>
+                      </i>
+                      <span class="sr-only">{t("Website")}</span>
+                    </a>
+                  </Show>
+                  <Show when={author()!.twitter}>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={
+                        author()!.twitter!.startsWith("http")
+                          ? author()!.twitter!
+                          : `https://twitter.com/${author()!.twitter!.replace(/^@/, "")}`
+                      }
+                      title="X"
+                      aria-label="X"
+                    >
+                      <i class="icon icon-x" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+                        </svg>
+                      </i>
+                      <span class="sr-only">X</span>
+                    </a>
+                  </Show>
+                  <Show when={author()!.facebook}>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={
+                        author()!.facebook!.startsWith("http")
+                          ? author()!.facebook!
+                          : `https://facebook.com/${author()!.facebook!.replace(/^@/, "")}`
+                      }
+                      title="Facebook"
+                      aria-label="Facebook"
+                    >
+                      <i class="icon icon-facebook" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                      </i>
+                      <span class="sr-only">Facebook</span>
+                    </a>
+                  </Show>
                 </span>
               </Show>
             </div>

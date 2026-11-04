@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+
 const languageNames: Record<string, string> = {
   javascript: "JavaScript",
   js: "JavaScript",
@@ -94,20 +96,26 @@ export async function setupCodeHighlight(container: HTMLElement | null) {
       lang.textContent = langName || "";
       header.appendChild(lang);
 
+      const copyText = () => t("Copy") || "Copy";
+      const copiedText = () => t("Copied!") || "Copied!";
+      const copyCodeAria = () => t("Copy code") || "Copy code";
+
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "code-copy-btn";
-      btn.setAttribute("aria-label", "复制代码");
-      btn.innerHTML = copyIcon + "<span>复制</span>";
+      btn.setAttribute("aria-label", copyCodeAria());
+      btn.innerHTML = copyIcon + "<span>" + copyText() + "</span>";
 
       btn.addEventListener("click", () => {
         const text = code.textContent || "";
         copyToClipboard(text).then(() => {
           btn.classList.add("copied");
-          btn.innerHTML = copiedIcon + "<span>已复制!</span>";
+          btn.setAttribute("aria-label", copiedText());
+          btn.innerHTML = copiedIcon + "<span>" + copiedText() + "</span>";
           setTimeout(() => {
             btn.classList.remove("copied");
-            btn.innerHTML = copyIcon + "<span>复制</span>";
+            btn.setAttribute("aria-label", copyCodeAria());
+            btn.innerHTML = copyIcon + "<span>" + copyText() + "</span>";
           }, 2000);
         });
       });
