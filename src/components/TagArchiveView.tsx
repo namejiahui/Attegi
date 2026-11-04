@@ -4,6 +4,7 @@ import { Show, For, Suspense, createEffect, onCleanup } from "solid-js";
 import { fetchTagData } from "../lib/server/ghost-data";
 import PostCard from "./PostCard";
 import Pagination from "./Pagination";
+import ErrorView from "./ErrorView";
 import { t, getLocales, getDefaultLocale } from "../lib/i18n";
 
 interface TagArchiveViewProps {
@@ -57,13 +58,7 @@ export default function TagArchiveView(props: TagArchiveViewProps) {
     >
       <Show
         when={tag()}
-        fallback={
-          <div class="inner inner-reading view-status-container">
-            <h1>404</h1>
-            <p>{t("Not Found") || "未找到该专栏或标签"}</p>
-            <A href={homeUrl()} class="status-action-link">{t("Return to Home")}</A>
-          </div>
-        }
+        fallback={<ErrorView lang={props.lang} title={t("Tag not found") || t("Page Not Found")} />}
       >
         <Title>{`${tag()!.name} - ${data()?.settings?.title || "Attegi"}`}</Title>
         <Meta

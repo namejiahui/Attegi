@@ -1,12 +1,21 @@
-import { Title, Meta } from "@solidjs/meta";
+import { Title, Meta, Link } from "@solidjs/meta";
 import { useParams, createAsync, A } from "@solidjs/router";
 import { Show, For, Suspense, createSignal, createEffect, onCleanup } from "solid-js";
 import { fetchPostOrPage } from "../lib/server/ghost-data";
 import { setupCodeHighlight } from "../lib/highlight.js";
+import {
+  cleanExcerpt,
+  handleToggleClick,
+  setupToggleCards,
+  setupGalleryCards,
+  setupPoemCards,
+  setupCoverBrightness,
+} from "../lib/content";
 import ShareButtons from "./ShareButtons";
 import PostNav from "./PostNav";
 import ImageLightbox, { type LightboxImage } from "./ImageLightbox";
 import TableOfContents from "./TableOfContents";
+import ErrorView from "./ErrorView";
 import { t, formatDate, formatIsoDateOnly, getLocales, getDefaultLocale } from "../lib/i18n";
 
 interface PostViewProps {
@@ -29,6 +38,7 @@ export default function PostView(props: PostViewProps) {
   const post = () => data()?.item;
 
   const [contentEl, setContentEl] = createSignal<HTMLElement | null>(null);
+  const [headerEl, setHeaderEl] = createSignal<HTMLElement | null>(null);
 
   const [lightboxImages, setLightboxImages] = createSignal<LightboxImage[]>([]);
   const [lightboxIndex, setLightboxIndex] = createSignal(0);
@@ -37,6 +47,11 @@ export default function PostView(props: PostViewProps) {
   const handleContentClick = (e: MouseEvent) => {
     const target = e.target as HTMLElement | null;
     if (!target) return;
+
+    if (handleToggleClick(target)) {
+      return;
+    }
+
     const img = target.closest("img") as HTMLImageElement | null;
     if (!img) return;
 
@@ -73,9 +88,19 @@ export default function PostView(props: PostViewProps) {
   });
 
   createEffect(() => {
+    const el = headerEl();
+    if (el && post()?.feature_image) {
+      setupCoverBrightness(el);
+    }
+  });
+
+  createEffect(() => {
     const el = contentEl();
     if (post()?.html && el) {
       setupCodeHighlight(el);
+      setupToggleCards(el);
+      setupGalleryCards(el);
+      setupPoemCards(el);
     }
   });
 
@@ -95,24 +120,77 @@ export default function PostView(props: PostViewProps) {
     >
       <Show
         when={post()}
-        fallback={
-          <div class="inner inner-reading view-status-container">
-            <h1>404</h1>
-            <p>{t("Not Found") || "未找到该文章或页面"}</p>
-            <A href={homeUrl()} class="status-action-link">{t("Return to Home")}</A>
-          </div>
-        }
+        fallback={<ErrorView lang={props.lang} />}
       >
         <Title>{post()!.title}</Title>
-        <Meta name="description" content={post()!.custom_excerpt || post()!.excerpt || ""} />
-        <Show when={post()!.og_title}>
-          <Meta property="og:title" content={post()!.og_title!} />
+        <Meta name="description" content={cleanExcerpt(post()!.custom_excerpt || post()!.excerpt || "")} />
+        <Link
+          rel="canonical"
+          href={
+            post()!.canonical_url ||
+            (data()?.settings?.url
+              ? `${data()!.settings!.url.replace(/\/$/, "")}${prefix()}/${post()!.slug}/`
+              : `${prefix()}/${post()!.slug}/`)
+          }
+        />
+
+        {/* OpenGraph */}
+        <Meta property="og:site_name" content={data()?.settings?.title || "Attegi"} />
+        <Meta property="og:type" content={data()?.isPage ? "website" : "article"} />
+        <Meta property="og:title" content={post()!.og_title || post()!.title} />
+        <Meta
+          property="og:description"
+          content={post()!.og_description || cleanExcerpt(post()!.custom_excerpt || post()!.excerpt || "")}
+        />
+        <Meta
+          property="og:url"
+          content={
+            data()?.settings?.url
+              ? `${data()!.settings!.url.replace(/\/$/, "")}${prefix()}/${post()!.slug}/`
+              : `${prefix()}/${post()!.slug}/`
+          }
+        />
+        <Show when={post()!.og_image || post()!.feature_image}>
+          <Meta property="og:image" content={post()!.og_image || post()!.feature_image!} />
         </Show>
-        <Show when={post()!.og_description}>
-          <Meta property="og:description" content={post()!.og_description!} />
+        <Show when={!data()?.isPage}>
+          <Show when={post()!.published_at}>
+            <Meta property="article:published_time" content={post()!.published_at} />
+          </Show>
+          <Show when={post()!.updated_at}>
+            <Meta property="article:modified_time" content={post()!.updated_at} />
+          </Show>
+          <For each={post()!.tags}>
+            {(tag) => <Meta property="article:tag" content={tag.name} />}
+          </For>
         </Show>
 
-        <header class={`post-header ${post()!.feature_image ? "has-cover" : ""}`}>
+        {/* Twitter Card */}
+        <Meta
+          name="twitter:card"
+          content={post()!.twitter_image || post()!.feature_image ? "summary_large_image" : "summary"}
+        />
+        <Meta name="twitter:title" content={post()!.twitter_title || post()!.title} />
+        <Meta
+          name="twitter:description"
+          content={post()!.twitter_description || cleanExcerpt(post()!.custom_excerpt || post()!.excerpt || "")}
+        />
+        <Show when={post()!.twitter_image || post()!.feature_image}>
+          <Meta name="twitter:image" content={post()!.twitter_image || post()!.feature_image!} />
+        </Show>
+        <Show when={data()?.settings?.twitter}>
+          <Meta name="twitter:site" content={data()!.settings!.twitter!} />
+        </Show>
+
+        {/* Per-post Code Injections */}
+        <Show when={post()!.codeinjection_head}>
+          <div innerHTML={post()!.codeinjection_head!} style={{ display: "none" }} />
+        </Show>
+        <Show when={post()!.codeinjection_foot}>
+          <div innerHTML={post()!.codeinjection_foot!} style={{ display: "none" }} />
+        </Show>
+
+        <header ref={setHeaderEl} class={`post-header ${post()!.feature_image ? "has-cover" : ""}`}>
           <div class="inner inner-reading">
             <h1 class="post-title">{post()!.title}</h1>
             <div class="post-meta">
