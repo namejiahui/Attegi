@@ -1,26 +1,17 @@
 import { Show, For } from "solid-js";
-import { A } from "@solidjs/router";
+import { A, useLocation } from "@solidjs/router";
 import type { GhostPost } from "../lib/ghost/types.js";
+import { t, formatDate, formatIsoDateOnly, getActiveLocale } from "../lib/i18n";
 
 interface PostCardProps {
   post: GhostPost;
 }
 
-function formatDate(isoString: string): string {
-  try {
-    const d = new Date(isoString);
-    return d.toLocaleDateString("zh-CN", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  } catch {
-    return isoString;
-  }
-}
-
 export default function PostCard(props: PostCardProps) {
   const post = () => props.post;
+  const location = useLocation();
+  const cur = () => getActiveLocale(location.pathname);
+  const prefix = () => (cur().isRoot ? "" : cur().prefix);
 
   return (
     <article class={`post ${post().featured ? "featured" : ""}`}>
@@ -29,18 +20,18 @@ export default function PostCard(props: PostCardProps) {
           <div class="post-box-header">
             <div class="post-box-title-wrap">
               <h2 class="post-title">
-                <A href={`/${post().slug}`}>{post().title}</A>
+                <A href={`${prefix()}/${post().slug}`}>{post().title}</A>
               </h2>
             </div>
 
             <div class="post-tags-inline">
               <Show when={post().featured}>
-                <span class="post-feature-tag">#Featured</span>
+                <span class="post-feature-tag">#{t("Featured")}</span>
               </Show>
               <Show when={post().tags && post().tags!.length > 0}>
-                <For each={post().tags?.slice(0, 3)}>
+                <For each={post().tags?.filter(t => !t.name.startsWith("#")).slice(0, 3)}>
                   {(tag) => (
-                    <A href={`/tag/${tag.slug}`} class="post-tag-chip">
+                    <A href={`${prefix()}/tag/${tag.slug}`} class="post-tag-chip">
                       {tag.name}
                     </A>
                   )}
@@ -51,14 +42,9 @@ export default function PostCard(props: PostCardProps) {
 
           <div class="post-box-link">
             <span class="post-meta">
-              <time datetime={post().published_at}>
-                {formatDate(post().published_at)}
+              <time datetime={formatIsoDateOnly(post().published_at)}>
+                {formatDate(post().published_at, "MMMM D, YYYY")}
               </time>
-              <Show when={post().reading_time}>
-                <span style={{ "margin-left": "0.8rem" }}>
-                  · {post().reading_time} 分钟阅读
-                </span>
-              </Show>
             </span>
             <p class="post-excerpt">
               {post().custom_excerpt || post().excerpt}
