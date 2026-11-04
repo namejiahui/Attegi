@@ -27,6 +27,7 @@ export interface GhostTag {
   slug: string;
   description: string | null;
   feature_image: string | null;
+  accent_color?: string | null;
   visibility: 'public' | 'internal';
   og_image: string | null;
   og_title: string | null;

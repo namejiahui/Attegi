@@ -118,3 +118,44 @@ export const fetchAuthorData = async (slug: string, localeCode?: string, page = 
     return null;
   }
 };
+
+export const fetchTagsPageData = async (localeCode?: string) => {
+  const langFilter = getGhostFilterForLocale(localeCode);
+  try {
+    const [tagsRes, postsRes, settings] = await Promise.all([
+      ghost.tags.browse({ limit: "all", include: "count.posts", filter: "visibility:public" }),
+      ghost.posts.browse({
+        limit: 100,
+        include: "tags",
+        fields: "id,title,slug,published_at,tags",
+        filter: langFilter || undefined,
+      }),
+      ghost.settings.browse(),
+    ]);
+    return {
+      tags: tagsRes.tags || [],
+      posts: postsRes.posts || [],
+      settings,
+    };
+  } catch (err) {
+    console.error("Failed to fetch tags page data:", err);
+    return null;
+  }
+};
+
+export const fetchLinksPageData = async () => {
+  try {
+    const [page, settings] = await Promise.all([
+      ghost.pages.read({ slug: "links" }).catch(() => null),
+      ghost.settings.browse(),
+    ]);
+    return {
+      page,
+      settings,
+    };
+  } catch (err) {
+    console.error("Failed to fetch links page data:", err);
+    return null;
+  }
+};
+

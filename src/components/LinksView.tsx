@@ -1,0 +1,180 @@
+import { Show, Suspense, onMount } from "solid-js";
+import { createAsync, useLocation } from "@solidjs/router";
+import { Title, Meta } from "@solidjs/meta";
+import { fetchLinksPageData } from "../lib/server/ghost-data";
+import { t, getLocales, getDefaultLocale, getActiveLocale } from "../lib/i18n";
+
+interface LinksViewProps {
+  lang?: string;
+}
+
+export default function LinksView(props: LinksViewProps) {
+  const location = useLocation();
+  const currentLocale = () => {
+    if (props.lang) {
+      return getLocales().find((l) => l.code === props.lang) || getDefaultLocale();
+    }
+    return getActiveLocale(location.pathname);
+  };
+
+  const data = createAsync(() => fetchLinksPageData());
+  const page = () => data()?.page;
+  const settings = () => data()?.settings;
+
+  const title = () => `${page()?.title || t("Links") || "友情链接"} - ${settings()?.title || "Attegi"}`;
+  const description = () =>
+    page()?.custom_excerpt ||
+    page()?.excerpt ||
+    t("Friends and connected sites") ||
+    "海内存知己，天涯若比邻";
+
+  onMount(() => {
+    if (typeof window !== "undefined") {
+      const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const svg = document.querySelector<SVGElement>(".links-symbol");
+      if (svg && query.matches) {
+        const anims = svg.querySelectorAll("animate, animateMotion");
+        anims.forEach((anim) => anim.setAttribute("repeatCount", "0"));
+      }
+    }
+  });
+
+  return (
+    <>
+      <Title>{title()}</Title>
+      <Meta name="description" content={description()} />
+
+      <div class="links-page">
+        <div class="inner">
+          <div class="links-content">
+            <div class="links-header">
+              <div class="links-visual">
+                <svg
+                  class="links-symbol"
+                  viewBox="0 0 140 70"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <linearGradient id="mobius-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="currentColor" stop-opacity="0.2" />
+                      <stop offset="25%" stop-color="currentColor" stop-opacity="0.8" />
+                      <stop offset="50%" stop-color="currentColor" stop-opacity="1" />
+                      <stop offset="75%" stop-color="currentColor" stop-opacity="0.8" />
+                      <stop offset="100%" stop-color="currentColor" stop-opacity="0.2" />
+                    </linearGradient>
+                    <radialGradient id="particle-grad" cx="50%" cy="30%" r="60%">
+                      <stop offset="0%" stop-color="#fff" stop-opacity="1" />
+                      <stop offset="50%" stop-color="currentColor" stop-opacity="1" />
+                      <stop offset="100%" stop-color="currentColor" stop-opacity="0.4" />
+                    </radialGradient>
+                    <filter id="glow-soft" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="2" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                    <filter id="glow-strong" x="-100%" y="-100%" width="300%" height="300%">
+                      <feGaussianBlur stdDeviation="4" result="blur1" />
+                      <feGaussianBlur stdDeviation="8" result="blur2" />
+                      <feMerge>
+                        <feMergeNode in="blur2" />
+                        <feMergeNode in="blur1" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feDropShadow
+                        dx="0"
+                        dy="3"
+                        stdDeviation="4"
+                        flood-color="currentColor"
+                        flood-opacity="0.25"
+                      />
+                    </filter>
+                  </defs>
+                  <path
+                    class="mobius-glow"
+                    d="M18 35 C18 12, 42 12, 70 35 C98 58, 122 58, 122 35 C122 12, 98 12, 70 35 C42 58, 18 58, 18 35"
+                    stroke="currentColor"
+                    stroke-width="12"
+                    stroke-linecap="round"
+                    fill="none"
+                    opacity="0.06"
+                    filter="url(#glow-soft)"
+                  />
+                  <path
+                    class="mobius-path"
+                    d="M18 35 C18 12, 42 12, 70 35 C98 58, 122 58, 122 35 C98 12, 122 12, 122 35 C122 58, 98 58, 70 35 C42 12, 18 12, 18 35"
+                    stroke="url(#mobius-grad)"
+                    stroke-width="4"
+                    stroke-linecap="round"
+                    fill="none"
+                    filter="url(#shadow)"
+                  />
+                  <g class="sparkles">
+                    <circle r="1.2" fill="currentColor" opacity="0">
+                      <animateMotion dur="7s" repeatCount="indefinite" fill="freeze">
+                        <mpath {...({ href: "#flow-path" } as any)} />
+                      </animateMotion>
+                      <animate attributeName="opacity" values="0;0.9;0" dur="2s" repeatCount="indefinite" />
+                      <animate attributeName="r" values="0.8;1.8;0.8" dur="2s" repeatCount="indefinite" />
+                    </circle>
+                    <circle r="1" fill="currentColor" opacity="0">
+                      <animateMotion dur="7s" repeatCount="indefinite" begin="1.75s" fill="freeze">
+                        <mpath {...({ href: "#flow-path" } as any)} />
+                      </animateMotion>
+                      <animate attributeName="opacity" values="0;0.7;0" dur="1.6s" repeatCount="indefinite" begin="1.75s" />
+                      <animate attributeName="r" values="0.5;1.3;0.5" dur="1.6s" repeatCount="indefinite" begin="1.75s" />
+                    </circle>
+                    <circle r="1" fill="currentColor" opacity="0">
+                      <animateMotion dur="7s" repeatCount="indefinite" begin="3.5s" fill="freeze">
+                        <mpath {...({ href: "#flow-path" } as any)} />
+                      </animateMotion>
+                      <animate attributeName="opacity" values="0;0.8;0" dur="1.8s" repeatCount="indefinite" begin="3.5s" />
+                      <animate attributeName="r" values="0.6;1.5;0.6" dur="1.8s" repeatCount="indefinite" begin="3.5s" />
+                    </circle>
+                    <circle r="0.8" fill="currentColor" opacity="0">
+                      <animateMotion dur="7s" repeatCount="indefinite" begin="5.25s" fill="freeze">
+                        <mpath {...({ href: "#flow-path" } as any)} />
+                      </animateMotion>
+                      <animate attributeName="opacity" values="0;0.6;0" dur="1.4s" repeatCount="indefinite" begin="5.25s" />
+                      <animate attributeName="r" values="0.4;1;0.4" dur="1.4s" repeatCount="indefinite" begin="5.25s" />
+                    </circle>
+                  </g>
+                  <circle class="particle-main" r="4" fill="url(#particle-grad)" filter="url(#glow-strong)">
+                    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear" fill="freeze">
+                      <mpath {...({ href: "#flow-path" } as any)} />
+                    </animateMotion>
+                    <animate attributeName="r" values="4;5.5;4" dur="2.5s" repeatCount="indefinite" />
+                  </circle>
+                  <circle class="particle-secondary" r="3" fill="url(#particle-grad)" filter="url(#glow-strong)" opacity="0">
+                    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear" begin="3s" fill="freeze">
+                      <mpath {...({ href: "#flow-path" } as any)} />
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;0.8;0.8;0.8" dur="6s" repeatCount="indefinite" begin="3s" keyTimes="0;0.01;0.99;1" />
+                    <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" begin="3s" />
+                  </circle>
+                  <path id="flow-path" d="M18 35 C18 12, 42 12, 70 35 C98 58, 122 58, 122 35 C122 12, 98 12, 70 35 C42 58, 18 58, 18 35" fill="none" stroke="none" />
+                </svg>
+              </div>
+              <h1 class="links-title">{page()?.title || t("Links") || "友情链接"}</h1>
+              <p class="links-description">{description()}</p>
+            </div>
+
+            <Suspense
+              fallback={
+                <div class="view-status-container inner inner-reading">
+                  <p>{t("Loading...") || "正在加载友链..."}</p>
+                </div>
+              }
+            >
+              <section
+                class="links-grid post-content"
+                innerHTML={page()?.html || ""}
+              />
+            </Suspense>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
