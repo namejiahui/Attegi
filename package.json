@@ -35,18 +35,10 @@
     "url": "https://github.com/namejiahui/Attegi.git"
   },
   "scripts": {
-    "dev": "node scripts/dev.ts",
-    "dev:hot": "node scripts/dev.ts hot",
-    "dev:preview": "node scripts/dev.ts preview",
-    "serve:hot": "node scripts/dev-hot.ts",
-    "serve:preview": "node scripts/dev-preview.ts",
+    "dev": "vite",
     "build": "vite build",
-    "build:watch": "vite build --watch",
-    "typecheck": "tsc",
-    "compress": "pnpm run build && node scripts/compress.ts",
-    "clean": "rm -rf assets/js/*.js assets/css/style.css assets/css/style.css.map dist/",
-    "test:templates": "node --test scripts/tests",
-    "validate": "pnpm run typecheck && pnpm run test:templates && pnpm run compress && pnpm dlx gscan -z dist/attegi.zip"
+    "start": "node dist/server/entry-server.js",
+    "typecheck": "tsc"
   },
   "devDependencies": {
     "@types/archiver": "^8.0.0",
@@ -158,6 +150,11 @@
     "ios_saf >= 16"
   ],
   "dependencies": {
-    "handlebars": "^4.7.10"
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^1.0.1",
+    "@solidjs/start": "^2.2.0",
+    "handlebars": "^4.7.10",
+    "ofetch": "^1.5.1",
+    "solid-js": "^1.9.18"
   }
 }
