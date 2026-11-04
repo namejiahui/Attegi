@@ -16,6 +16,12 @@
   overflow-x: clip !important;
 }
 
+/* Ensure post headings have proper scroll margin for sticky header */
+.post-content h2,
+.post-content h3 {
+  scroll-margin-top: 8rem;
+}
+
 /* Desktop TOC Sidebar - fixed position on the left side of viewport */
 .toc-sidebar {
   position: fixed;
@@ -205,9 +211,11 @@
     color: var(--color-content-lead);
   }
 
-  &.is-active {
+  &.is-active,
+  &.is-active-link {
     color: var(--color-content-lead);
-    border-left-color: var(--color-content-lead);
+    border-left-color: var(--ghost-accent-color);
+    font-weight: 500;
   }
 }
 
@@ -224,6 +232,10 @@
   }
 }
 
+.toc-sidebar .toc-item-h3 .toc-link {
+  --toc-indent: 3.6rem;
+}
+
 /* ==========================================================================
    Mobile TOC - Mini Floating Panel
    ========================================================================== */
@@ -237,18 +249,15 @@
   width: 4.4rem;
   height: 4.4rem;
   z-index: var(--z-toc-trigger);
-  background: rgba(255,255,255,0.85);
-  border: none;
-  border-radius: 50%;
+  background: var(--glass-surface-strong);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
   color: var(--color-content-main);
   cursor: pointer;
   box-shadow: var(--shadow-float);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
 
-  .theme-dark & {
-    background: rgba(30,30,30,0.85);
-  }
   transition: opacity var(--duration-slow) var(--ease-standard), visibility var(--duration-slow) var(--ease-standard), transform var(--duration-slow) var(--ease-standard);
   opacity: 0;
   visibility: hidden;
@@ -344,10 +353,17 @@
   -moz-osx-font-smoothing: grayscale;
   backface-visibility: hidden;
 
-  &.is-open {
+  &.is-open,
+  &[data-expanded] {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+  }
+
+  &[data-closed] {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(100%);
   }
 
   .theme-dark & {
@@ -373,9 +389,15 @@
   transition: opacity var(--duration-slow) var(--ease-spring),
               visibility var(--duration-slow) var(--ease-spring);
 
-  &.is-open {
+  &.is-open,
+  &[data-expanded] {
     opacity: 1;
     visibility: visible;
+  }
+
+  &[data-closed] {
+    opacity: 0;
+    visibility: hidden;
   }
 
   @media only screen and (max-width: 1200px) {
@@ -498,12 +520,17 @@
     }
   }
 
-  &.is-active {
+  &.is-active,
+  &.is-active-link {
     color: var(--color-content-main);
     font-weight: 600;
     border-left-color: var(--ghost-accent-color);
     background: color-mix(in srgb, var(--ghost-accent-color) 8%, transparent);
   }
+}
+
+.toc-mobile-item.toc-item-h3 .toc-mobile-link {
+  padding-left: 2.8rem;
 }
 
 /* Mobile nested heading levels */

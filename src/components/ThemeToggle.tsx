@@ -1,4 +1,5 @@
 import { onMount, createSignal } from "solid-js";
+import { t } from "../lib/i18n";
 
 type ThemeMode = "system" | "dark" | "light";
 
@@ -48,12 +49,18 @@ export default function ThemeToggle() {
     applyTheme(next);
   };
 
+  const themeLabel = () => {
+    const mode = theme();
+    const modeText = mode === "system" ? t("System") : mode === "dark" ? t("Dark") : t("Light");
+    return `${t("Toggle theme")}: ${modeText}`;
+  };
+
   return (
     <button
       type="button"
       class="theme-toggle js-theme"
       onClick={cycleTheme}
-      aria-label={`Toggle theme: ${theme()}`}
+      aria-label={themeLabel()}
     >
       <i class="icon theme-icon-sun" aria-hidden="true">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

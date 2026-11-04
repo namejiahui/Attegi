@@ -6,6 +6,7 @@
   --color-content-main: #374151;
   /* AA on bg-main (6.42:1), bg-secondary (6.04:1) and bg-contrast (4.99:1) */
   --color-content-secondary: #5B5F66;
+  --color-content-muted: #717680;
 
   /* Text/icon color for content painted on top of an accent-colored fill.
      Ghost admins can pick any accent, so the real value is computed at
@@ -28,6 +29,8 @@
   /* Glass: nav pills and floating menu (surface), mobile menu (strong) */
   --glass-surface: rgb(255 255 255 / 0.82);
   --glass-surface-strong: rgb(255 255 255 / 0.86);
+  --glass-surface-subtle: rgb(0 0 0 / 0.04);
+  --glass-surface-hover: rgb(0 0 0 / 0.06);
   --glass-border: rgb(0 0 0 / 0.08);
   --glass-border-strong: rgb(0 0 0 / 0.14);
   --glass-highlight: rgb(255 255 255 / 0.7);
@@ -74,6 +77,7 @@
   --color-content-lead: #F6F7FA;
   --color-content-main: #E2E6EB;
   --color-content-secondary: #B6BBC4;
+  --color-content-muted: #8B929D;
 
   --color-on-accent: #1D1F21;
 
@@ -87,6 +91,8 @@
 
   --glass-surface: rgb(255 255 255 / 0.12);
   --glass-surface-strong: rgb(29 31 33 / 0.84);
+  --glass-surface-subtle: rgb(255 255 255 / 0.05);
+  --glass-surface-hover: rgb(255 255 255 / 0.09);
   --glass-border: rgb(255 255 255 / 0.2);
   --glass-border-strong: rgb(255 255 255 / 0.34);
   --glass-highlight: rgb(255 255 255 / 0.12);
@@ -113,6 +119,7 @@
     --color-content-lead: #F6F7FA;
     --color-content-main: #E2E6EB;
     --color-content-secondary: #B6BBC4;
+  --color-content-muted: #8B929D;
 
     --color-on-accent: #1D1F21;
 

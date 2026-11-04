@@ -40,6 +40,9 @@
 	/* Floating widgets and top-level overlays. */
 	--z-floating-ui: 1000;
 	--z-top: 9999;
+	--z-lightbox-overlay: 10000;
+	--z-lightbox-content: 10001;
+	--z-lightbox-controls: 10002;
 
 	/* ---- motion ---------------------------------------------------------
 	   Every transition uses these. fast: color/hover feedback. base: borders,
@@ -78,6 +81,7 @@
 	--radius-md: 1.2rem;
 	--radius-lg: 2rem;
 	--radius-pill: 999px;
+	--radius-full: var(--radius-pill);
 
 	/* ---- shadow ----------------------------------------------------------
 	   Cards stay flat and are outlined by --color-border. Shadows are only

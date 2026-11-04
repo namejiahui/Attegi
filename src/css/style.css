@@ -8,6 +8,8 @@
 @import "./highlight.css";
 @import "./toc.css";
 @import "./poem-card.css";
+@import "./cards.css";
+@import "./lightbox.css";
 /* ==========================================================================
    Basics
    ========================================================================== */
@@ -2725,7 +2727,7 @@ textarea {
 	color: var(--color-content-main);
 	background: transparent;
 	border: 1px solid var(--color-border);
-	border-radius: var(--radius-full);
+	border-radius: var(--radius-pill);
 	cursor: pointer;
 	transition: color var(--duration-fast) var(--ease-standard),
 		border-color var(--duration-fast) var(--ease-standard),
@@ -2734,7 +2736,7 @@ textarea {
 	@media (hover: hover) and (pointer: fine) {
 		&:hover {
 			color: var(--color-content-lead);
-			border-color: var(--color-content-muted);
+			border-color: var(--color-border-strong);
 			background: var(--glass-surface-subtle);
 		}
 	}
@@ -2751,7 +2753,17 @@ textarea {
 	}
 }
 
-.lang-selector:has(:popover-open) .lang-trigger {
+@keyframes langPopoverFade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.lang-selector:has(:popover-open) .lang-trigger,
+.lang-trigger[data-expanded] {
 	border-color: var(--ghost-accent-color);
 	color: var(--color-content-lead);
 
@@ -2761,8 +2773,6 @@ textarea {
 }
 
 .lang-popover {
-	position: fixed;
-	inset: auto;
 	margin: 0;
 	padding: 0.6rem;
 	min-width: 14rem;
@@ -2773,23 +2783,9 @@ textarea {
 	box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-float);
 	-webkit-backdrop-filter: blur(24px) saturate(180%);
 	backdrop-filter: blur(24px) saturate(180%);
-	transform-origin: top right;
-	opacity: 0;
-	transform: translateY(-4px) scale(0.96);
-	transition: opacity var(--duration-base) var(--ease-standard),
-		transform var(--duration-slow) var(--ease-spring),
-		overlay var(--duration-slow) allow-discrete,
-		display var(--duration-slow) allow-discrete;
-
-	&:popover-open {
-		opacity: 1;
-		transform: none;
-
-		@starting-style {
-			opacity: 0;
-			transform: translateY(-4px) scale(0.96);
-		}
-	}
+	z-index: var(--z-floating-ui);
+	outline: none;
+	animation: langPopoverFade 0.15s var(--ease-standard) forwards;
 
 	@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
 		background: var(--color-background-main);
@@ -2817,6 +2813,8 @@ textarea {
 	color: var(--color-content-main);
 	text-decoration: none;
 	border-radius: var(--radius-sm);
+	cursor: pointer;
+	user-select: none;
 	transition: background var(--duration-fast) var(--ease-standard),
 		color var(--duration-fast) var(--ease-standard);
 
@@ -3155,7 +3153,8 @@ textarea {
 		}
 	}
 
-	.lang-selector:has(:popover-open) .lang-trigger {
+	.lang-selector:has(:popover-open) .lang-trigger,
+	.lang-trigger[data-expanded] {
 		color: #fff;
 		border-color: #fff;
 		background: rgb(255 255 255 / 0.15);
@@ -3457,7 +3456,8 @@ textarea {
 	}
 }
 
-.menu-active .site-menu {
+.menu-active .site-menu,
+.site-menu.is-open {
 	opacity: 1;
 	visibility: visible;
 	transform: translateY(0);
@@ -6443,12 +6443,12 @@ a.post-tag-chip {
 
 .back-to-top .progress-ring__bg {
 	fill: none;
-	stroke: rgba(0, 0, 0, 0.08);
+	stroke: var(--color-border);
 	stroke-width: 2;
 }
 
 .theme-dark .back-to-top .progress-ring__bg {
-	stroke: rgba(255, 255, 255, 0.1);
+	stroke: var(--color-border);
 }
 
 .back-to-top .progress-ring__progress {
@@ -6465,13 +6465,13 @@ a.post-tag-chip {
 .back-to-top__icon {
 	width: 20px;
 	height: 20px;
-	color: rgba(0, 0, 0, 0.6);
+	color: var(--color-content-secondary);
 	position: relative;
 	z-index: var(--z-base);
 }
 
 .theme-dark .back-to-top__icon {
-	color: rgba(255, 255, 255, 0.8);
+	color: var(--color-content-secondary);
 }
 
 /* Mobile adjustments */
@@ -7121,6 +7121,58 @@ a.post-tag-chip {
 		transition-duration: 0.01ms !important;
 		scroll-behavior: auto !important;
 	}
+}
+
+/* ==========================================================================
+   View States: Loading, Empty, and Feedback Messages
+   ========================================================================== */
+.view-status-container {
+	padding: var(--space-8) 0;
+	text-align: center;
+	color: var(--color-content-main);
+
+	h2 {
+		font-family: var(--gh-font-heading);
+		font-size: var(--font-size-xl);
+		margin-bottom: var(--space-3);
+	}
+
+	p {
+		font-family: var(--gh-font-body);
+		font-size: var(--font-size-base);
+		color: var(--color-content-secondary);
+		margin-bottom: var(--space-4);
+	}
+}
+
+.status-action-link {
+	display: inline-flex;
+	align-items: center;
+	font-weight: 500;
+	color: var(--color-accent-text);
+	text-decoration: none;
+	border-bottom: 1px solid currentColor;
+	transition: opacity var(--duration-fast) var(--ease-standard);
+
+	&:hover {
+		opacity: 0.85;
+	}
+}
+
+.feed-status-message {
+	padding: var(--space-6) 0;
+	text-align: center;
+	font-family: var(--gh-font-body);
+	font-size: var(--font-size-base);
+	color: var(--color-content-secondary);
+}
+
+.app-loading-state {
+	padding: var(--space-8) 0;
+	text-align: center;
+	font-family: var(--gh-font-body);
+	font-size: var(--font-size-base);
+	color: var(--color-content-secondary);
 }
 
 /* ==========================================================================

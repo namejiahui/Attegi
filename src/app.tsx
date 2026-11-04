@@ -1,10 +1,12 @@
-import { MetaProvider, Title } from "@solidjs/meta";
-import { Router, createAsync } from "@solidjs/router";
+import { MetaProvider, Title, Style } from "@solidjs/meta";
+import { Router, createAsync, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
+import { Suspense, Show, createEffect } from "solid-js";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import BackToTop from "./components/BackToTop";
 import { ghost } from "./lib/ghost/index.js";
+import { locale, changeLocale, getActiveLocale } from "./lib/i18n";
 import "./css/style.css";
 
 const fetchSettings = async () => {
@@ -19,17 +21,29 @@ const fetchSettings = async () => {
 
 function Layout(props: { children?: any }) {
   const settings = createAsync(() => fetchSettings());
+  const location = useLocation();
+
+  createEffect(() => {
+    const cur = getActiveLocale(location.pathname);
+    if (locale() !== cur.code) {
+      changeLocale(cur.code);
+    }
+  });
 
   return (
     <div class="viewport">
+      <Show when={settings()?.accent_color}>
+        <Style>{`:root { --ghost-accent-color: ${settings()!.accent_color}; }`}</Style>
+      </Show>
       <Header settings={settings()} />
       <section class="page-wrapper">
         <main id="main">
-          <Suspense fallback={<div class="container" style={{ padding: "4rem 0" }}>加载中...</div>}>
+          <Suspense fallback={<div class="container app-loading-state">加载中...</div>}>
             {props.children}
           </Suspense>
         </main>
         <Footer settings={settings()} />
+        <BackToTop />
       </section>
     </div>
   );
@@ -41,7 +55,9 @@ export default function App() {
       root={(props) => (
         <MetaProvider>
           <Title>Attegi Blog</Title>
-          <Layout>{props.children}</Layout>
+          <Suspense>
+            <Layout>{props.children}</Layout>
+          </Suspense>
         </MetaProvider>
       )}
     >

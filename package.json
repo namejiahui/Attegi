@@ -150,10 +150,13 @@
     "ios_saf >= 16"
   ],
   "dependencies": {
+    "@kobalte/core": "^0.13.14",
+    "@solid-primitives/i18n": "^2.2.1",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^1.0.1",
     "@solidjs/start": "^2.2.0",
     "handlebars": "^4.7.10",
+    "highlight.js": "^11.12.0",
     "ofetch": "^1.5.1",
     "solid-js": "^1.9.18"
   }

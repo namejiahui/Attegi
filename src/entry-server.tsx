@@ -1,5 +1,6 @@
 // @refresh reload
 import { createHandler, StartServer } from "@solidjs/start/server";
+import { getActiveLocale, setLocale } from "./lib/i18n";
 
 const themeBootstrapScript = `
 (function(){
@@ -15,24 +16,30 @@ const themeBootstrapScript = `
 })();
 `;
 
-export default createHandler(() => (
-  <StartServer
-    document={({ assets, children, scripts }) => (
-      <html lang="zh">
-        <head>
-          <meta charset="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
-          <meta name="theme-color" content="#1D1F21" media="(prefers-color-scheme: dark)" />
-          <link rel="icon" href="/favicon.ico" />
-          <script innerHTML={themeBootstrapScript} />
-          {assets}
-        </head>
-        <body>
-          <div id="app">{children}</div>
-          {scripts}
-        </body>
-      </html>
-    )}
-  />
-));
+export default createHandler((context) => {
+  const pathname = new URL(context.request.url).pathname;
+  const currentLocale = getActiveLocale(pathname);
+  setLocale(currentLocale.code);
+  return (
+    <StartServer
+      document={({ assets, children, scripts }) => (
+        <html lang={currentLocale.code}>
+          <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+            <meta name="theme-color" content="#1D1F21" media="(prefers-color-scheme: dark)" />
+            <link rel="icon" href="/favicon.ico" />
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss/" />
+            <script innerHTML={themeBootstrapScript} />
+            {assets}
+          </head>
+          <body>
+            <div id="app">{children}</div>
+            {scripts}
+          </body>
+        </html>
+      )}
+    />
+  );
+});
