@@ -1,4 +1,4 @@
-import { createSignal, createEffect, onMount, onCleanup, Show, For } from "solid-js";
+import { createSignal, createMemo, createEffect, onSettled, Show, For } from "solid-js";
 import { Dialog } from "@kobalte/core/dialog";
 import { t } from "../lib/i18n";
 
@@ -37,10 +37,8 @@ function parseHeadingsFromHtml(html: string): TocItem[] {
 }
 
 export default function TableOfContents(props: TableOfContentsProps) {
-  // Parse directly from HTML for instant SSR rendering
-  const initialHeadings = props.html ? parseHeadingsFromHtml(props.html) : [];
-  const [headings, setHeadings] = createSignal<TocItem[]>(initialHeadings);
-  const [activeId, setActiveId] = createSignal<string>(initialHeadings[0]?.id || "");
+  const headings = createMemo(() => (props.html ? parseHeadingsFromHtml(props.html) : []));
+  const [activeId, setActiveId] = createSignal<string>("");
   const [isSidebarVisible, setIsSidebarVisible] = createSignal(false);
   const [isTriggerVisible, setIsTriggerVisible] = createSignal(false);
   const [readingProgress, setReadingProgress] = createSignal(0);
@@ -75,40 +73,43 @@ export default function TableOfContents(props: TableOfContentsProps) {
     document.documentElement.classList.add("has-toc");
   };
 
-  createEffect(() => {
-    if (props.html) {
-      const items = parseHeadingsFromHtml(props.html);
-      setHeadings(items);
-      if (items.length > 0 && !activeId()) {
+  createEffect(
+    () => [headings(), activeId()] as const,
+    ([items, currentActiveId]) => {
+      if (items.length > 0 && !currentActiveId) {
         setActiveId(items[0].id);
       }
     }
-  });
+  );
 
-  createEffect(() => {
-    // Whenever contentEl or headings change, sync IDs to the DOM
-    if (props.contentEl || headings().length > 0) {
-      setTimeout(syncHeadingDomIds, 50);
+  createEffect(
+    () => [props.contentEl, headings().length] as const,
+    ([el, len]) => {
+      if (el || len > 0) {
+        setTimeout(syncHeadingDomIds, 50);
+      }
     }
-  });
+  );
 
   // Keep the active link centered in the desktop sidebar when scrolling
-  createEffect(() => {
-    const current = activeId();
-    if (!current || typeof document === "undefined") return;
+  createEffect(
+    () => activeId(),
+    (current) => {
+      if (!current || typeof document === "undefined") return;
 
-    const sidebar = document.querySelector<HTMLElement>(".toc-sidebar");
-    const activeLink = sidebar?.querySelector<HTMLElement>(`.toc-link[href="#${current}"]`);
-    if (sidebar && activeLink) {
-      const sidebarRect = sidebar.getBoundingClientRect();
-      const linkRect = activeLink.getBoundingClientRect();
-      const linkTop = linkRect.top - sidebarRect.top + sidebar.scrollTop;
-      const targetScroll = linkTop - sidebarRect.height / 2 + linkRect.height / 2;
-      sidebar.scrollTo({ top: Math.max(0, targetScroll), behavior: "smooth" });
+      const sidebar = document.querySelector<HTMLElement>(".toc-sidebar");
+      const activeLink = sidebar?.querySelector<HTMLElement>(`.toc-link[href="#${current}"]`);
+      if (sidebar && activeLink) {
+        const sidebarRect = sidebar.getBoundingClientRect();
+        const linkRect = activeLink.getBoundingClientRect();
+        const linkTop = linkRect.top - sidebarRect.top + sidebar.scrollTop;
+        const targetScroll = linkTop - sidebarRect.height / 2 + linkRect.height / 2;
+        sidebar.scrollTo({ top: Math.max(0, targetScroll), behavior: "smooth" });
+      }
     }
-  });
+  );
 
-  onMount(() => {
+  onSettled(() => {
     syncHeadingDomIds();
 
     // Scroll spy using IntersectionObserver
@@ -172,13 +173,13 @@ export default function TableOfContents(props: TableOfContentsProps) {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
-    onCleanup(() => {
+    return () => {
       observer?.disconnect();
       window.removeEventListener("scroll", handleScroll);
       if (typeof document !== "undefined") {
         document.documentElement.classList.remove("has-toc");
       }
-    });
+    };
   });
 
   const scrollToHeading = (id: string) => {
@@ -205,20 +206,20 @@ export default function TableOfContents(props: TableOfContentsProps) {
           </div>
           <nav class="toc-list" aria-label={t("Table of Contents")}>
             <ol class="toc-list">
-              <For each={headings()}>
+              <For each={headings()} keyed={(item) => item.id}>
                 {(item) => (
-                  <li class={`toc-item toc-item-h${item.level}`}>
+                  <li class={`toc-item toc-item-h${item().level}`}>
                     <a
-                      href={`#${item.id}`}
-                      class={`toc-link node-name--H${item.level} ${
-                        activeId() === item.id ? "is-active is-active-link" : ""
+                      href={`#${item().id}`}
+                      class={`toc-link node-name--H${item().level} ${
+                        activeId() === item().id ? "is-active is-active-link" : ""
                       }`}
                       onClick={(e) => {
                         e.preventDefault();
-                        scrollToHeading(item.id);
+                        scrollToHeading(item().id);
                       }}
                     >
-                      {item.text}
+                      {item().text}
                     </a>
                   </li>
                 )}
@@ -236,7 +237,7 @@ export default function TableOfContents(props: TableOfContentsProps) {
         }`}
         onClick={() => setIsMobileOpen(true)}
         aria-label={t("Open table of contents")}
-        aria-expanded={isMobileOpen()}
+        aria-expanded={isMobileOpen() ? "true" : "false"}
         aria-haspopup="dialog"
       >
         <svg class="toc-progress-ring" viewBox="0 0 44 44" aria-hidden="true">
@@ -299,20 +300,20 @@ export default function TableOfContents(props: TableOfContentsProps) {
             <div class="toc-mobile-content">
               <nav class="toc-mobile-list" aria-label={t("Table of Contents")}>
                 <ol class="toc-list">
-                  <For each={headings()}>
+                  <For each={headings()} keyed={(item) => item.id}>
                     {(item) => (
-                      <li class={`toc-mobile-item toc-item-h${item.level}`}>
+                      <li class={`toc-mobile-item toc-item-h${item().level}`}>
                         <a
-                          href={`#${item.id}`}
+                          href={`#${item().id}`}
                           class={`toc-mobile-link ${
-                            activeId() === item.id ? "is-active is-active-link" : ""
+                            activeId() === item().id ? "is-active is-active-link" : ""
                           }`}
                           onClick={(e) => {
                             e.preventDefault();
-                            scrollToHeading(item.id);
+                            scrollToHeading(item().id);
                           }}
                         >
-                          {item.text}
+                          {item().text}
                         </a>
                       </li>
                     )}

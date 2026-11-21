@@ -1,4 +1,4 @@
-import { onMount, createSignal } from "solid-js";
+import { onSettled, createSignal } from "solid-js";
 import { t } from "../lib/i18n";
 
 type ThemeMode = "system" | "dark" | "light";
@@ -32,7 +32,7 @@ export default function ThemeToggle() {
     }
   };
 
-  onMount(() => {
+  onSettled(() => {
     try {
       const stored = localStorage.getItem("attegi_theme") as ThemeMode | null;
       if (stored === "dark" || stored === "light" || stored === "system") {

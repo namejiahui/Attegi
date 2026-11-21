@@ -1,7 +1,7 @@
-import type { APIEvent } from "@solidjs/start/server";
+import type { APIHandler } from "filesystem-routing/api";
 import { ghost } from "../lib/ghost/index.js";
 
-export async function GET(event: APIEvent) {
+export const GET: APIHandler = async ({ request }) => {
   const targetUrl = ghost.siteUrl;
   if (!targetUrl) {
     return new Response("Ghost URL not configured", { status: 500 });
@@ -14,7 +14,7 @@ export async function GET(event: APIEvent) {
     }
 
     let xml = await upstream.text();
-    const siteUrl = new URL(event.request.url).origin;
+    const siteUrl = new URL(request.url).origin;
 
     // Replace ghost backend origin with current frontend origin in feed and post links
     if (targetUrl !== siteUrl) {
@@ -31,4 +31,4 @@ export async function GET(event: APIEvent) {
   } catch (err: any) {
     return new Response(`RSS Error: ${err?.message || "Unknown error"}`, { status: 500 });
   }
-}
+};

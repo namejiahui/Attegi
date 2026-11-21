@@ -1,6 +1,5 @@
 import { Title, Meta, Link } from "@solidjs/meta";
-import { createAsync } from "@solidjs/router";
-import { For, Show, Suspense, createEffect, onCleanup } from "solid-js";
+import { For, Show, Loading, createEffect, createMemo } from "solid-js";
 import PostCard from "./PostCard";
 import Pagination from "./Pagination";
 import { fetchHomeFeedData } from "../lib/server/ghost-data";
@@ -20,20 +19,19 @@ export default function HomeFeed(props: HomeFeedProps) {
   };
   const isRoot = () => currentLocale().isRoot;
   const pageNumber = () => props.page || 1;
-  const data = createAsync(() => fetchHomeFeedData(currentLocale().code, pageNumber()));
+  const data = createMemo(() => fetchHomeFeedData(currentLocale().code, pageNumber()));
 
-  createEffect(() => {
-    if (typeof document !== "undefined") {
-      const hasCover = Boolean(data()?.settings?.cover_image);
-      document.documentElement.classList.toggle("cover-active", hasCover);
+  createEffect(
+    () => Boolean(data()?.settings?.cover_image),
+    (hasCover) => {
+      if (typeof document !== "undefined") {
+        document.documentElement.classList.toggle("cover-active", hasCover);
+        return () => {
+          document.documentElement.classList.remove("cover-active");
+        };
+      }
     }
-  });
-
-  onCleanup(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.remove("cover-active");
-    }
-  });
+  );
 
   const coverSrcset = () => {
     const img = data()?.settings?.cover_image;
@@ -112,7 +110,7 @@ export default function HomeFeed(props: HomeFeedProps) {
 
       <div id="index" class="container">
         <div class="content">
-          <Suspense fallback={<p class="feed-status-message">{t("Loading...") || "正在加载文章列表..."}</p>}>
+          <Loading fallback={<p class="feed-status-message">{t("Loading...") || "正在加载文章列表..."}</p>}>
             <Show
               when={data()?.posts && data()!.posts.length > 0}
               fallback={<p class="feed-status-message">{t("No Posts")}</p>}
@@ -126,7 +124,7 @@ export default function HomeFeed(props: HomeFeedProps) {
                 basePath={isRoot() ? "" : currentLocale().prefix}
               />
             </Show>
-          </Suspense>
+          </Loading>
         </div>
       </div>
     </>

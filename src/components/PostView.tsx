@@ -1,6 +1,6 @@
 import { Title, Meta, Link } from "@solidjs/meta";
-import { useParams, createAsync, A } from "@solidjs/router";
-import { Show, For, Suspense, createSignal, createEffect, onCleanup } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { Show, For, Loading, createSignal, createEffect, createMemo } from "solid-js";
 import { fetchPostOrPage } from "../lib/server/ghost-data";
 import { setupCodeHighlight } from "../lib/highlight.js";
 import {
@@ -31,10 +31,9 @@ export default function PostView(props: PostViewProps) {
   };
   const isRoot = () => currentLocale().isRoot;
   const prefix = () => (isRoot() ? "" : currentLocale().prefix);
-  const homeUrl = () => (isRoot() ? "/" : currentLocale().prefix);
 
   const params = useParams<{ slug: string }>();
-  const data = createAsync(() => fetchPostOrPage(params.slug, currentLocale().code));
+  const data = createMemo(() => fetchPostOrPage(params.slug, currentLocale().code));
   const post = () => data()?.item;
 
   const [contentEl, setContentEl] = createSignal<HTMLElement | null>(null);
@@ -80,38 +79,43 @@ export default function PostView(props: PostViewProps) {
     setIsLightboxOpen(true);
   };
 
-  createEffect(() => {
-    if (typeof document !== "undefined") {
-      const hasCover = Boolean(post()?.feature_image);
-      document.documentElement.classList.toggle("cover-active", hasCover);
+  createEffect(
+    () => Boolean(post()?.feature_image),
+    (hasCover) => {
+      if (typeof document !== "undefined") {
+        document.documentElement.classList.toggle("cover-active", hasCover);
+        return () => {
+          document.documentElement.classList.remove("cover-active");
+        };
+      }
     }
-  });
+  );
 
-  createEffect(() => {
-    const el = headerEl();
-    if (el && post()?.feature_image) {
-      setupCoverBrightness(el);
+  createEffect(
+    () => [headerEl(), post()?.feature_image] as const,
+    ([el, img]) => {
+      if (el && img) {
+        setupCoverBrightness(el);
+      }
     }
-  });
+  );
 
-  createEffect(() => {
-    const el = contentEl();
-    if (post()?.html && el) {
-      setupCodeHighlight(el);
-      setupToggleCards(el);
-      setupGalleryCards(el);
-      setupPoemCards(el);
+  createEffect(
+    () => [contentEl(), post()?.html] as const,
+    ([el, html]) => {
+      if (html && el) {
+        setupCodeHighlight(el);
+        setupToggleCards(el);
+        setupGalleryCards(el);
+        setupPoemCards(el);
+      }
     }
-  });
+  );
 
-  onCleanup(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.remove("cover-active");
-    }
-  });
+
 
   return (
-    <Suspense
+    <Loading
       fallback={
         <div class="inner inner-reading view-status-container">
           <p>{t("Loading...") || "正在加载文章内容..."}</p>
@@ -199,7 +203,7 @@ export default function PostView(props: PostViewProps) {
                   <For each={post()!.authors}>
                     {(author) => (
                       <figure class="post-meta-avatar avatar" aria-label={author.name}>
-                        <A href={`${prefix()}/author/${author.slug}/`} class="author-avatar" aria-label={author.name}>
+                        <a href={`${prefix()}/author/${author.slug}/`} class="author-avatar" aria-label={author.name}>
                           <Show
                             when={author.profile_image}
                             fallback={
@@ -216,7 +220,7 @@ export default function PostView(props: PostViewProps) {
                               decoding="async"
                             />
                           </Show>
-                        </A>
+                        </a>
                       </figure>
                     )}
                   </For>
@@ -226,7 +230,7 @@ export default function PostView(props: PostViewProps) {
                     {(author, i) => (
                       <>
                         {i() > 0 ? ", " : ""}
-                        <A href={`${prefix()}/author/${author.slug}/`}>{author.name}</A>
+                        <a href={`${prefix()}/author/${author.slug}/`}>{author.name}</a>
                       </>
                     )}
                   </For>
@@ -282,9 +286,9 @@ export default function PostView(props: PostViewProps) {
                       <span class="post-info-label">{t("Topic")}</span>
                       <For each={post()!.tags?.filter(t => !t.name.startsWith("#"))}>
                         {(tag) => (
-                          <A href={`${prefix()}/tag/${tag.slug}`} class="post-tag-chip">
+                          <a href={`${prefix()}/tag/${tag.slug}`} class="post-tag-chip">
                             {tag.name}
-                          </A>
+                          </a>
                         )}
                       </For>
                     </aside>
@@ -319,6 +323,6 @@ export default function PostView(props: PostViewProps) {
           />
         </div>
       </Show>
-    </Suspense>
+    </Loading>
   );
 }

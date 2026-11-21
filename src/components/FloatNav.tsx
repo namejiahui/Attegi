@@ -1,5 +1,5 @@
-import { Show, For, onMount, onCleanup } from "solid-js";
-import { A, useLocation } from "@solidjs/router";
+import { Show, For, onSettled } from "solid-js";
+import { useLocation } from "@solidjs/router";
 import { t, getLocales, getActiveLocale, resolveTargetUrl } from "../lib/i18n";
 import type { GhostSettings } from "../lib/ghost/types";
 
@@ -23,7 +23,7 @@ export default function FloatNav(props: FloatNavProps) {
     return cur === target;
   };
 
-  onMount(() => {
+  onSettled(() => {
     if (typeof window === "undefined") return;
 
     const handleScroll = () => {
@@ -43,11 +43,11 @@ export default function FloatNav(props: FloatNavProps) {
     };
     panel?.addEventListener("click", handlePanelClick);
 
-    onCleanup(() => {
+    return () => {
       window.removeEventListener("scroll", handleScroll);
       panel?.removeEventListener("click", handlePanelClick);
       document.documentElement.classList.remove("nav-offscreen");
-    });
+    };
   });
 
   return (
@@ -64,18 +64,18 @@ export default function FloatNav(props: FloatNavProps) {
         </span>
       </button>
       <div class="float-nav-panel" id="float-nav-panel" popover="auto">
-        <A class="float-nav-home" href={homeUrl()}>
+        <a class="float-nav-home" href={homeUrl()}>
           <Show when={props.settings?.icon}>
             <img src={props.settings!.icon!} alt="" width="24" height="24" />
           </Show>
           <span>{props.settings?.title || "Home"}</span>
-        </A>
+        </a>
         <nav class="float-nav-links" aria-label={t("Main") || "主导航"}>
           <ul>
             <For each={navItems()}>
               {(item) => (
                 <li class={isActive(item.url) ? "active" : ""}>
-                  <A href={resolveNavUrl(item.url)}>{item.label}</A>
+                  <a href={resolveNavUrl(item.url)}>{item.label}</a>
                 </li>
               )}
             </For>

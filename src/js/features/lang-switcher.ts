@@ -4,7 +4,7 @@
  * (@custom.multilingual_locales, e.g. "zh:中文, en:English, ja:日本語").
  */
 
-import { qs, qsa } from '../core/dom.js';
+import { qs } from '../core/dom.js';
 
 export interface LocaleItem {
   code: string;

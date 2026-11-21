@@ -1,5 +1,5 @@
-import { Show, For, Suspense } from "solid-js";
-import { A, createAsync, useLocation } from "@solidjs/router";
+import { Show, For, Loading, createMemo } from "solid-js";
+import { useLocation } from "@solidjs/router";
 import { Title, Meta } from "@solidjs/meta";
 import { fetchTagsPageData } from "../lib/server/ghost-data";
 import { t, formatDate, getLocales, getDefaultLocale, getActiveLocale } from "../lib/i18n";
@@ -20,7 +20,7 @@ export default function TagsView(props: TagsViewProps) {
   const isRoot = () => currentLocale().isRoot;
   const prefix = () => (isRoot() ? "" : currentLocale().prefix);
 
-  const data = createAsync(() => fetchTagsPageData(currentLocale().code));
+  const data = createMemo(() => fetchTagsPageData(currentLocale().code));
   const tags = () => data()?.tags || [];
   const posts = () => data()?.posts || [];
   const settings = () => data()?.settings;
@@ -48,7 +48,7 @@ export default function TagsView(props: TagsViewProps) {
       <div id="tags-index" class="container">
         <div class="content">
           <div class="inner">
-            <Suspense
+            <Loading
               fallback={
                 <div class="view-status-container inner inner-reading">
                   <p>{t("Loading...") || "正在加载专栏..."}</p>
@@ -59,8 +59,8 @@ export default function TagsView(props: TagsViewProps) {
                 <For each={tags()}>
                   {(tag) => {
                     const tagPosts = () =>
-                      posts().filter((p) =>
-                        p.tags?.some((t) => t.slug === tag.slug || t.id === tag.id)
+                      posts().filter((p: GhostPost) =>
+                        p.tags?.some((t: GhostTag) => t.slug === tag.slug || t.id === tag.id)
                       );
                     const postCount = tag.count?.posts ?? tagPosts().length;
                     const tagUrl = `${prefix()}/tag/${tag.slug}`;
@@ -78,7 +78,7 @@ export default function TagsView(props: TagsViewProps) {
                         <Show
                           when={tag.feature_image}
                           fallback={
-                            <A href={tagUrl} class="tag-card-link">
+                            <a href={tagUrl} class="tag-card-link">
                               <div class="tag-card-header">
                                 <div
                                   class="tag-card-icon"
@@ -120,10 +120,10 @@ export default function TagsView(props: TagsViewProps) {
                               <Show when={tag.description}>
                                 <p class="tag-card-description">{tag.description}</p>
                               </Show>
-                            </A>
+                            </a>
                           }
                         >
-                          <A href={tagUrl} class="tag-card-bg">
+                          <a href={tagUrl} class="tag-card-bg">
                             <img
                               src={tag.feature_image!}
                               alt=""
@@ -150,19 +150,19 @@ export default function TagsView(props: TagsViewProps) {
                                 </span>
                               </div>
                             </div>
-                          </A>
+                          </a>
                         </Show>
 
                         <Show when={tagPosts().length > 0}>
                           <div class="tag-card-posts">
                             <For each={tagPosts().slice(0, 5)}>
                               {(p: GhostPost) => (
-                                <A href={`${prefix()}/${p.slug}`} class="tag-post-preview">
+                                <a href={`${prefix()}/${p.slug}`} class="tag-post-preview">
                                   <span class="tag-post-title">{p.title}</span>
                                   <span class="tag-post-date">
                                     {formatDate(p.published_at, "MMM D")}
                                   </span>
-                                </A>
+                                </a>
                               )}
                             </For>
                           </div>
@@ -172,7 +172,7 @@ export default function TagsView(props: TagsViewProps) {
                   }}
                 </For>
               </div>
-            </Suspense>
+            </Loading>
           </div>
         </div>
       </div>

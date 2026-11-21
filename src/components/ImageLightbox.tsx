@@ -1,4 +1,4 @@
-import { createSignal, createEffect, onCleanup, Show, For } from "solid-js";
+import { createSignal, createEffect, Show } from "solid-js";
 import { Dialog } from "@kobalte/core/dialog";
 
 export interface LightboxImage {
@@ -15,12 +15,7 @@ interface ImageLightboxProps {
 }
 
 export default function ImageLightbox(props: ImageLightboxProps) {
-  const [index, setIndex] = createSignal(props.currentIndex);
-
-  // Sync external index changes
-  createEffect(() => {
-    setIndex(props.currentIndex);
-  });
+  const [index, setIndex] = createSignal(() => props.currentIndex);
 
   const total = () => props.images.length;
   const current = () => props.images[index()] || { src: "", alt: "" };
@@ -51,12 +46,15 @@ export default function ImageLightbox(props: ImageLightboxProps) {
     }
   };
 
-  createEffect(() => {
-    if (props.isOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-      onCleanup(() => window.removeEventListener("keydown", handleKeyDown));
+  createEffect(
+    () => props.isOpen,
+    (isOpen) => {
+      if (isOpen) {
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+      }
     }
-  });
+  );
 
   // Touch gesture support for mobile swiping
   let touchStartX = 0;

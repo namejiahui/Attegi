@@ -1,5 +1,5 @@
 import { Show, For, createSignal } from "solid-js";
-import { A, useLocation } from "@solidjs/router";
+import { useLocation } from "@solidjs/router";
 import { Dialog } from "@kobalte/core/dialog";
 import type { GhostSettings } from "../lib/ghost/types.js";
 import ThemeToggle from "./ThemeToggle";
@@ -25,14 +25,14 @@ export default function Header(props: HeaderProps) {
           <Show
             when={props.settings?.logo}
             fallback={
-              <A class="wordmark" href={homeUrl()}>
+              <a class="wordmark" href={homeUrl()}>
                 {props.settings?.title || "Attegi"}
-              </A>
+              </a>
             }
           >
-            <A class="logo" href={homeUrl()} title={t("Home")}>
+            <a class="logo" href={homeUrl()} title={t("Home")}>
               <img src={props.settings!.logo!} alt={props.settings?.title || "Logo"} />
-            </A>
+            </a>
           </Show>
         </div>
 
@@ -43,9 +43,9 @@ export default function Header(props: HeaderProps) {
                 const slug = item.label.toLowerCase().replace(/[^a-z0-9]/g, "");
                 return (
                   <li class={`nav-${slug}`}>
-                    <A href={resolveNavUrl(item.url)}>
+                    <a href={resolveNavUrl(item.url)}>
                       <span>{t(item.label)}</span>
-                    </A>
+                    </a>
                   </li>
                 );
               }}
@@ -69,7 +69,7 @@ export default function Header(props: HeaderProps) {
             class="nav-menu"
             onClick={() => setIsMobileMenuOpen(true)}
             aria-label={t("Menu")}
-            aria-expanded={isMobileMenuOpen()}
+            aria-expanded={isMobileMenuOpen() ? "true" : "false"}
           >
             {t("Menu")}
           </button>
@@ -97,9 +97,9 @@ export default function Header(props: HeaderProps) {
                 <For each={navItems()}>
                   {(item) => (
                     <li>
-                      <A href={resolveNavUrl(item.url)} onClick={() => setIsMobileMenuOpen(false)}>
+                      <a href={resolveNavUrl(item.url)} onClick={() => setIsMobileMenuOpen(false)}>
                         <span>{t(item.label)}</span>
-                      </A>
+                      </a>
                     </li>
                   )}
                 </For>

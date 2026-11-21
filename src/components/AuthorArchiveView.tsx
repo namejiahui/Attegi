@@ -1,6 +1,6 @@
 import { Title, Meta } from "@solidjs/meta";
-import { useParams, createAsync, A } from "@solidjs/router";
-import { Show, For, Suspense, createEffect, onCleanup } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { Show, For, Loading, createEffect, createMemo } from "solid-js";
 import { fetchAuthorData } from "../lib/server/ghost-data";
 import PostCard from "./PostCard";
 import Pagination from "./Pagination";
@@ -20,26 +20,24 @@ export default function AuthorArchiveView(props: AuthorArchiveViewProps) {
   };
   const isRoot = () => currentLocale().isRoot;
   const prefix = () => (isRoot() ? "" : currentLocale().prefix);
-  const homeUrl = () => (isRoot() ? "/" : currentLocale().prefix);
 
   const params = useParams<{ slug: string }>();
-  const data = createAsync(() => fetchAuthorData(params.slug, currentLocale().code));
+  const data = createMemo(() => fetchAuthorData(params.slug, currentLocale().code));
   const author = () => data()?.author;
   const posts = () => data()?.posts || [];
   const total = () => data()?.meta?.pagination?.total ?? posts().length;
 
-  createEffect(() => {
-    if (typeof document !== "undefined") {
-      const hasCover = Boolean(author()?.cover_image);
-      document.documentElement.classList.toggle("cover-active", hasCover);
+  createEffect(
+    () => Boolean(author()?.cover_image),
+    (hasCover) => {
+      if (typeof document !== "undefined") {
+        document.documentElement.classList.toggle("cover-active", hasCover);
+        return () => {
+          document.documentElement.classList.remove("cover-active");
+        };
+      }
     }
-  });
-
-  onCleanup(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.remove("cover-active");
-    }
-  });
+  );
 
   const postCountText = () => {
     const count = total();
@@ -49,7 +47,7 @@ export default function AuthorArchiveView(props: AuthorArchiveViewProps) {
   };
 
   return (
-    <Suspense
+    <Loading
       fallback={
         <div class="inner inner-reading view-status-container">
           <p>{t("Loading...") || "正在加载作者主页..."}</p>
@@ -190,6 +188,6 @@ export default function AuthorArchiveView(props: AuthorArchiveViewProps) {
           </div>
         </div>
       </Show>
-    </Suspense>
+    </Loading>
   );
 }

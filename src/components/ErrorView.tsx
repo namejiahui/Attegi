@@ -1,5 +1,5 @@
-import { Show, For, onMount, onCleanup } from "solid-js";
-import { A, createAsync, useLocation } from "@solidjs/router";
+import { Show, For, onSettled, createMemo } from "solid-js";
+import { useLocation } from "@solidjs/router";
 import { Title } from "@solidjs/meta";
 import { fetchHomeFeedData } from "../lib/server/ghost-data";
 import { t, getLocales, getDefaultLocale, getActiveLocale, formatDate, formatIsoDateOnly } from "../lib/i18n";
@@ -23,18 +23,15 @@ export default function ErrorView(props: ErrorViewProps) {
   const prefix = () => (isRoot() ? "" : currentLocale().prefix);
   const homeUrl = () => (isRoot() ? "/" : currentLocale().prefix);
 
-  const homeData = createAsync(() => fetchHomeFeedData(currentLocale().code, 1));
+  const homeData = createMemo(() => fetchHomeFeedData(currentLocale().code, 1));
   const recentPosts = () => (homeData()?.posts || []).slice(0, 3);
 
-  onMount(() => {
+  onSettled(() => {
     if (typeof document !== "undefined") {
       document.documentElement.classList.add("is-error-page");
-    }
-  });
-
-  onCleanup(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.remove("is-error-page");
+      return () => {
+        document.documentElement.classList.remove("is-error-page");
+      };
     }
   });
 
@@ -76,7 +73,7 @@ export default function ErrorView(props: ErrorViewProps) {
             <div class="error-card">
               <h1 class="error-title">{title()}</h1>
               <p class="error-description">{description()}</p>
-              <A href={homeUrl()} class="error-button">
+              <a href={homeUrl()} class="error-button">
                 <i class="icon icon-arrow-left" aria-hidden="true">
                   <svg
                     width="20"
@@ -94,7 +91,7 @@ export default function ErrorView(props: ErrorViewProps) {
                   </svg>
                 </i>
                 <span>{t("Return Home")}</span>
-              </A>
+              </a>
             </div>
 
             {/* Recent Posts Recommendations */}
@@ -107,7 +104,7 @@ export default function ErrorView(props: ErrorViewProps) {
                       const firstTag = () => post.tags?.find((tagItem: { name: string }) => !tagItem.name.startsWith("#"));
                       return (
                         <article class="recommendation-card">
-                          <A href={postUrl(post)} class="recommendation-link">
+                          <a href={postUrl(post)} class="recommendation-link">
                             <Show when={post.feature_image}>
                               <div class="recommendation-image">
                                 <img
@@ -132,7 +129,7 @@ export default function ErrorView(props: ErrorViewProps) {
                                 {formatDate(post.published_at, "MMM DD, YYYY")}
                               </time>
                             </div>
-                          </A>
+                          </a>
                         </article>
                       );
                     }}

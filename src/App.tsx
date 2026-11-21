@@ -1,7 +1,7 @@
-import { MetaProvider, Title, Style, Link } from "@solidjs/meta";
-import { Router, createAsync, useLocation } from "@solidjs/router";
-import { FileRoutes } from "@solidjs/start/router";
-import { Suspense, Show, createEffect } from "solid-js";
+import { Title, Style, Link } from "@solidjs/meta";
+import { useLocation } from "@solidjs/router";
+import { Loading, Show, createEffect, createMemo } from "solid-js";
+import { Router } from "./router";
 import Header from "./components/Header";
 import FloatNav from "./components/FloatNav";
 import Footer from "./components/Footer";
@@ -21,15 +21,17 @@ const fetchSettings = async () => {
 };
 
 function Layout(props: { children?: any }) {
-  const settings = createAsync(() => fetchSettings());
+  const settings = createMemo(() => fetchSettings());
   const location = useLocation();
 
-  createEffect(() => {
-    const cur = getActiveLocale(location.pathname);
-    if (locale() !== cur.code) {
-      changeLocale(cur.code);
+  createEffect(
+    () => [getActiveLocale(location.pathname), locale()] as const,
+    ([cur, curLocale]) => {
+      if (curLocale !== cur.code) {
+        changeLocale(cur.code);
+      }
     }
-  });
+  );
 
   return (
     <div class="viewport">
@@ -46,9 +48,9 @@ function Layout(props: { children?: any }) {
       <FloatNav settings={settings()} />
       <section class="page-wrapper">
         <main id="main">
-          <Suspense fallback={<div class="container app-loading-state">加载中...</div>}>
+          <Loading on={location.pathname} fallback={<div class="container app-loading-state">加载中...</div>}>
             {props.children}
-          </Suspense>
+          </Loading>
         </main>
         <Footer settings={settings()} />
         <BackToTop />
@@ -62,17 +64,13 @@ function Layout(props: { children?: any }) {
 
 export default function App() {
   return (
-    <Router
-      root={(props) => (
-        <MetaProvider>
-          <Title>Attegi Blog</Title>
-          <Suspense>
-            <Layout>{props.children}</Layout>
-          </Suspense>
-        </MetaProvider>
-      )}
-    >
-      <FileRoutes />
-    </Router>
+    <>
+      <Title>Attegi Blog</Title>
+      <Router>
+        {(props) => (
+          <Layout>{props.children}</Layout>
+        )}
+      </Router>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import { Show, For } from "solid-js";
-import { A, useLocation } from "@solidjs/router";
+import { useLocation } from "@solidjs/router";
 import type { GhostPost } from "../lib/ghost/types.js";
 import { t, formatDate, formatIsoDateOnly, getActiveLocale } from "../lib/i18n";
 import { cleanExcerpt } from "../lib/content";
@@ -21,7 +21,7 @@ export default function PostCard(props: PostCardProps) {
           <div class="post-box-header">
             <div class="post-box-title-wrap">
               <h2 class="post-title">
-                <A href={`${prefix()}/${post().slug}`}>{post().title}</A>
+                <a href={`${prefix()}/${post().slug}`}>{post().title}</a>
               </h2>
             </div>
 
@@ -32,9 +32,9 @@ export default function PostCard(props: PostCardProps) {
               <Show when={post().tags && post().tags!.length > 0}>
                 <For each={post().tags?.filter(t => !t.name.startsWith("#")).slice(0, 3)}>
                   {(tag) => (
-                    <A href={`${prefix()}/tag/${tag.slug}`} class="post-tag-chip">
+                    <a href={`${prefix()}/tag/${tag.slug}`} class="post-tag-chip">
                       {tag.name}
-                    </A>
+                    </a>
                   )}
                 </For>
               </Show>

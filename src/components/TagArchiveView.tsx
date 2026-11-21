@@ -1,6 +1,6 @@
 import { Title, Meta } from "@solidjs/meta";
-import { useParams, createAsync, A } from "@solidjs/router";
-import { Show, For, Suspense, createEffect, onCleanup } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { Show, For, Loading, createEffect, createMemo } from "solid-js";
 import { fetchTagData } from "../lib/server/ghost-data";
 import PostCard from "./PostCard";
 import Pagination from "./Pagination";
@@ -20,26 +20,24 @@ export default function TagArchiveView(props: TagArchiveViewProps) {
   };
   const isRoot = () => currentLocale().isRoot;
   const prefix = () => (isRoot() ? "" : currentLocale().prefix);
-  const homeUrl = () => (isRoot() ? "/" : currentLocale().prefix);
 
   const params = useParams<{ slug: string }>();
-  const data = createAsync(() => fetchTagData(params.slug, currentLocale().code));
+  const data = createMemo(() => fetchTagData(params.slug, currentLocale().code));
   const tag = () => data()?.tag;
   const posts = () => data()?.posts || [];
   const total = () => data()?.meta?.pagination?.total ?? posts().length;
 
-  createEffect(() => {
-    if (typeof document !== "undefined") {
-      const hasCover = Boolean(tag()?.feature_image);
-      document.documentElement.classList.toggle("cover-active", hasCover);
+  createEffect(
+    () => Boolean(tag()?.feature_image),
+    (hasCover) => {
+      if (typeof document !== "undefined") {
+        document.documentElement.classList.toggle("cover-active", hasCover);
+        return () => {
+          document.documentElement.classList.remove("cover-active");
+        };
+      }
     }
-  });
-
-  onCleanup(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.remove("cover-active");
-    }
-  });
+  );
 
   const postCountText = () => {
     const count = total();
@@ -49,7 +47,7 @@ export default function TagArchiveView(props: TagArchiveViewProps) {
   };
 
   return (
-    <Suspense
+    <Loading
       fallback={
         <div class="inner inner-reading view-status-container">
           <p>{t("Loading...") || "正在加载专栏内容..."}</p>
@@ -112,6 +110,6 @@ export default function TagArchiveView(props: TagArchiveViewProps) {
           </div>
         </div>
       </Show>
-    </Suspense>
+    </Loading>
   );
 }

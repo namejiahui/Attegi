@@ -1,23 +1,14 @@
-import { Show, Suspense, onMount } from "solid-js";
-import { createAsync, useLocation } from "@solidjs/router";
+import { Loading, onSettled, createMemo } from "solid-js";
 import { Title, Meta } from "@solidjs/meta";
 import { fetchLinksPageData } from "../lib/server/ghost-data";
-import { t, getLocales, getDefaultLocale, getActiveLocale } from "../lib/i18n";
+import { t } from "../lib/i18n";
 
 interface LinksViewProps {
   lang?: string;
 }
 
-export default function LinksView(props: LinksViewProps) {
-  const location = useLocation();
-  const currentLocale = () => {
-    if (props.lang) {
-      return getLocales().find((l) => l.code === props.lang) || getDefaultLocale();
-    }
-    return getActiveLocale(location.pathname);
-  };
-
-  const data = createAsync(() => fetchLinksPageData());
+export default function LinksView(_props: LinksViewProps = {}) {
+  const data = createMemo(() => fetchLinksPageData());
   const page = () => data()?.page;
   const settings = () => data()?.settings;
 
@@ -28,7 +19,7 @@ export default function LinksView(props: LinksViewProps) {
     t("Friends and connected sites") ||
     "海内存知己，天涯若比邻";
 
-  onMount(() => {
+  onSettled(() => {
     if (typeof window !== "undefined") {
       const query = window.matchMedia("(prefers-reduced-motion: reduce)");
       const svg = document.querySelector<SVGElement>(".links-symbol");
@@ -160,7 +151,7 @@ export default function LinksView(props: LinksViewProps) {
               <p class="links-description">{description()}</p>
             </div>
 
-            <Suspense
+            <Loading
               fallback={
                 <div class="view-status-container inner inner-reading">
                   <p>{t("Loading...") || "正在加载友链..."}</p>
@@ -171,7 +162,7 @@ export default function LinksView(props: LinksViewProps) {
                 class="links-grid post-content"
                 innerHTML={page()?.html || ""}
               />
-            </Suspense>
+            </Loading>
           </div>
         </div>
       </div>

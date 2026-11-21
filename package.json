@@ -37,15 +37,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "node dist/server/entry-server.js",
+    "start": "node dist/server/node.js",
+    "serve": "vite preview",
     "typecheck": "tsc"
   },
   "devDependencies": {
+    "@solidjs/vite-plugin": "^3.0.1",
     "@types/archiver": "^8.0.0",
     "@types/browser-sync": "^2.29.1",
     "@types/node": "^26.6.6",
     "archiver": "^8.0.0",
     "browser-sync": "^3.0.4",
+    "filesystem-routing": "^0.5.0",
     "tocbot": "^4.36.8",
     "typescript": "^7.0.2",
     "vite": "^8.3.5"
@@ -150,14 +153,15 @@
     "ios_saf >= 16"
   ],
   "dependencies": {
-    "@kobalte/core": "^0.13.14",
-    "@solid-primitives/i18n": "^2.2.1",
-    "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^1.0.1",
-    "@solidjs/start": "^2.2.0",
+    "@kobalte/core": "^2.0.0-alpha.5",
+    "@solid-primitives/i18n": "^3.0.0",
+    "@solidjs/diagnostics": "^2.0.3",
+    "@solidjs/meta": "^2.0.0",
+    "@solidjs/router": "^2.0.1",
+    "@solidjs/web": "^2.0.3",
     "handlebars": "^4.7.10",
     "highlight.js": "^11.12.0",
     "ofetch": "^1.5.1",
-    "solid-js": "^1.9.18"
+    "solid-js": "^2.0.3"
   }
 }

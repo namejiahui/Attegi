@@ -1,5 +1,5 @@
 import { Show } from "solid-js";
-import { A, useLocation } from "@solidjs/router";
+import { useLocation } from "@solidjs/router";
 import type { GhostPost } from "../lib/ghost/types.js";
 import { t, formatDate, formatIsoDateOnly, getActiveLocale } from "../lib/i18n";
 import { cleanExcerpt } from "../lib/content";
@@ -23,7 +23,7 @@ export default function PostNav(props: PostNavProps) {
       <Show
         when={props.nextPost}
         fallback={
-          <A class="post-nav-home" href={homeUrl()}>
+          <a class="post-nav-home" href={homeUrl()}>
             <section class="post-nav-teaser">
               <i class="icon icon-home" aria-hidden="true">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -34,10 +34,10 @@ export default function PostNav(props: PostNavProps) {
               <h2 class="post-nav-title">{t("Return to Home")}</h2>
               <p class="post-nav-excerpt">{defaultExcerpt()}</p>
             </section>
-          </A>
+          </a>
         }
       >
-        <A class="post-nav-next" href={`${prefix()}/${props.nextPost!.slug}`}>
+        <a class="post-nav-next" href={`${prefix()}/${props.nextPost!.slug}`}>
           <section class="post-nav-teaser">
             <i class="icon icon-arrow-left" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -53,14 +53,14 @@ export default function PostNav(props: PostNavProps) {
               </time>
             </p>
           </section>
-        </A>
+        </a>
       </Show>
 
       {/* Right side: Prev (older) post, or Return to Home */}
       <Show
         when={props.prevPost}
         fallback={
-          <A class="post-nav-home" href={homeUrl()}>
+          <a class="post-nav-home" href={homeUrl()}>
             <section class="post-nav-teaser">
               <i class="icon icon-home" aria-hidden="true">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -71,10 +71,10 @@ export default function PostNav(props: PostNavProps) {
               <h2 class="post-nav-title">{t("Return to Home")}</h2>
               <p class="post-nav-excerpt">{defaultExcerpt()}</p>
             </section>
-          </A>
+          </a>
         }
       >
-        <A class="post-nav-prev" href={`${prefix()}/${props.prevPost!.slug}`}>
+        <a class="post-nav-prev" href={`${prefix()}/${props.prevPost!.slug}`}>
           <section class="post-nav-teaser">
             <i class="icon icon-arrow-right" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -90,7 +90,7 @@ export default function PostNav(props: PostNavProps) {
               </time>
             </p>
           </section>
-        </A>
+        </a>
       </Show>
 
       <div class="clear" />

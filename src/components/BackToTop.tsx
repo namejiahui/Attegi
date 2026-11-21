@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup } from "solid-js";
+import { createSignal, onSettled } from "solid-js";
 import { t } from "../lib/i18n";
 
 export default function BackToTop() {
@@ -8,7 +8,7 @@ export default function BackToTop() {
   const radius = 20;
   const circumference = 2 * Math.PI * radius; // ~125.66
 
-  onMount(() => {
+  onSettled(() => {
     const handleScroll = () => {
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -24,9 +24,9 @@ export default function BackToTop() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
-    onCleanup(() => {
+    return () => {
       window.removeEventListener("scroll", handleScroll);
-    });
+    };
   });
 
   const scrollToTop = () => {
